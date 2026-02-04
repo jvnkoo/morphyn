@@ -35,5 +35,14 @@ namespace Morphyn.Parser
                     .Then(HasParser.Many())
                     .Before(Char('}'))
             );
+        
+        public static readonly Parser<char, Unit> Comment =
+            (Char('#').IgnoreResult()
+                .Or(String("//").IgnoreResult()))
+            .Then(AnyCharExcept('\r','\n').SkipMany())
+            .Then(
+                Char('\n').IgnoreResult() 
+                    .Or(End)                  
+            );
     }
 }

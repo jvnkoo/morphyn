@@ -13,5 +13,11 @@ namespace Morphyn.Parser
         // Parses an identifier from the input. 
         private static readonly Parser<char, string> Identifier =
             Letter.AtLeastOnceString();
+        
+        private static Parser<char, T> Tok<T>(Parser<char, T> parser) =>
+            parser.Between(Skip);
+        
+        private static readonly Parser<char, Unit> Skip =
+            Whitespace.IgnoreResult().Or(Comment).SkipMany();
     }
 }

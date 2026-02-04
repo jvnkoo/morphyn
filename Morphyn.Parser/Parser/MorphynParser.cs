@@ -16,7 +16,7 @@ namespace Morphyn.Parser
         // Parses the root of the file
         // EntityParser.Before(SkipWhitespaces).Many() parses multiple entities
         public static Parser<char, IEnumerable<Entity>> RootParser =>
-            SkipWhitespaces.Then(EntityParser.Before(SkipWhitespaces).Many());
+            Tok(EntityParser).Many();
         
         /// <summary>
         /// Parses the entire file content and returns a list of fields.
