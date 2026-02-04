@@ -24,26 +24,49 @@ namespace Morphyn.Parser
             Letter.AtLeastOnceString();
 
         // Parses a single 'has name: value' line and consumes the trailing semicolon.
-        public static readonly Parser<char, (string name, int value)> HasParser =
+        public static readonly Parser<char, MorphynField> HasParser =
             Parser.Map(
-                (name, value) => (name, value),
+                (name, value) => new MorphynField(name, value),
                 String("has").Then(SkipWhitespaces).Then(Identifier),
                 Char(':').Between(SkipWhitespaces).Then(Number)
             ).Before(Char(';').Then(SkipWhitespaces));
+        
+        // =================================================================
+        // =================== Entity parser ===============================
+        // =================================================================
 
-        // Parses multiple 'has' statements across the whole file.
-        // SkipWhitespaces at the start allows the file to begin with empty lines.
-        public static readonly Parser<char, IEnumerable<(string name, int value)>> AllHasParser =
-            SkipWhitespaces.Then(HasParser.Many());
+        /// <summary>
+        /// Parses an entity from the input.
+        /// </summary>
+        public static readonly Parser<char, Entity> EntityParser =
+            Parser.Map((name, fields) => 
+                {
+                    var entity = new Entity { Name = name };
+                    foreach (var f in fields) 
+                    {
+                        entity.Fields[f.Name] = (int)f.Value; 
+                    }
+                    return entity;
+                },
+                String("entity").Then(SkipWhitespaces).Then(Identifier).Before(SkipWhitespaces),
+                Char('{').Between(SkipWhitespaces)
+                    .Then(HasParser.Many())
+                    .Before(Char('}'))
+            );
+        
+        // Parses the root of the file
+        // EntityParser.Before(SkipWhitespaces).Many() parses multiple entities
+        public static readonly Parser<char, IEnumerable<Entity>> RootParser =
+            SkipWhitespaces.Then(EntityParser.Before(SkipWhitespaces).Many());
         
         /// <summary>
         /// Parses the entire file content and returns a list of fields.
         /// </summary>
-        public static List<(string name, int value)> ParseFile(string input)
+        public static List<Entity> ParseFile(string input)
         {
-            return AllHasParser.ParseOrThrow(input).ToList();
+            return RootParser.ParseOrThrow(input).ToList();
         }
         
-        // TODO: add parse for entity, on, ->, check and other statements
+        // TODO: add parse for on, ->, check and other statements
     }
 }

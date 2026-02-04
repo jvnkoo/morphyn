@@ -29,19 +29,22 @@ namespace Morphyn.Core
                 // Read all text from the provided file
                 string code = File.ReadAllText(path);
 
-                // Parse all 'has' statements into AST data
-                var fields = MorphynParser.ParseFile(code);
+                var entities = MorphynParser.ParseFile(code);
 
-                // Initialize a test entity with parsed data
-                var entity = new Entity { Name = Path.GetFileNameWithoutExtension(path) };
-                foreach (var field in fields)
+                foreach (var entity in entities)
                 {
-                    entity.Has.Add(field);
-                    Console.WriteLine($"[AST] Field loaded: {field.name} = {field.value}");
-                }
+                    Console.WriteLine($"[AST] Entity loaded: {entity.Name}");
+                    
+                    // Dictionary<string, int>
+                    foreach (var field in entity.Fields)
+                    {
+                        Console.WriteLine($"  -> {field.Key}: {field.Value}");
+                    }
 
-                // Trigger a default runtime event
-                MorphynRuntime.Emit(entity, "start");
+                    // Trigger runtime event for each entity
+                    MorphynRuntime.Emit(entity, "start");
+                    Console.WriteLine(); 
+                }
             }
             catch (Exception ex)
             {

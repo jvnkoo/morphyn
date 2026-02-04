@@ -7,7 +7,7 @@ namespace Morphyn.Parser
     public class Entity
     {
         public string Name; // Entity name, for example "Player"
-        public List<(string Name, int Value)> Has = new(); // Entity properties
+        public Dictionary<string, int> Fields { get; set; } = new(); // Entity fields for runtime
         public List<Event> Events = new(); // Events (on)
     }
     
@@ -17,4 +17,7 @@ namespace Morphyn.Parser
         public string Name; // Event name, for example "damage"
         public List<string> Statements = new(); // List of properties as a text           
     }
+
+    // Fields
+    public record class MorphynField(string Name, object Value);
 }
