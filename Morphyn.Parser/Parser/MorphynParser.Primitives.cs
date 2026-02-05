@@ -9,14 +9,14 @@ namespace Morphyn.Parser
         // Parses a number from the input. 
         private static Parser<char, int> Number =>
             Digit.AtLeastOnceString().Select(int.Parse);
-        
+
         // Parses an identifier from the input. 
         private static Parser<char, string> Identifier =>
             Letter.AtLeastOnceString();
-        
+
         private static Parser<char, T> Tok<T>(Parser<char, T> parser) =>
             parser.Between(Skip);
-        
+
         private static Parser<char, Unit> Skip =>
             Whitespace.IgnoreResult().Or(Comment).SkipMany();
 
@@ -33,5 +33,13 @@ namespace Morphyn.Parser
         private static Parser<char, string> StringLiteral =>
             Char('"').Then(AnyCharExcept('"').ManyString()).Before(Char('"'));
         
+        // Parses arguments for emit call
+        private static Parser<char, IEnumerable<object>> CallArgs =>
+            OneOf(
+                    Number.Cast<object>(),
+                    StringLiteral.Cast<object>(),
+                    Identifier.Cast<object>()
+                ).Separated(Char(',').Between(Skip))
+                .Between(Char('('), Char(')'));
     }
 }
