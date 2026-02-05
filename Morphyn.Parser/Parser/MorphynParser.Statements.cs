@@ -51,5 +51,18 @@ namespace Morphyn.Parser
                     .Or(End.IgnoreResult())                  
             );
 
+        public static Parser<char, Event> EventParser =>
+            Parser.Map((name, args, statement) => new Event
+            {
+                Name = name,
+                Arguments = args.ToList(),
+                Statements = statement.ToList()
+            },
+            Tok(String("on")).Then(Tok(Identifier)), 
+            ArgsParser,
+            Tok(Char('{')) 
+                .Then(StatementParser.Many())
+                .Before(Tok(Char('}'))) 
+            );
     }
 }

@@ -19,5 +19,14 @@ namespace Morphyn.Parser
         
         private static Parser<char, Unit> Skip =>
             Whitespace.IgnoreResult().Or(Comment).SkipMany();
+
+        // Parses arguments list: (arg1, arg2, arg3)
+        private static Parser<char, IEnumerable<string>> ArgsParser =>
+            Identifier.Separated(Tok(Char(',')))
+                .Between(Tok(Char('(')), Tok(Char(')')));
+
+        // Parses a statement in the event
+        private static Parser<char, string> StatementParser =
+            AnyCharExcept(';', '}').ManyString().Before(Char(';').Then(Skip));
     }
 }
