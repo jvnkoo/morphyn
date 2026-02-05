@@ -1,5 +1,8 @@
 namespace Morphyn.Parser
 {
+    /// <summary>
+    /// Represents an entity in language.
+    /// </summary>
     public class Entity
     {
         public string Name; // Entity name, for example "Player"

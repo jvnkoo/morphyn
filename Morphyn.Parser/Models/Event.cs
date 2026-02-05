@@ -1,6 +1,8 @@
 namespace Morphyn.Parser
 {
-    // Event (on)
+    /// <summary>
+    /// Represents an event of an entity in language. (on)
+    /// </summary>
     public class Event
     {
         public string Name; // Event name, for example "damage"

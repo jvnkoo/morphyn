@@ -5,11 +5,14 @@ using System.Collections.Generic;
 
 namespace Morphyn.Parser
 {
+    using System.Security.AccessControl;
     using Parser = Pidgin.Parser;
 
     public static partial class MorphynParser
     {
-        // Parses a single 'has name: value' line and consumes the trailing semicolon.
+        /// <summary>
+        /// Parses a single 'has name: value' line and consumes the trailing semicolon.
+        /// </summary>
         public static Parser<char, MorphynField> HasParser =>
             Parser.Map(
                 (name, value) => new MorphynField(name, value),
@@ -51,6 +54,11 @@ namespace Morphyn.Parser
                     .Or(End.IgnoreResult())                  
             );
 
+        /// <summary>
+        /// Parses an event from the input.
+        /// An event is used to implement entity behavior.
+        /// It consists of a name and a list of statements.
+        /// </summary>
         public static Parser<char, Event> EventParser =>
             Parser.Map((name, args, statement) => new Event
             {
