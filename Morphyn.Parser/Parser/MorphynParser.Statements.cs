@@ -60,16 +60,16 @@ namespace Morphyn.Parser
         /// It consists of a name and a list of statements.
         /// </summary>
         public static Parser<char, Event> EventParser =>
-            Parser.Map((name, args, statement) => new Event
+            Parser.Map((name, args, actions) => new Event
             {
                 Name = name,
                 Arguments = args.ToList(),
-                Statements = statement.ToList()
+                Actions = actions.ToList()
             },
             Tok(String("on")).Then(Tok(Identifier)), 
             ArgsParser,
             Tok(Char('{')) 
-                .Then(StatementParser.Many())
+                .Then(ActionParser.Many())
                 .Before(Tok(Char('}'))) 
             );
 

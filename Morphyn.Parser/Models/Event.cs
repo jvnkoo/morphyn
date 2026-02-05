@@ -8,5 +8,6 @@ namespace Morphyn.Parser
         public string Name; // Event name, for example "damage"
         public List<string> Arguments = new(); // List of arguments, for example "amount"
         public List<string> Statements = new(); // List of properties as a text           
+        public List<MorphynAction> Actions = new();
     }
 }
