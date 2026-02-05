@@ -28,5 +28,10 @@ namespace Morphyn.Parser
         // Parses a statement in the event
         private static Parser<char, string> StatementParser =
             AnyCharExcept(';', '}').ManyString().Before(Char(';').Then(Skip));
+
+        // Parser for string in quotes "string"
+        private static Parser<char, string> StringLiteral =>
+            Char('"').Then(AnyCharExcept('"').ManyString()).Before(Char('"'));
+        
     }
 }
