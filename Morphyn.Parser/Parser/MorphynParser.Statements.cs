@@ -72,5 +72,29 @@ namespace Morphyn.Parser
                 .Then(StatementParser.Many())
                 .Before(Tok(Char('}'))) 
             );
+
+        /// <summary>
+        /// Parses a single 'emit event_name [args]' line and consumes the trailing semicolon.
+        /// </summary>
+        public static Parser<char, MorphynAction> EmitParser =>
+            String("emit").Then(Skip).Then(Identifier)
+                .Then(CallArgs, (name, args) => new EmitAction
+                {
+                    EventName = name,
+                    Arguments = args.ToList()
+                } as MorphynAction)
+                .Before(Char(';').Then(Skip));
+
+        /// <summary>
+        /// Parses a single 'check expression' line and consumes the trailing semicolon.
+        /// </summary>
+        public static Parser<char, MorphynAction> CheckParser =>
+            String("check").Then(Skip)
+                .Then(AnyCharExcept(';').ManyString())
+                .Select(expr => new CheckAction() { Expression = expr.Trim() } as MorphynAction)
+                .Before(Char(';').Then(Skip));
+        
+        public static Parser<char, MorphynAction> ActionParser =>
+            OneOf(EmitParser, CheckParser).Labelled("action (emit or check)");
     }
 }
