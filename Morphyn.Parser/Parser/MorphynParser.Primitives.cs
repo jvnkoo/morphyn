@@ -7,17 +7,17 @@ namespace Morphyn.Parser
     public static partial class MorphynParser
     {
         // Parses a number from the input. 
-        private static readonly Parser<char, int> Number =
+        private static Parser<char, int> Number =>
             Digit.AtLeastOnceString().Select(int.Parse);
         
         // Parses an identifier from the input. 
-        private static readonly Parser<char, string> Identifier =
+        private static Parser<char, string> Identifier =>
             Letter.AtLeastOnceString();
         
         private static Parser<char, T> Tok<T>(Parser<char, T> parser) =>
             parser.Between(Skip);
         
-        private static readonly Parser<char, Unit> Skip =
+        private static Parser<char, Unit> Skip =>
             Whitespace.IgnoreResult().Or(Comment).SkipMany();
     }
 }

@@ -13,36 +13,43 @@ namespace Morphyn.Parser
         public static Parser<char, MorphynField> HasParser =>
             Parser.Map(
                 (name, value) => new MorphynField(name, value),
-                String("has").Then(SkipWhitespaces).Then(Identifier),
-                Char(':').Between(SkipWhitespaces).Then(Number)
-            ).Before(Char(';').Then(SkipWhitespaces));
+                String("has").Then(Skip).Then(Identifier),
+                Char(':').Between(Skip).Then(Number).Cast<object>()
+            ).Before(Char(';').Then(Skip));
 
         /// <summary>
         /// Parses an entity from the input.
         /// </summary>
         public static Parser<char, Entity> EntityParser =>
-            Parser.Map((name, fields) => 
-                {
-                    var entity = new Entity { Name = name };
-                    foreach (var f in fields) 
+            String("entity").Then(Skip).Then(Identifier).Before(Skip)
+                .Then(name => 
+                        Char('{').Then(Skip)
+                            .Then(OneOf(
+                                Try(HasParser.Cast<object>()),
+                                Try(EventParser.Cast<object>())
+                            ).Between(Skip).Many()) 
+                            .Before(Skip)           
+                            .Before(Char('}')),
+                    (name, members) =>
                     {
-                        entity.Fields[f.Name] = (int)f.Value; 
+                        var entity = new Entity { Name = name };
+                        foreach (var member in members)
+                        {
+                            if (member is MorphynField f) entity.Fields[f.Name] = f.Value;
+                            if (member is Event e) entity.Events.Add(e);
+                        }
+                        return entity;
                     }
-                    return entity;
-                },
-                String("entity").Then(SkipWhitespaces).Then(Identifier).Before(SkipWhitespaces),
-                Char('{').Between(SkipWhitespaces)
-                    .Then(HasParser.Many())
-                    .Before(Char('}'))
-            );
+                );
         
-        public static readonly Parser<char, Unit> Comment =
+        public static Parser<char, Unit> Comment =>
             (Char('#').IgnoreResult()
                 .Or(String("//").IgnoreResult()))
             .Then(AnyCharExcept('\r','\n').SkipMany())
             .Then(
                 Char('\n').IgnoreResult() 
-                    .Or(End)                  
+                    .Or(End.IgnoreResult())                  
             );
+
     }
 }
