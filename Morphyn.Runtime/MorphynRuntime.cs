@@ -30,11 +30,27 @@ namespace Morphyn.Runtime
             {
                 case EmitAction emit:
                     if (emit.EventName == "log")
+                    {
                         Console.WriteLine($"[LOG]: {string.Join(" ", emit.Arguments)}");
+                        return true;
+                    }
+
+                    if (!string.IsNullOrEmpty(emit.TargetEntityName))
+                    {
+                        if (data.Entities.TryGetValue(emit.TargetEntityName, out var targetEntity))
+                        {
+                            Emit(data, targetEntity, emit.EventName);
+                        }
+                        else
+                        {
+                            Console.WriteLine($"[Runtime Error] Entity '{emit.TargetEntityName}' not found.");
+                        }
+                    }
                     else
+                    {
                         Emit(data, entity, emit.EventName);
+                    }
                     return true;
-                
                 case CheckAction check:
                     return EvaluateCheck(data, entity, check.Expression);
                 

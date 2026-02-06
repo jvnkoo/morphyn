@@ -53,15 +53,24 @@ namespace Morphyn.Parser
             CallArgument.ManyDelimitedBy(Token.EqualTo(MorphynToken.Comma))
                 .Between(Token.EqualTo(MorphynToken.LeftParen), Token.EqualTo(MorphynToken.RightParen))
                 .Select(x => x.ToArray());
+        
+        private static TokenListParser<MorphynToken, (string? target, string eventName)> EventReference =>
+            (from target in Identifier
+                from dot in Token.EqualTo(MorphynToken.Dot)
+                from name in Identifier
+                select (target: (string?)target, eventName: name))
+            .Try() 
+            .Or(Identifier.Select(name => (target: (string?)null, eventName: name)));
 
         // Parse emit action: emit eventName(args)
         private static TokenListParser<MorphynToken, MorphynAction> EmitAction =>
             from emitKeyword in Identifier.Where(id => id == "emit")
-            from name in Identifier
-            from args in CallArguments
+            from @ref in EventReference 
+            from args in CallArguments.OptionalOrDefault(Array.Empty<object>())
             select (MorphynAction)new EmitAction 
             { 
-                EventName = name, 
+                TargetEntityName = @ref.target, 
+                EventName = @ref.eventName, 
                 Arguments = args.ToList() 
             };
 

@@ -5,7 +5,7 @@ namespace Morphyn.Parser
     /// </summary>
     public class Event
     {
-        public string Name { get; set; }
+        public required string Name { get; set; }
         public List<string> Parameters { get; set; } = new List<string>();
         public List<MorphynAction> Actions { get; set; } = new List<MorphynAction>();
     }

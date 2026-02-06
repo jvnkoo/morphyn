@@ -10,8 +10,9 @@ namespace Morphyn.Parser
     /// </summary>
     public class EmitAction : MorphynAction
     {
-        public string EventName { get; set; }
-        public List<object> Arguments { get; set; } = new List<object>();
+        public string? TargetEntityName { get; init; } 
+        public required string EventName { get; init; }
+        public List<object> Arguments { get; init; } = new();
     }
 
     /// <summary>
@@ -19,6 +20,6 @@ namespace Morphyn.Parser
     /// </summary>
     public class CheckAction : MorphynAction
     {
-        public string Expression { get; set; }
+        public required string Expression { get; set; }
     }
 }

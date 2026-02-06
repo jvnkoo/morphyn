@@ -25,6 +25,7 @@ namespace Morphyn.Parser
         RightParen,
         Comma,
         Colon,
+        Dot,
         
         // Operators
         Equals,
@@ -51,6 +52,7 @@ namespace Morphyn.Parser
                 .Match(Character.EqualTo(')'), MorphynToken.RightParen)
                 .Match(Character.EqualTo(','), MorphynToken.Comma)
                 .Match(Character.EqualTo(':'), MorphynToken.Colon)
+                .Match(Character.EqualTo('.'), MorphynToken.Dot)
                 
                 .Match(Span.EqualTo("=="), MorphynToken.DoubleEquals)
                 .Match(Span.EqualTo("!="), MorphynToken.NotEquals)
