@@ -4,17 +4,13 @@ namespace Morphyn.Parser
 {
     public class EntityData
     {
-        public Dictionary<string, Entity> Entities = new();
-        public Dictionary<string, int> Values = new();
-
-        public EntityData() { }
+        public Dictionary<string, Entity> Entities { get; set; } = new Dictionary<string, Entity>();
 
         public EntityData(IEnumerable<Entity> entities)
         {
-            foreach (var e in entities)
+            foreach (var entity in entities)
             {
-                if (!Entities.ContainsKey(e.Name))
-                    Entities[e.Name] = e;
+                Entities[entity.Name] = entity;
             }
         }
     }

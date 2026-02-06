@@ -1,13 +1,10 @@
-using Morphyn.Parser;
 using System;
 using System.Linq;
+using Morphyn.Parser;
 using static Morphyn.Runtime.MorphynEvaluator;
 
 namespace Morphyn.Runtime
 {
-    /// <summary>
-    /// The AST execution is implemented here.
-    /// </summary>
     public static class MorphynRuntime
     {
         public static void Emit(EntityData data, Entity entity, string eventName)
@@ -31,7 +28,7 @@ namespace Morphyn.Runtime
         {
             switch (action)
             {
-                case EmitAction emit :
+                case EmitAction emit:
                     if (emit.EventName == "log")
                         Console.WriteLine($"[LOG]: {string.Join(" ", emit.Arguments)}");
                     else

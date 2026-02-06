@@ -1,56 +1,154 @@
-using Pidgin;
-using static Pidgin.Parser;
-using static Pidgin.Parser<char>;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Superpower;
+using Superpower.Parsers;
 
 namespace Morphyn.Parser
 {
-    /// <summary>
-    /// Here we will implement the parser for the Morphyn language.
-    /// It converts text from .morphyn files into ASTs(Entity and Event structures).
-    /// </summary>
-    public static partial class MorphynParser
+    public static class MorphynParser
     {
-        // Parses the root of the file
-        // EntityParser.Before(SkipWhitespaces).Many() parses multiple entities
-        public static Parser<char, IEnumerable<Entity>> RootParser =>
-            Tok(EntityParser).Many();
+        private static readonly Tokenizer<MorphynToken> Tokenizer = MorphynTokenizer.Create();
 
-        /// <summary>
-        /// Parses a .morphyn file and returns parsed data.
-        /// File contains one or more entities, each of which is parsed into an Entity instance.
-        /// If parsing fails, it throws an exception with details about the error.
-        /// </summary>
+        // Parse identifier token
+        private static TokenListParser<MorphynToken, string> Identifier =>
+            Token.EqualTo(MorphynToken.Identifier).Select(t => t.ToStringValue());
+
+        // Parse number token
+        private static TokenListParser<MorphynToken, int> Number =>
+            Token.EqualTo(MorphynToken.Number).Select(t => int.Parse(t.ToStringValue()));
+
+        // Parse string token (removes quotes)
+        private static TokenListParser<MorphynToken, string> String =>
+            Token.EqualTo(MorphynToken.String).Select(t => 
+            {
+                var str = t.ToStringValue();
+                return str.Substring(1, str.Length - 2);
+            });
+
+        // Parse field declaration: identifier : number
+        private static TokenListParser<MorphynToken, KeyValuePair<string, object>> FieldDeclaration =>
+            (from name in Identifier
+                from colon in Token.EqualTo(MorphynToken.Colon)
+                from value in Number
+                select new KeyValuePair<string, object>(name, value)).Try();
+
+        // Parse parameter list: (param1, param2, ...)
+        private static TokenListParser<MorphynToken, string[]> ParameterList =>
+            Identifier.ManyDelimitedBy(Token.EqualTo(MorphynToken.Comma))
+                .Between(Token.EqualTo(MorphynToken.LeftParen), Token.EqualTo(MorphynToken.RightParen))
+                .Select(x => x.ToArray());
+
+        // Parse optional parameter list
+        private static TokenListParser<MorphynToken, string[]> OptionalParameterList =>
+            ParameterList.OptionalOrDefault(Array.Empty<string>());
+
+        // Parse call arguments: (arg1, arg2, ...)
+        private static TokenListParser<MorphynToken, object> CallArgument =>
+            Number.Select(n => (object)n)
+                .Or(String.Select(s => (object)s))
+                .Or(Identifier.Select(id => (object)id));
+
+        private static TokenListParser<MorphynToken, object[]> CallArguments =>
+            CallArgument.ManyDelimitedBy(Token.EqualTo(MorphynToken.Comma))
+                .Between(Token.EqualTo(MorphynToken.LeftParen), Token.EqualTo(MorphynToken.RightParen))
+                .Select(x => x.ToArray());
+
+        // Parse emit action: emit eventName(args)
+        private static TokenListParser<MorphynToken, MorphynAction> EmitAction =>
+            from emitKeyword in Identifier.Where(id => id == "emit")
+            from name in Identifier
+            from args in CallArguments
+            select (MorphynAction)new EmitAction 
+            { 
+                EventName = name, 
+                Arguments = args.ToList() 
+            };
+
+        // Parse check action: check expression
+        private static TokenListParser<MorphynToken, MorphynAction> CheckAction =>
+            from checkKeyword in Identifier.Where(id => id == "check")
+            from fieldName in Identifier // Changed 'field' to 'fieldName'
+            from op in Token.EqualTo(MorphynToken.DoubleEquals)
+                .Select(_ => "==")
+                .Or(Token.EqualTo(MorphynToken.NotEquals).Select(_ => "!="))
+                .Or(Token.EqualTo(MorphynToken.GreaterThanOrEqual).Select(_ => ">="))
+                .Or(Token.EqualTo(MorphynToken.LessThanOrEqual).Select(_ => "<="))
+                .Or(Token.EqualTo(MorphynToken.GreaterThan).Select(_ => ">"))
+                .Or(Token.EqualTo(MorphynToken.LessThan).Select(_ => "<"))
+            from value in Number
+            select (MorphynAction)new CheckAction 
+            { 
+                Expression = $"{fieldName} {op} {value}" 
+            };
+
+        // Parse any action
+        private static TokenListParser<MorphynToken, MorphynAction> ActionParser =>
+            EmitAction.Or(CheckAction);
+
+        // Parse event: on eventName(params) { actions }
+        private static TokenListParser<MorphynToken, Event> EventDeclaration =>
+            from onKeyword in Identifier.Where(id => id == "on")
+            from eventName in Identifier
+            from parameters in OptionalParameterList
+            from leftBrace in Token.EqualTo(MorphynToken.LeftBrace)
+            from actions in ActionParser.Many()
+            from rightBrace in Token.EqualTo(MorphynToken.RightBrace)
+            select new Event
+            {
+                Name = eventName,
+                Parameters = parameters.ToList(),
+                Actions = actions.ToList()
+            };
+
+        // Parse entity: entity Name { fields... events... }
+        private static TokenListParser<MorphynToken, Entity> EntityDeclaration =>
+            from entityKeyword in Identifier.Where(id => id == "entity")
+            from name in Identifier
+            from leftBrace in Token.EqualTo(MorphynToken.LeftBrace)
+            from fields in FieldDeclaration.Many()
+            from events in EventDeclaration.Many()
+            from rightBrace in Token.EqualTo(MorphynToken.RightBrace) 
+            select new Entity
+            {
+                Name = name,
+                Fields = fields.ToDictionary(f => f.Key, f => f.Value),
+                Events = events.ToList()
+            };
+        
+        // Parse multiple entities
+        private static TokenListParser<MorphynToken, Entity[]> RootParser =>
+            EntityDeclaration.Many().Select(x => x.ToArray());
+
         public static EntityData ParseFile(string input)
         {
-            var result = RootParser.Parse(input);
-
-            if (result.Success)
+            try
             {
-                return new EntityData(result.Value);
+                var tokens = Tokenizer.Tokenize(input);
+                var result = RootParser.Parse(tokens);
+                return new EntityData(result);
             }
-
-            var error = result.Error;
-            Console.Error.WriteLine("Morphyn parse error");
-            Console.Error.WriteLine($"Position : line {error.ErrorPos.Line}, column {error.ErrorPos.Col}");
-            PrintErrorContext(input, error.ErrorPos.Line, error.ErrorPos.Col);
-
-            throw new Exception("Morphyn parsing failed. Look at the context above.");
+            catch (ParseException ex)
+            {
+                Console.Error.WriteLine("Morphyn parse error");
+                Console.Error.WriteLine($"Position: {ex.ErrorPosition}");
+                Console.Error.WriteLine($"Message: {ex.Message}");
+                PrintErrorContext(input, ex.ErrorPosition);
+                throw new Exception("Morphyn parsing failed. See context above.");
+            }
         }
 
-        private static void PrintErrorContext(string input, int line, int column)
+        private static void PrintErrorContext(string input, Superpower.Model.Position position)
         {
             var lines = input.Split('\n');
-            var l = Math.Clamp(line - 1, 0, lines.Length - 1);
-            var c = Math.Clamp(column - 1, 0, lines[l].Length);
+            int lineIndex = Math.Clamp(position.Line - 1, 0, lines.Length - 1);
+            int columnIndex = Math.Clamp(position.Column - 1, 0, lines[lineIndex].Length);
 
             Console.Error.WriteLine("Context:");
-            if (l < lines.Length)
+            if (lineIndex < lines.Length)
             {
-                Console.Error.WriteLine(lines[l]);
-                Console.Error.WriteLine(new string(' ', c) + "^");
+                Console.Error.WriteLine(lines[lineIndex]);
+                Console.Error.WriteLine(new string(' ', columnIndex) + "^");
             }
         }
     }
