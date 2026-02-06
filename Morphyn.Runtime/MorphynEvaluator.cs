@@ -4,7 +4,7 @@ namespace Morphyn.Runtime
 {
     public static class MorphynEvaluator
     {
-        public static bool EvaluateCheck(Entity entity, string expression)
+        public static bool EvaluateCheck(EntityData data, Entity entity, string expression)
         {
             var parts = expression.Split(' ', StringSplitOptions.RemoveEmptyEntries);
             if (parts.Length < 3) return true;

@@ -1,45 +1,56 @@
 using Pidgin;
 using static Pidgin.Parser;
 using static Pidgin.Parser<char>;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Morphyn.Parser
 {
     public static partial class MorphynParser
     {
-        // Parses a number from the input. 
+        /// <summary>
+        /// Parses an identifier. An identifier is a string of one or more letters or digits,
+        /// possibly starting with an underscore.
+        /// </summary>
+        private static Parser<char, string> Identifier =>
+            Pidgin.Parser.Map((first, rest) => first + rest, 
+                Letter.Or(Char('_')), 
+                LetterOrDigit.Or(Char('_')).ManyString());
+
+        // Parses a number from the input
         private static Parser<char, int> Number =>
             Digit.AtLeastOnceString().Select(int.Parse);
-
-        // Parses an identifier from the input. 
-        private static Parser<char, string> Identifier =>
-            Letter.AtLeastOnceString();
-
+        
+        /// <summary>
+        /// Parses a token. A token is a non-whitespace, non-comment character.
+        /// </summary>
         private static Parser<char, T> Tok<T>(Parser<char, T> parser) =>
             parser.Between(Skip);
 
         private static Parser<char, Unit> Skip =>
             Whitespace.IgnoreResult().Or(Comment).SkipMany();
 
-        // Parses arguments list: (arg1, arg2, arg3)
         private static Parser<char, IEnumerable<string>> ArgsParser =>
-            Identifier.Separated(Tok(Char(',')))
+            Tok(Identifier).Separated(Tok(Char(',')))
+                .Or(Pidgin.Parser<char>.Return(Enumerable.Empty<string>()))
                 .Between(Tok(Char('(')), Tok(Char(')')));
 
-        // Parses a statement in the event
-        private static Parser<char, string> StatementParser =
-            AnyCharExcept(';', '}').ManyString().Before(Char(';').Then(Skip));
-
-        // Parser for string in quotes "string"
+        /// <summary>
+        /// Parser for string in quotes "string"
+        /// </summary>
         private static Parser<char, string> StringLiteral =>
             Char('"').Then(AnyCharExcept('"').ManyString()).Before(Char('"'));
         
-        // Parses arguments for emit call
+        /// <summary>
+        /// Parses argument for emit call
+        /// </summary>
         private static Parser<char, IEnumerable<object>> CallArgs =>
             OneOf(
                     Number.Cast<object>(),
                     StringLiteral.Cast<object>(),
                     Identifier.Cast<object>()
-                ).Separated(Char(',').Between(Skip))
-                .Between(Char('('), Char(')'));
+                ).Separated(Tok(Char(',')))
+                .Or(Pidgin.Parser<char>.Return(Enumerable.Empty<object>()))
+                .Between(Tok(Char('(')), Tok(Char(')')));
     }
 }

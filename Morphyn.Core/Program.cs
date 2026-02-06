@@ -29,9 +29,11 @@ namespace Morphyn.Core
                 // Read all text from the provided file
                 string code = File.ReadAllText(path);
 
-                var entities = MorphynParser.ParseFile(code);
+                EntityData context = MorphynParser.ParseFile(code);
+                
+                Console.WriteLine($"[System] Loaded {context.Entities.Count} entities.");
 
-                foreach (var entity in entities)
+                foreach (var entity in context.Entities.Values)
                 {
                     Console.WriteLine($"[AST] Entity loaded: {entity.Name}");
                     
@@ -41,14 +43,15 @@ namespace Morphyn.Core
                         Console.WriteLine($"  -> {field.Key}: {field.Value}");
                     }
 
-                    // Trigger runtime event for each entity
-                    MorphynRuntime.Emit(entity, "start");
+                    // Trigger runtime vent for each entity
+                    MorphynRuntime.Emit(context, entity, "start");
                     Console.WriteLine(); 
                 }
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Parser/Runtime Error: {ex.Message}");
+                Console.WriteLine(ex.StackTrace);
             }
         }
     }

@@ -1,4 +1,6 @@
 using Morphyn.Parser;
+using System;
+using System.Linq;
 using static Morphyn.Runtime.MorphynEvaluator;
 
 namespace Morphyn.Runtime
@@ -8,8 +10,7 @@ namespace Morphyn.Runtime
     /// </summary>
     public static class MorphynRuntime
     {
-        // Executes the event for the entity
-        public static void Emit(Entity entity, string eventName)
+        public static void Emit(EntityData data, Entity entity, string eventName)
         {
             var ev = entity.Events.FirstOrDefault(e => e.Name == eventName);
             if (ev == null) return;
@@ -18,7 +19,7 @@ namespace Morphyn.Runtime
 
             foreach (var action in ev.Actions)
             {
-                if (!ExecuteAction(entity, action))
+                if (!ExecuteAction(data, entity, action))
                 {
                     Console.WriteLine($"[Runtime] Event '{eventName}' halted due to failed check.");
                     break;
@@ -26,23 +27,19 @@ namespace Morphyn.Runtime
             }
         }
 
-        private static bool ExecuteAction(Entity entity, MorphynAction action)
+        private static bool ExecuteAction(EntityData data, Entity entity, MorphynAction action)
         {
             switch (action)
             {
                 case EmitAction emit :
                     if (emit.EventName == "log")
-                    {
                         Console.WriteLine($"[LOG]: {string.Join(" ", emit.Arguments)}");
-                    }
                     else
-                    {
-                        Emit(entity, emit.EventName);
-                    }
-
+                        Emit(data, entity, emit.EventName);
                     return true;
+                
                 case CheckAction check:
-                    return EvaluateCheck(entity, check.Expression);
+                    return EvaluateCheck(data, entity, check.Expression);
                 
                 default:
                     return true;

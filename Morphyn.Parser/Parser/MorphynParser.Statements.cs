@@ -2,19 +2,17 @@ using Pidgin;
 using static Pidgin.Parser;
 using static Pidgin.Parser<char>;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Morphyn.Parser
 {
-    using System.Security.AccessControl;
-    using Parser = Pidgin.Parser;
-
     public static partial class MorphynParser
     {
         /// <summary>
         /// Parses a single 'has name: value' line and consumes the trailing semicolon.
         /// </summary>
         public static Parser<char, MorphynField> HasParser =>
-            Parser.Map(
+            Pidgin.Parser.Map(
                 (name, value) => new MorphynField(name, value),
                 String("has").Then(Skip).Then(Identifier),
                 Char(':').Between(Skip).Then(Number).Cast<object>()
@@ -31,7 +29,7 @@ namespace Morphyn.Parser
                                 Try(HasParser.Cast<object>()),
                                 Try(EventParser.Cast<object>())
                             ).Between(Skip).Many()) 
-                            .Before(Skip)           
+                            .Before(Skip)
                             .Before(Char('}')),
                     (name, members) =>
                     {
@@ -55,12 +53,12 @@ namespace Morphyn.Parser
             );
 
         /// <summary>
-        /// Parses an event from the input.
+        /// Parses and event from the input.
         /// An event is used to implement entity behavior.
         /// It consists of a name and a list of statements.
         /// </summary>
         public static Parser<char, Event> EventParser =>
-            Parser.Map((name, args, actions) => new Event
+            Pidgin.Parser.Map((name, args, actions) => new Event
             {
                 Name = name,
                 Arguments = args.ToList(),
@@ -77,13 +75,15 @@ namespace Morphyn.Parser
         /// Parses a single 'emit event_name [args]' line and consumes the trailing semicolon.
         /// </summary>
         public static Parser<char, MorphynAction> EmitParser =>
-            String("emit").Then(Skip).Then(Identifier)
-                .Then(CallArgs, (name, args) => new EmitAction
+            Pidgin.Parser.Map(
+                (name, args) => new EmitAction
                 {
                     EventName = name,
                     Arguments = args.ToList()
-                } as MorphynAction)
-                .Before(Char(';').Then(Skip));
+                } as MorphynAction,
+                String("emit").Then(Skip).Then(Identifier),
+                CallArgs
+            ).Before(Char(';').Then(Skip));
 
         /// <summary>
         /// Parses a single 'check expression' line and consumes the trailing semicolon.
