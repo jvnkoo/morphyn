@@ -35,7 +35,15 @@ namespace Morphyn.Parser
         LessThan,
         GreaterThanOrEqual,
         LessThanOrEqual,
-        DoubleEquals
+        DoubleEquals,
+        
+        // Math operators
+        Plus,
+        Minus,
+        Asterisk,
+        Slash,
+        Percent,
+        Arrow
     }
 
     public static class MorphynTokenizer
@@ -47,7 +55,6 @@ namespace Morphyn.Parser
                 .Ignore(Comment.CStyle)
                 .Ignore(Comment.CPlusPlusStyle)
                 .Ignore(Comment.ShellStyle)
-                
                 
                 .Match(Span.EqualTo("entity"), MorphynToken.Entity)
                 .Match(Span.EqualTo("has"), MorphynToken.Has)
@@ -70,6 +77,13 @@ namespace Morphyn.Parser
                 .Match(Character.EqualTo('>'), MorphynToken.GreaterThan)
                 .Match(Character.EqualTo('<'), MorphynToken.LessThan)
                 .Match(Character.EqualTo('='), MorphynToken.Equals)
+                
+                .Match(Span.EqualTo("->"), MorphynToken.Arrow)
+                .Match(Character.EqualTo('+'), MorphynToken.Plus)
+                .Match(Character.EqualTo('-'), MorphynToken.Minus)
+                .Match(Character.EqualTo('*'), MorphynToken.Asterisk)
+                .Match(Character.EqualTo('/'), MorphynToken.Slash)
+                .Match(Character.EqualTo('%'), MorphynToken.Percent)
                 
                 .Match(Numerics.Integer, MorphynToken.Number, requireDelimiters: true)
                 .Match(QuotedString.CStyle, MorphynToken.String, requireDelimiters: true)

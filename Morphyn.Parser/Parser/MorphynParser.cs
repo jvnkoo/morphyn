@@ -20,11 +20,52 @@ namespace Morphyn.Parser
 
         // Parse string token (removes quotes)
         private static TokenListParser<MorphynToken, string> String =>
-            Token.EqualTo(MorphynToken.String).Select(t => 
+            Token.EqualTo(MorphynToken.String).Select(t =>
             {
                 var str = t.ToStringValue();
                 return str.Substring(1, str.Length - 2);
             });
+
+        // Terms are the lowest level of the expression.
+        // They include numbers, identifiers, and subexpressions in parentheses.
+        // Subexpressions have higher priority than numbers and identifiers.
+        private static TokenListParser<MorphynToken, MorphynExpression> Term =>
+            Token.EqualTo(MorphynToken.Number)
+                .Select(t => (MorphynExpression)new LiteralExpression(int.Parse(t.ToStringValue())))
+                .Or(Token.EqualTo(MorphynToken.Identifier)
+                    .Select(t => (MorphynExpression)new VariableExpression(t.ToStringValue())))
+                .Or(Parse.Ref(() => Expression).Between(Token.EqualTo(MorphynToken.LeftParen),
+                    Token.EqualTo(MorphynToken.RightParen)));
+
+
+        // Parser precedence for multiplication and division (and modulo).
+        // These operators have higher precedence than addition and subtraction.
+        private static TokenListParser<MorphynToken, MorphynExpression> Factor =>
+            Parse.Chain(
+                Token.EqualTo(MorphynToken.Asterisk).Or(Token.EqualTo(MorphynToken.Slash))
+                    .Or(Token.EqualTo(MorphynToken.Percent)),
+                Term,
+                (op, left, right) => (MorphynExpression)new BinaryExpression(op.ToStringValue(), left, right)
+            );
+
+        // Parser precedence for addition and subtraction.
+        // These operators have lower precedence than multiplication and division.
+        private static TokenListParser<MorphynToken, MorphynExpression> Expression =>
+            Parse.Chain(
+                Token.EqualTo(MorphynToken.Plus).Or(Token.EqualTo(MorphynToken.Minus)),
+                Factor,
+                (op, left, right) => (MorphynExpression)new BinaryExpression(op.ToStringValue(), left, right)
+            );
+        
+        /// <summary>
+        /// An arrow "->" is used in flow actions to indicate that the expression on the left should be assigned to the field on the right.
+        /// For example, "entity.health -> player.health" sets the health of the entity to the health of the player.
+        /// </summary>
+        private static TokenListParser<MorphynToken, MorphynAction> FlowAction =>
+            from expr in Expression
+            from arrow in Token.EqualTo(MorphynToken.Arrow)
+            from target in Identifier
+            select (MorphynAction)new SetAction { Expression = expr, TargetField = target };
 
         // Parse field declaration: identifier : number
         // Maybe make "has" optional
@@ -55,31 +96,31 @@ namespace Morphyn.Parser
             CallArgument.ManyDelimitedBy(Token.EqualTo(MorphynToken.Comma))
                 .Between(Token.EqualTo(MorphynToken.LeftParen), Token.EqualTo(MorphynToken.RightParen))
                 .Select(x => x.ToArray());
-        
+
         private static TokenListParser<MorphynToken, (string? target, string eventName)> EventReference =>
             (from target in Identifier
                 from dot in Token.EqualTo(MorphynToken.Dot)
                 from name in Identifier
                 select (target: (string?)target, eventName: name))
-            .Try() 
+            .Try()
             .Or(Identifier.Select(name => (target: (string?)null, eventName: name)));
 
         // Parse emit action: emit eventName(args)
         private static TokenListParser<MorphynToken, MorphynAction> EmitAction =>
             from emitKeyword in Token.EqualTo(MorphynToken.Emit)
-            from @ref in EventReference 
+            from @ref in EventReference
             from args in CallArguments.OptionalOrDefault(Array.Empty<object>())
-            select (MorphynAction)new EmitAction 
-            { 
-                TargetEntityName = @ref.target, 
-                EventName = @ref.eventName, 
-                Arguments = args.ToList() 
+            select (MorphynAction)new EmitAction
+            {
+                TargetEntityName = @ref.target,
+                EventName = @ref.eventName,
+                Arguments = args.ToList()
             };
 
         // Parse check action: check expression
         private static TokenListParser<MorphynToken, MorphynAction> CheckAction =>
             from checkKeyword in Token.EqualTo(MorphynToken.Check)
-            from fieldName in Identifier 
+            from leftExpr in Expression
             from op in Token.EqualTo(MorphynToken.DoubleEquals)
                 .Select(_ => "==")
                 .Or(Token.EqualTo(MorphynToken.NotEquals).Select(_ => "!="))
@@ -87,15 +128,19 @@ namespace Morphyn.Parser
                 .Or(Token.EqualTo(MorphynToken.LessThanOrEqual).Select(_ => "<="))
                 .Or(Token.EqualTo(MorphynToken.GreaterThan).Select(_ => ">"))
                 .Or(Token.EqualTo(MorphynToken.LessThan).Select(_ => "<"))
-            from value in Number
+            from rightExpr in Expression
             select (MorphynAction)new CheckAction 
             { 
-                Expression = $"{fieldName} {op} {value}" 
+                Left = leftExpr, 
+                Operator = op, 
+                Right = rightExpr 
             };
 
         // Parse any action
         private static TokenListParser<MorphynToken, MorphynAction> ActionParser =>
-            EmitAction.Or(CheckAction);
+            FlowAction.Try()  
+                .Or(CheckAction.Try())
+                .Or(EmitAction);
 
         // Parse event: on eventName(params) { actions }
         private static TokenListParser<MorphynToken, Event> EventDeclaration =>
@@ -119,14 +164,14 @@ namespace Morphyn.Parser
             from leftBrace in Token.EqualTo(MorphynToken.LeftBrace)
             from fields in FieldDeclaration.Many()
             from events in EventDeclaration.Many()
-            from rightBrace in Token.EqualTo(MorphynToken.RightBrace) 
+            from rightBrace in Token.EqualTo(MorphynToken.RightBrace)
             select new Entity
             {
                 Name = name,
                 Fields = fields.ToDictionary(f => f.Key, f => f.Value),
                 Events = events.ToList()
             };
-        
+
         // Parse multiple entities
         private static TokenListParser<MorphynToken, Entity[]> RootParser =>
             EntityDeclaration.Many().Select(x => x.ToArray());

@@ -29,12 +29,12 @@ namespace Morphyn.Runtime
             var ev = entity.Events.FirstOrDefault(e => e.Name == pending.EventName);
 
             if (ev == null) return;
-            
+    
             Console.WriteLine($"\n[Runtime] Processing '{pending.EventName}' on {entity.Name}");
 
             foreach (var action in ev.Actions)
             {
-                if (!ExecuteAction(data, entity, action))
+                if (!ExecuteAction(data, entity, action, pending.Args)) 
                 {
                     Console.WriteLine($"[Runtime] Event '{pending.EventName}' stopped.");
                     break;
@@ -42,32 +42,35 @@ namespace Morphyn.Runtime
             }
         }
 
-        private static bool ExecuteAction(EntityData data, Entity entity, MorphynAction action)
+        private static bool ExecuteAction(EntityData data, Entity entity, MorphynAction action, List<object> args)
         {
             switch (action)
             {
+                case SetAction set:
+                    int value = EvaluateExpression(entity, set.Expression, args);
+                    if (entity.Fields.ContainsKey(set.TargetField)) {
+                        entity.Fields[set.TargetField] = value;
+                        Console.WriteLine($"[Runtime] {entity.Name}.{set.TargetField} -> {value}");
+                    }
+                    return true;
+
+                case CheckAction check:
+                    return EvaluateCheck(entity, check, args);
+
                 case EmitAction emit:
-                    if (emit.EventName == "log")
-                    {
+                    if (emit.EventName == "log") {
                         Console.WriteLine($"[LOG]: {string.Join(" ", emit.Arguments)}");
                         return true;
                     }
-
+            
                     Entity target = entity;
-                    if (!string.IsNullOrEmpty(emit.TargetEntityName))
-                    {
-                        if (!data.Entities.TryGetValue(emit.TargetEntityName, out target))
-                        {
-                            Console.WriteLine($"[Runtime Error] Target '{emit.TargetEntityName}' not found.");
-                            return true;
-                        }
+                    if (!string.IsNullOrEmpty(emit.TargetEntityName)) {
+                        data.Entities.TryGetValue(emit.TargetEntityName, out target);
                     }
-                    
-                    Send(target, emit.EventName, emit.Arguments);
+
+                    if (target != null) Send(target, emit.EventName, emit.Arguments);
                     return true;
-                case CheckAction check:
-                    return EvaluateCheck(data, entity, check.Expression);
-                
+
                 default:
                     return true;
             }
