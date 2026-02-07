@@ -57,6 +57,30 @@ namespace Morphyn.Core
                 Console.WriteLine("\n--- Starting Runtime ---");
 
                 MorphynRuntime.RunFullCycle(context);
+                
+                Console.WriteLine("\n--- Engine Pulse Started (Press Ctrl+C to stop) ---");
+
+                DateTime lastTime = DateTime.Now;
+
+                while (true)
+                {
+                    DateTime currentTime = DateTime.Now;
+                    // Calculate fps
+                    double dt = (currentTime - lastTime).TotalSeconds;
+                    lastTime = currentTime;
+
+                    foreach (var entity in context.Entities.Values)
+                    {
+                        if (entity.Events.Any(e => e.Name == "tick"))
+                        {
+                            MorphynRuntime.Send(entity, "tick", new List<object>() { dt });
+                        }
+                    }
+                    
+                    MorphynRuntime.RunFullCycle(context);
+                    
+                    System.Threading.Thread.Sleep(16);
+                }
 
                 Console.WriteLine("--- Simulation Finished ---");
             }
