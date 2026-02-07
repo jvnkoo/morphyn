@@ -66,14 +66,14 @@ namespace Morphyn.Core
                 {
                     DateTime currentTime = DateTime.Now;
                     // Calculate fps
-                    double dt = (currentTime - lastTime).TotalSeconds;
+                    int dtMs = (int)(currentTime - lastTime).TotalMilliseconds;
                     lastTime = currentTime;
 
                     foreach (var entity in context.Entities.Values)
                     {
                         if (entity.Events.Any(e => e.Name == "tick"))
                         {
-                            MorphynRuntime.Send(entity, "tick", new List<object>() { dt });
+                            MorphynRuntime.Send(entity, "tick", new List<object>() { dtMs });
                         }
                     }
                     
