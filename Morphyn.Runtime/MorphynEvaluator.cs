@@ -5,42 +5,41 @@ namespace Morphyn.Runtime
 {
     public static class MorphynEvaluator
     {
-        public static int EvaluateExpression(Entity entity, MorphynExpression expr, List<object> eventArgs)
+        public static object EvaluateExpression(Entity entity, MorphynExpression expr, List<object> eventArgs)
         {
             return expr switch
             {
-                LiteralExpression l => Convert.ToInt32(l.Value),
-                            
+                LiteralExpression l => l.Value, 
+        
                 VariableExpression v => 
-                    (v.Name == "dt" && eventArgs.Count > 0) ? Convert.ToInt32(eventArgs[0]) : 
-                    entity.Fields.TryGetValue(v.Name, out var val) ? Convert.ToInt32(val) : 0,
+                    (v.Name == "dt" && eventArgs.Count > 0) 
+                        ? Convert.ToInt32(eventArgs[0]) 
+                        : (entity.Fields.TryGetValue(v.Name, out var val) ? Convert.ToInt32(val) : 0),
 
-                BinaryExpression b => Calculate(
-                    EvaluateExpression(entity, b.Left, eventArgs),
-                    b.Operator,
-                    EvaluateExpression(entity, b.Right, eventArgs)
-                ),
+                BinaryExpression b => EvaluateBinary(entity, b, eventArgs),
+        
                 _ => 0
             };
         }
-
-        private static int Calculate(int left, string op, int right)
+        private static int EvaluateBinary(Entity entity, BinaryExpression b, List<object> args)
         {
-            return op switch
+            int left = Convert.ToInt32(EvaluateExpression(entity, b.Left, args));
+            int right = Convert.ToInt32(EvaluateExpression(entity, b.Right, args));
+
+            return b.Operator switch
             {
                 "+" => left + right,
                 "-" => left - right,
                 "*" => left * right,
-                "/" => right == 0 ? 0 : left / right,
-                "%" => right == 0 ? 0 : left % right,
+                "/" => right != 0 ? left / right : 0,
                 _ => 0
             };
         }
 
         public static bool EvaluateCheck(Entity entity, CheckAction check, List<object> args)
         {
-            int left = EvaluateExpression(entity, check.Left, args);
-            int right = EvaluateExpression(entity, check.Right, args);
+            int left = Convert.ToInt32(EvaluateExpression(entity, check.Left, args));
+            int right = Convert.ToInt32(EvaluateExpression(entity, check.Right, args));
 
             bool result = check.Operator switch
             {
@@ -52,7 +51,7 @@ namespace Morphyn.Runtime
                 "<=" => left <= right,
                 _ => false
             };
-            
+    
             Console.WriteLine($"[Eval] Check: {left} {check.Operator} {right} => {result}");
             return result;
         }

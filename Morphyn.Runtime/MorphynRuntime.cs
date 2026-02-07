@@ -47,7 +47,8 @@ namespace Morphyn.Runtime
             switch (action)
             {
                 case SetAction set:
-                    int value = EvaluateExpression(entity, set.Expression, args);
+                    int value = Convert.ToInt32(EvaluateExpression(entity, set.Expression, args));
+    
                     if (entity.Fields.ContainsKey(set.TargetField)) {
                         entity.Fields[set.TargetField] = value;
                         Console.WriteLine($"[Runtime] {entity.Name}.{set.TargetField} -> {value}");
@@ -58,19 +59,29 @@ namespace Morphyn.Runtime
                     return EvaluateCheck(entity, check, args);
 
                 case EmitAction emit:
-                    if (emit.EventName == "log") {
-                        Console.WriteLine($"[LOG]: {string.Join(" ", emit.Arguments)}");
+                    var resolvedArgs = emit.Arguments
+                        .Select<MorphynExpression, object>(expr => 
+                            MorphynEvaluator.EvaluateExpression(entity, expr, args))
+                        .ToList();
+
+                    if (emit.EventName == "log") 
+                    {
+                        Console.WriteLine($"[LOG]: {string.Join(" ", resolvedArgs)}");
                         return true;
                     }
-            
-                    Entity target = entity;
-                    if (!string.IsNullOrEmpty(emit.TargetEntityName)) {
+
+                    Entity? target = entity;
+                    if (!string.IsNullOrEmpty(emit.TargetEntityName)) 
+                    {
                         data.Entities.TryGetValue(emit.TargetEntityName, out target);
                     }
 
-                    if (target != null) Send(target, emit.EventName, emit.Arguments);
+                    if (target != null) 
+                    {
+                        Send(target, emit.EventName, resolvedArgs);
+                    }
                     return true;
-
+                
                 default:
                     return true;
             }

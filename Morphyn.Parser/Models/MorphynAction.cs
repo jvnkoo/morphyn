@@ -12,7 +12,7 @@ namespace Morphyn.Parser
     {
         public string? TargetEntityName { get; init; } 
         public required string EventName { get; init; }
-        public List<object> Arguments { get; init; } = new();
+        public List<MorphynExpression> Arguments { get; init; } = new();
     }
 
     /// <summary>

@@ -32,6 +32,8 @@ namespace Morphyn.Parser
         private static TokenListParser<MorphynToken, MorphynExpression> Term =>
             Token.EqualTo(MorphynToken.Number)
                 .Select(t => (MorphynExpression)new LiteralExpression(int.Parse(t.ToStringValue())))
+                .Or(Token.EqualTo(MorphynToken.String) 
+                    .Select(t => (MorphynExpression)new LiteralExpression(t.ToStringValue().Trim('"'))))
                 .Or(Token.EqualTo(MorphynToken.Identifier)
                     .Select(t => (MorphynExpression)new VariableExpression(t.ToStringValue())))
                 .Or(Parse.Ref(() => Expression).Between(Token.EqualTo(MorphynToken.LeftParen),
@@ -87,12 +89,10 @@ namespace Morphyn.Parser
             ParameterList.OptionalOrDefault(Array.Empty<string>());
 
         // Parse call arguments: (arg1, arg2, ...)
-        private static TokenListParser<MorphynToken, object> CallArgument =>
-            Number.Select(n => (object)n)
-                .Or(String.Select(s => (object)s))
-                .Or(Identifier.Select(id => (object)id));
+        private static TokenListParser<MorphynToken, MorphynExpression> CallArgument =>
+            Expression; // emit log("HP is:", hp + 10, armor / 2)
 
-        private static TokenListParser<MorphynToken, object[]> CallArguments =>
+        private static TokenListParser<MorphynToken, MorphynExpression[]> CallArguments =>
             CallArgument.ManyDelimitedBy(Token.EqualTo(MorphynToken.Comma))
                 .Between(Token.EqualTo(MorphynToken.LeftParen), Token.EqualTo(MorphynToken.RightParen))
                 .Select(x => x.ToArray());
@@ -109,7 +109,7 @@ namespace Morphyn.Parser
         private static TokenListParser<MorphynToken, MorphynAction> EmitAction =>
             from emitKeyword in Token.EqualTo(MorphynToken.Emit)
             from @ref in EventReference
-            from args in CallArguments.OptionalOrDefault(Array.Empty<object>())
+            from args in CallArguments.OptionalOrDefault(Array.Empty<MorphynExpression>())
             select (MorphynAction)new EmitAction
             {
                 TargetEntityName = @ref.target,
