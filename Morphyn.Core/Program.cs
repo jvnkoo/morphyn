@@ -44,7 +44,14 @@ namespace Morphyn.Core
                     foreach (var field in entity.Fields)
                         Console.WriteLine($"  -> {field.Key}: {field.Value}");
 
-                    MorphynRuntime.Send(entity, "start");
+                    if (entity.Events.Any(e => e.Name == "init"))
+                    {
+                        MorphynRuntime.Send(entity, "init");
+                    }
+                    else 
+                    {
+                        Console.WriteLine($"  [Info] {entity.Name} has no 'init' event. Static data only.");
+                    }
                 }
 
                 Console.WriteLine("\n--- Starting Runtime ---");
