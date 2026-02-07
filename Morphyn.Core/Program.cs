@@ -36,6 +36,8 @@ namespace Morphyn.Core
                 string code = File.ReadAllText(path);
                 EntityData context = MorphynParser.ParseFile(code);
                 
+                ValidateEntities(context);
+                
                 Console.WriteLine($"[System] Loaded {context.Entities.Count} entities.");
 
                 foreach (var entity in context.Entities.Values)
@@ -88,6 +90,31 @@ namespace Morphyn.Core
             {
                 Console.WriteLine($"Parser/Runtime Error: {ex.Message}");
                 Console.WriteLine(ex.StackTrace);
+            }
+        }
+        
+        static void ValidateEntities(EntityData data)
+        {
+            foreach (var entity in data.Entities.Values)
+            {
+                var duplicateField = entity.Fields.Keys
+                    .GroupBy(name => name)
+                    .FirstOrDefault(g => g.Count() > 1);
+
+                if (duplicateField != null)
+                {
+                    throw new Exception($"[Semantic Error]: Entity '{entity.Name}' has multiple fields named '{duplicateField.Key}'.");
+                }
+
+                // 2. Проверка дубликатов ивентов (on)
+                var duplicateEvent = entity.Events
+                    .GroupBy(e => e.Name)
+                    .FirstOrDefault(g => g.Count() > 1);
+
+                if (duplicateEvent != null)
+                {
+                    throw new Exception($"[Semantic Error]: Entity '{entity.Name}' has multiple definitions for event '{duplicateEvent.Key}'. Event names must be unique.");
+                }
             }
         }
     }

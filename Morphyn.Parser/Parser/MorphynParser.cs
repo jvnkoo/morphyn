@@ -187,13 +187,24 @@ namespace Morphyn.Parser
             select new Entity
             {
                 Name = name,
-                Fields = fields.ToDictionary(f => f.Key, f => f.Value),
-                Events = events.ToList()
+                Fields = fields.GroupBy(f => f.Key).Any(g => g.Count() > 1) 
+                    ? throw new Exception($"[Semantic Error]: Entity '{name}' has duplicate fields.") 
+                    : fields.ToDictionary(f => f.Key, f => f.Value),
+
+                Events = events.GroupBy(e => e.Name).Any(g => g.Count() > 1)
+                    ? throw new Exception($"[Semantic Error]: Entity '{name}' has duplicate events.")
+                    : events.ToList()
             };
 
         // Parse multiple entities
         private static TokenListParser<MorphynToken, Entity[]> RootParser =>
-            EntityDeclaration.Many().Select(x => x.ToArray());
+            EntityDeclaration.Many().Select(entities => 
+            {
+                var duplicate = entities.GroupBy(e => e.Name).FirstOrDefault(g => g.Count() > 1);
+                if (duplicate != null)
+                    throw new Exception($"[Semantic Error]: Duplicate entity definition: '{duplicate.Key}'");
+                return entities.ToArray();
+            });
 
         public static EntityData ParseFile(string input)
         {
