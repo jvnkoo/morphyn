@@ -135,22 +135,25 @@ namespace Morphyn.Parser
 
         // Parse check action: check expression
         private static TokenListParser<MorphynToken, MorphynAction> CheckAction =>
-            from checkKeyword in Token.EqualTo(MorphynToken.Check)
-            from leftExpr in Expression
-            from op in Token.EqualTo(MorphynToken.DoubleEquals)
-                .Select(_ => "==")
-                .Or(Token.EqualTo(MorphynToken.NotEquals).Select(_ => "!="))
-                .Or(Token.EqualTo(MorphynToken.GreaterThanOrEqual).Select(_ => ">="))
-                .Or(Token.EqualTo(MorphynToken.LessThanOrEqual).Select(_ => "<="))
-                .Or(Token.EqualTo(MorphynToken.GreaterThan).Select(_ => ">"))
-                .Or(Token.EqualTo(MorphynToken.LessThan).Select(_ => "<"))
-            from rightExpr in Expression
-            select (MorphynAction)new CheckAction 
-            { 
-                Left = leftExpr, 
-                Operator = op, 
-                Right = rightExpr 
-            };
+            (from checkKeyword in Token.EqualTo(MorphynToken.Check)
+                from leftExpr in Expression
+                from op in Token.EqualTo(MorphynToken.DoubleEquals).Select(_ => "==")
+                    .Or(Token.EqualTo(MorphynToken.NotEquals).Select(_ => "!="))
+                    .Or(Token.EqualTo(MorphynToken.GreaterThanOrEqual).Select(_ => ">="))
+                    .Or(Token.EqualTo(MorphynToken.LessThanOrEqual).Select(_ => "<="))
+                    .Or(Token.EqualTo(MorphynToken.GreaterThan).Select(_ => ">"))
+                    .Or(Token.EqualTo(MorphynToken.LessThan).Select(_ => "<"))
+                from rightExpr in Expression
+                from inline in Token.EqualTo(MorphynToken.Colon)
+                    .IgnoreThen(Parse.Ref(() => ActionParser))
+                    .OptionalOrDefault() 
+                select (MorphynAction)new CheckAction 
+                { 
+                    Left = leftExpr, 
+                    Operator = op, 
+                    Right = rightExpr,
+                    InlineAction = inline
+                });
 
         // Parse any action
         private static TokenListParser<MorphynToken, MorphynAction> ActionParser =>

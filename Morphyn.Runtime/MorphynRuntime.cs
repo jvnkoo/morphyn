@@ -56,7 +56,16 @@ namespace Morphyn.Runtime
                     return true;
 
                 case CheckAction check:
-                    return EvaluateCheck(entity, check, ev, args);
+                    bool passed = EvaluateCheck(entity, check, ev, args);
+    
+                    if (check.InlineAction != null) {
+                        if (passed) {
+                            ExecuteAction(data, entity, ev, check.InlineAction, args);
+                        }
+                        return true; 
+                    }
+
+                    return passed; 
 
                 case EmitAction emit:
                     var resolvedArgs = emit.Arguments

@@ -23,6 +23,7 @@ namespace Morphyn.Parser
         public MorphynExpression Left { get; set; }
         public string Operator { get; set; }
         public MorphynExpression Right { get; set; }
+        public MorphynAction? InlineAction { get; set; }
     }
     
     public class SetAction : MorphynAction
