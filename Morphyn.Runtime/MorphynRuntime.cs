@@ -9,9 +9,11 @@ namespace Morphyn.Runtime
     {
         private static readonly Queue<PendingEvent> _eventQueue = new();
 
+        private static readonly List<object> EmptyArgs = new List<object>(0);
+
         public static void Send(Entity target, string eventName, List<object>? args = null)
         {
-            _eventQueue.Enqueue(new PendingEvent(target, eventName, args ?? new()));
+            _eventQueue.Enqueue(new PendingEvent(target, eventName, args ?? EmptyArgs));
         }
 
         public static void RunFullCycle(EntityData data)
@@ -26,17 +28,14 @@ namespace Morphyn.Runtime
         private static void ProcessEvent(EntityData data, PendingEvent pending)
         {
             var entity = pending.Target;
-            var ev = entity.Events.FirstOrDefault(e => e.Name == pending.EventName);
-
+            if (!entity.EventCache.TryGetValue(pending.EventName, out var ev)) return;
+            
             if (ev == null) return;
-    
-            Console.WriteLine($"\n[Runtime] Processing '{pending.EventName}' on {entity.Name}");
-
+            
             foreach (var action in ev.Actions)
             {
                 if (!ExecuteAction(data, entity, ev, action, pending.Args)) 
                 {
-                    Console.WriteLine($"[Runtime] Event '{pending.EventName}' stopped.");
                     break;
                 }
             }
@@ -51,7 +50,6 @@ namespace Morphyn.Runtime
                     
                     if (entity.Fields.ContainsKey(set.TargetField)) {
                         entity.Fields[set.TargetField] = value;
-                        Console.WriteLine($"[Runtime] {entity.Name}.{set.TargetField} -> {value}");
                     }
                     return true;
 
@@ -68,10 +66,12 @@ namespace Morphyn.Runtime
                     return passed; 
 
                 case EmitAction emit:
-                    var resolvedArgs = emit.Arguments
-                        .Select<MorphynExpression, object>(expr => 
-                            MorphynEvaluator.EvaluateExpression(entity, expr, ev, args))
-                        .ToList();
+                    int count = emit.Arguments.Count;
+                    List<object> resolvedArgs = new List<object>(count);
+                    for (int i = 0; i < count; i++)
+                    {
+                        resolvedArgs.Add(MorphynEvaluator.EvaluateExpression(entity, emit.Arguments[i], ev, args));
+                    }
 
                     if (emit.EventName == "log") 
                     {

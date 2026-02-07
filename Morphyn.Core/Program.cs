@@ -42,6 +42,7 @@ namespace Morphyn.Core
 
                 foreach (var entity in context.Entities.Values)
                 {
+                    entity.BuildCache();
                     Console.WriteLine($"[AST] Entity loaded: {entity.Name}");
                     foreach (var field in entity.Fields)
                         Console.WriteLine($"  -> {field.Key}: {field.Value}");
