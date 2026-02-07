@@ -14,6 +14,7 @@ namespace Morphyn.Parser
         
         // Keywords
         Entity,
+        Has,
         On,
         Emit,
         Check,
@@ -46,6 +47,13 @@ namespace Morphyn.Parser
                 .Ignore(Comment.CStyle)
                 .Ignore(Comment.CPlusPlusStyle)
                 .Ignore(Comment.ShellStyle)
+                
+                
+                .Match(Span.EqualTo("entity"), MorphynToken.Entity)
+                .Match(Span.EqualTo("has"), MorphynToken.Has)
+                .Match(Span.EqualTo("on"), MorphynToken.On)
+                .Match(Span.EqualTo("emit"), MorphynToken.Emit)
+                .Match(Span.EqualTo("check"), MorphynToken.Check)
                 
                 .Match(Character.EqualTo('{'), MorphynToken.LeftBrace)
                 .Match(Character.EqualTo('}'), MorphynToken.RightBrace)

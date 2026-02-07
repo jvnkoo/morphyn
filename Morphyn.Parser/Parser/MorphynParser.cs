@@ -29,7 +29,7 @@ namespace Morphyn.Parser
         // Parse field declaration: identifier : number
         // Maybe make "has" optional
         private static TokenListParser<MorphynToken, KeyValuePair<string, object>> FieldDeclaration =>
-            (from hasKeyWord in Identifier.Where(id => id == "has")
+            (from hasKeyWord in Token.EqualTo(MorphynToken.Has)
                 from name in Identifier
                 from colon in Token.EqualTo(MorphynToken.Colon)
                 from value in Number
@@ -66,7 +66,7 @@ namespace Morphyn.Parser
 
         // Parse emit action: emit eventName(args)
         private static TokenListParser<MorphynToken, MorphynAction> EmitAction =>
-            from emitKeyword in Identifier.Where(id => id == "emit")
+            from emitKeyword in Token.EqualTo(MorphynToken.Emit)
             from @ref in EventReference 
             from args in CallArguments.OptionalOrDefault(Array.Empty<object>())
             select (MorphynAction)new EmitAction 
@@ -78,7 +78,7 @@ namespace Morphyn.Parser
 
         // Parse check action: check expression
         private static TokenListParser<MorphynToken, MorphynAction> CheckAction =>
-            from checkKeyword in Identifier.Where(id => id == "check")
+            from checkKeyword in Token.EqualTo(MorphynToken.Check)
             from fieldName in Identifier 
             from op in Token.EqualTo(MorphynToken.DoubleEquals)
                 .Select(_ => "==")
@@ -99,7 +99,7 @@ namespace Morphyn.Parser
 
         // Parse event: on eventName(params) { actions }
         private static TokenListParser<MorphynToken, Event> EventDeclaration =>
-            from onKeyword in Identifier.Where(id => id == "on")
+            from onKeyword in Token.EqualTo(MorphynToken.On)
             from eventName in Identifier
             from parameters in OptionalParameterList
             from leftBrace in Token.EqualTo(MorphynToken.LeftBrace)
@@ -114,7 +114,7 @@ namespace Morphyn.Parser
 
         // Parse entity: entity Name { fields... events... }
         private static TokenListParser<MorphynToken, Entity> EntityDeclaration =>
-            from entityKeyword in Identifier.Where(id => id == "entity")
+            from entityKeyword in Token.EqualTo(MorphynToken.Entity)
             from name in Identifier
             from leftBrace in Token.EqualTo(MorphynToken.LeftBrace)
             from fields in FieldDeclaration.Many()
