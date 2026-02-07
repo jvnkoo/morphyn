@@ -7,18 +7,36 @@ namespace Morphyn.Runtime
 {
     public static class MorphynRuntime
     {
-        public static void Emit(EntityData data, Entity entity, string eventName)
-        {
-            var ev = entity.Events.FirstOrDefault(e => e.Name == eventName);
-            if (ev == null) return;
+        private static readonly Queue<PendingEvent> _eventQueue = new();
 
-            Console.WriteLine($"\n[Runtime] >>> Triggering '{eventName}' on {entity.Name}");
+        public static void Send(Entity target, string eventName, List<object>? args = null)
+        {
+            _eventQueue.Enqueue(new PendingEvent(target, eventName, args ?? new()));
+        }
+
+        public static void RunFullCycle(EntityData data)
+        {
+            while (_eventQueue.Count > 0)
+            {
+                var current = _eventQueue.Dequeue();
+                ProcessEvent(data, current);
+            }
+        }
+
+        private static void ProcessEvent(EntityData data, PendingEvent pending)
+        {
+            var entity = pending.Target;
+            var ev = entity.Events.FirstOrDefault(e => e.Name == pending.EventName);
+
+            if (ev == null) return;
+            
+            Console.WriteLine($"\n[Runtime] Processing '{pending.EventName}' on {entity.Name}");
 
             foreach (var action in ev.Actions)
             {
                 if (!ExecuteAction(data, entity, action))
                 {
-                    Console.WriteLine($"[Runtime] Event '{eventName}' halted due to failed check.");
+                    Console.WriteLine($"[Runtime] Event '{pending.EventName}' stopped.");
                     break;
                 }
             }
@@ -35,21 +53,17 @@ namespace Morphyn.Runtime
                         return true;
                     }
 
+                    Entity target = entity;
                     if (!string.IsNullOrEmpty(emit.TargetEntityName))
                     {
-                        if (data.Entities.TryGetValue(emit.TargetEntityName, out var targetEntity))
+                        if (!data.Entities.TryGetValue(emit.TargetEntityName, out target))
                         {
-                            Emit(data, targetEntity, emit.EventName);
-                        }
-                        else
-                        {
-                            Console.WriteLine($"[Runtime Error] Entity '{emit.TargetEntityName}' not found.");
+                            Console.WriteLine($"[Runtime Error] Target '{emit.TargetEntityName}' not found.");
+                            return true;
                         }
                     }
-                    else
-                    {
-                        Emit(data, entity, emit.EventName);
-                    }
+                    
+                    Send(target, emit.EventName, emit.Arguments);
                     return true;
                 case CheckAction check:
                     return EvaluateCheck(data, entity, check.Expression);

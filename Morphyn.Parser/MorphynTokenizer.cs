@@ -45,6 +45,7 @@ namespace Morphyn.Parser
                 .Ignore(Span.WhiteSpace)
                 .Ignore(Comment.CStyle)
                 .Ignore(Comment.CPlusPlusStyle)
+                .Ignore(Comment.ShellStyle)
                 
                 .Match(Character.EqualTo('{'), MorphynToken.LeftBrace)
                 .Match(Character.EqualTo('}'), MorphynToken.RightBrace)

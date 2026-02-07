@@ -33,15 +33,17 @@ namespace Morphyn.Core
                 foreach (var entity in context.Entities.Values)
                 {
                     Console.WriteLine($"[AST] Entity loaded: {entity.Name}");
-                    
                     foreach (var field in entity.Fields)
-                    {
                         Console.WriteLine($"  -> {field.Key}: {field.Value}");
-                    }
 
-                    MorphynRuntime.Emit(context, entity, "start");
-                    Console.WriteLine(); 
+                    MorphynRuntime.Send(entity, "start");
                 }
+
+                Console.WriteLine("\n--- Starting Runtime ---");
+
+                MorphynRuntime.RunFullCycle(context);
+
+                Console.WriteLine("--- Simulation Finished ---");
             }
             catch (Exception ex)
             {
