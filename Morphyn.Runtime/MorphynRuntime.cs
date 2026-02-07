@@ -34,7 +34,7 @@ namespace Morphyn.Runtime
 
             foreach (var action in ev.Actions)
             {
-                if (!ExecuteAction(data, entity, action, pending.Args)) 
+                if (!ExecuteAction(data, entity, ev, action, pending.Args)) 
                 {
                     Console.WriteLine($"[Runtime] Event '{pending.EventName}' stopped.");
                     break;
@@ -42,13 +42,13 @@ namespace Morphyn.Runtime
             }
         }
 
-        private static bool ExecuteAction(EntityData data, Entity entity, MorphynAction action, List<object> args)
+        private static bool ExecuteAction(EntityData data, Entity entity, Event ev, MorphynAction action, List<object> args)
         {
             switch (action)
             {
                 case SetAction set:
-                    int value = Convert.ToInt32(EvaluateExpression(entity, set.Expression, args));
-    
+                    object value = EvaluateExpression(entity, set.Expression, ev, args);
+                    
                     if (entity.Fields.ContainsKey(set.TargetField)) {
                         entity.Fields[set.TargetField] = value;
                         Console.WriteLine($"[Runtime] {entity.Name}.{set.TargetField} -> {value}");
@@ -56,12 +56,12 @@ namespace Morphyn.Runtime
                     return true;
 
                 case CheckAction check:
-                    return EvaluateCheck(entity, check, args);
+                    return EvaluateCheck(entity, check, ev, args);
 
                 case EmitAction emit:
                     var resolvedArgs = emit.Arguments
                         .Select<MorphynExpression, object>(expr => 
-                            MorphynEvaluator.EvaluateExpression(entity, expr, args))
+                            MorphynEvaluator.EvaluateExpression(entity, expr, ev, args))
                         .ToList();
 
                     if (emit.EventName == "log") 

@@ -9,8 +9,11 @@ namespace Morphyn.Parser
     {
         None,
         Identifier,
+        Double,
         Number,
         String,
+        True,
+        False,
         
         // Keywords
         Entity,
@@ -84,6 +87,9 @@ namespace Morphyn.Parser
                 .Match(Character.EqualTo('*'), MorphynToken.Asterisk)
                 .Match(Character.EqualTo('/'), MorphynToken.Slash)
                 .Match(Character.EqualTo('%'), MorphynToken.Percent)
+                
+                .Match(Numerics.Decimal, MorphynToken.Double) 
+                .Match(Numerics.Integer, MorphynToken.Number, requireDelimiters: true)
                 
                 .Match(Numerics.Integer, MorphynToken.Number, requireDelimiters: true)
                 .Match(QuotedString.CStyle, MorphynToken.String, requireDelimiters: true)

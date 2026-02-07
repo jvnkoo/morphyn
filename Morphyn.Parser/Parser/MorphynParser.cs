@@ -6,6 +6,8 @@ using Superpower.Parsers;
 
 namespace Morphyn.Parser
 {
+    using System.Globalization;
+
     public static class MorphynParser
     {
         private static readonly Tokenizer<MorphynToken> Tokenizer = MorphynTokenizer.Create();
@@ -30,15 +32,16 @@ namespace Morphyn.Parser
         // They include numbers, identifiers, and subexpressions in parentheses.
         // Subexpressions have higher priority than numbers and identifiers.
         private static TokenListParser<MorphynToken, MorphynExpression> Term =>
-            Token.EqualTo(MorphynToken.Number)
-                .Select(t => (MorphynExpression)new LiteralExpression(int.Parse(t.ToStringValue())))
+            Token.EqualTo(MorphynToken.Double) 
+                .Select(t => (MorphynExpression)new LiteralExpression(double.Parse(t.ToStringValue(), CultureInfo.InvariantCulture)))
+                .Or(Token.EqualTo(MorphynToken.Number)
+                    .Select(t => (MorphynExpression)new LiteralExpression(double.Parse(t.ToStringValue(), CultureInfo.InvariantCulture))))
                 .Or(Token.EqualTo(MorphynToken.String) 
                     .Select(t => (MorphynExpression)new LiteralExpression(t.ToStringValue().Trim('"'))))
                 .Or(Token.EqualTo(MorphynToken.Identifier)
                     .Select(t => (MorphynExpression)new VariableExpression(t.ToStringValue())))
                 .Or(Parse.Ref(() => Expression).Between(Token.EqualTo(MorphynToken.LeftParen),
                     Token.EqualTo(MorphynToken.RightParen)));
-
 
         // Parser precedence for multiplication and division (and modulo).
         // These operators have higher precedence than addition and subtraction.
@@ -69,13 +72,26 @@ namespace Morphyn.Parser
             from target in Identifier
             select (MorphynAction)new SetAction { Expression = expr, TargetField = target };
 
-        // Parse field declaration: identifier : number
+        /// <summary>
+        /// Flow actions consist of an expression followed by an arrow and an identifier.
+        /// The expression is evaluated and the result is assigned to the field indicated by the identifier.
+        /// </summary>
+        private static TokenListParser<MorphynToken, object> LiteralValue =>
+            Token.EqualTo(MorphynToken.Double)
+                .Select(t => (object)double.Parse(t.ToStringValue(), CultureInfo.InvariantCulture))
+                .Or(Token.EqualTo(MorphynToken.Number).Select(t =>
+                    (object)double.Parse(t.ToStringValue(), CultureInfo.InvariantCulture)))
+                .Or(Token.EqualTo(MorphynToken.String).Select(t => (object)t.ToStringValue().Trim('"')))
+                .Or(Token.EqualTo(MorphynToken.True).Select(_ => (object)true))
+                .Or(Token.EqualTo(MorphynToken.False).Select(_ => (object)false));
+
+        // Parse field declaration: identifier : value
         // Maybe make "has" optional
         private static TokenListParser<MorphynToken, KeyValuePair<string, object>> FieldDeclaration =>
             (from hasKeyWord in Token.EqualTo(MorphynToken.Has)
                 from name in Identifier
                 from colon in Token.EqualTo(MorphynToken.Colon)
-                from value in Number
+                from value in LiteralValue
                 select new KeyValuePair<string, object>(name, value)).Try();
 
         // Parse parameter list: (param1, param2, ...)
@@ -138,9 +154,9 @@ namespace Morphyn.Parser
 
         // Parse any action
         private static TokenListParser<MorphynToken, MorphynAction> ActionParser =>
-            FlowAction.Try()  
+            EmitAction.Try()
                 .Or(CheckAction.Try())
-                .Or(EmitAction);
+                .Or(FlowAction);
 
         // Parse event: on eventName(params) { actions }
         private static TokenListParser<MorphynToken, Event> EventDeclaration =>

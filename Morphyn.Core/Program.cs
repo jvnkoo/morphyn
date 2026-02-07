@@ -66,7 +66,7 @@ namespace Morphyn.Core
                 {
                     DateTime currentTime = DateTime.Now;
                     // Calculate fps
-                    int dtMs = (int)(currentTime - lastTime).TotalMilliseconds;
+                    double dtMs = (currentTime - lastTime).TotalMilliseconds;
                     lastTime = currentTime;
 
                     foreach (var entity in context.Entities.Values)
