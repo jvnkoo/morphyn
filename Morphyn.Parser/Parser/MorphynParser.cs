@@ -27,8 +27,10 @@ namespace Morphyn.Parser
             });
 
         // Parse field declaration: identifier : number
+        // Maybe make "has" optional
         private static TokenListParser<MorphynToken, KeyValuePair<string, object>> FieldDeclaration =>
-            (from name in Identifier
+            (from hasKeyWord in Identifier.Where(id => id == "has")
+                from name in Identifier
                 from colon in Token.EqualTo(MorphynToken.Colon)
                 from value in Number
                 select new KeyValuePair<string, object>(name, value)).Try();
@@ -77,7 +79,7 @@ namespace Morphyn.Parser
         // Parse check action: check expression
         private static TokenListParser<MorphynToken, MorphynAction> CheckAction =>
             from checkKeyword in Identifier.Where(id => id == "check")
-            from fieldName in Identifier // Changed 'field' to 'fieldName'
+            from fieldName in Identifier 
             from op in Token.EqualTo(MorphynToken.DoubleEquals)
                 .Select(_ => "==")
                 .Or(Token.EqualTo(MorphynToken.NotEquals).Select(_ => "!="))
