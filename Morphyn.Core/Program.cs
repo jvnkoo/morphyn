@@ -16,10 +16,18 @@ namespace Morphyn.Core
             }
 
             string path = args[0];
+            string[] validExtensions = { ".mrph", ".morph", ".morphyn" };
+            string ext = Path.GetExtension(path).ToLower();
+
+            if (!validExtensions.Contains(ext))
+            {
+                Console.WriteLine($"[Error]: Running file with non-standard extension '{ext}'.");
+                return;
+            }
 
             if (!File.Exists(path))
             {
-                Console.WriteLine($"Error: File '{path}' not found.");
+                Console.WriteLine($"[Error]: File '{path}' not found.");
                 return;
             }
 
