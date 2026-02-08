@@ -65,7 +65,9 @@ namespace Morphyn.Runtime
 
                 case CheckAction check:
                 {
-                    bool passed = EvaluateCheck(entity, check, localScope);
+                    object result = EvaluateExpression(entity, check.Condition, localScope);
+                    bool passed = result is bool b && b;
+                    
                     if (passed)
                     {
                         if (check.InlineAction != null)

@@ -20,6 +20,7 @@ namespace Morphyn.Parser
     /// </summary>
     public class CheckAction : MorphynAction
     {
+        public required MorphynExpression Condition { get; set; }
         public MorphynExpression Left { get; set; }
         public string Operator { get; set; }
         public MorphynExpression Right { get; set; }

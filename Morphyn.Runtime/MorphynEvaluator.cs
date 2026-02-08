@@ -12,21 +12,38 @@ namespace Morphyn.Runtime
             return expr switch
             {
                 LiteralExpression l => l.Value,
-                
+        
                 VariableExpression v => 
                     localScope.TryGetValue(v.Name, out var argVal) ? argVal :
-                    (entity.Fields.TryGetValue(v.Name, out var fieldVal) 
-                        ? fieldVal 
-                        : throw new Exception($"Variable '{v.Name}' not found in '{entity.Name}'")),
+                        (entity.Fields.TryGetValue(v.Name, out var fieldVal) 
+                            ? fieldVal 
+                            : throw new Exception($"Variable '{v.Name}' not found in '{entity.Name}'")),
 
                 BinaryExpression b => EvaluateBinary(entity, b, localScope),
-                
+        
+                BinaryLogicExpression bl => EvaluateLogic(entity, bl, localScope),
+        
+                UnaryLogicExpression u => EvaluateUnary(entity, u, localScope),
+        
                 IndexAccessExpression idx => GetFromPool(entity, idx, localScope),
-                
                 PoolPropertyExpression p => GetPoolProperty(entity, p),
-                
+        
                 _ => throw new Exception($"Unsupported expression: {expr.GetType().Name}")
             };
+        }
+
+        private static bool EvaluateLogic(Entity entity, BinaryLogicExpression b, Dictionary<string, object> localScope)
+        {
+            var left = (bool)EvaluateExpression(entity, b.Left, localScope);
+            if (b.Operator == "or") return left || (bool)EvaluateExpression(entity, b.Right, localScope);
+            if (b.Operator == "and") return left && (bool)EvaluateExpression(entity, b.Right, localScope);
+            throw new Exception($"Unknown logic operator: {b.Operator}");
+        }
+
+        private static bool EvaluateUnary(Entity entity, UnaryLogicExpression u, Dictionary<string, object> localScope)
+        {
+            var val = (bool)EvaluateExpression(entity, u.Inner, localScope);
+            return !val;
         }
 
         private static object GetPoolProperty(Entity entity, PoolPropertyExpression p)
@@ -35,7 +52,7 @@ namespace Morphyn.Runtime
             {
                 if (p.Property.ToLower() == "count") 
                     return (double)pool.Values.Count; 
-            
+    
                 throw new Exception($"Property '{p.Property}' not supported.");
             }
             throw new Exception($"Pool '{p.TargetName}' not found.");
@@ -56,49 +73,38 @@ namespace Morphyn.Runtime
             throw new Exception($"Target '{idx.TargetName}' is not a pool.");
         }
 
-        private static double EvaluateBinary(Entity entity, BinaryExpression b, Dictionary<string, object> localScope)
+        private static object EvaluateBinary(Entity entity, BinaryExpression b, Dictionary<string, object> localScope)
         {
-            double left = Convert.ToDouble(EvaluateExpression(entity, b.Left, localScope), CultureInfo.InvariantCulture);
-            double right = Convert.ToDouble(EvaluateExpression(entity, b.Right, localScope), CultureInfo.InvariantCulture);
-
-            return b.Operator switch
-            {
-                "+" => left + right,
-                "-" => left - right,
-                "*" => left * right,
-                "/" => Math.Abs(right) > 1e-9 ? left / right : 0.0,
-                "%" => Math.Abs(right) > 1e-9 ? left % right : 0.0,
-                _ => throw new Exception($"Unknown operator: {b.Operator}")
-            };
-        }
-
-        public static bool EvaluateCheck(Entity entity, CheckAction check, Dictionary<string, object> localScope)
-        {
-            object leftObj = EvaluateExpression(entity, check.Left, localScope);
-            object rightObj = EvaluateExpression(entity, check.Right, localScope);
+            var leftObj = EvaluateExpression(entity, b.Left, localScope);
+            var rightObj = EvaluateExpression(entity, b.Right, localScope);
 
             if (IsNumeric(leftObj) && IsNumeric(rightObj))
             {
-                double left = Convert.ToDouble(leftObj, CultureInfo.InvariantCulture);
-                double right = Convert.ToDouble(rightObj, CultureInfo.InvariantCulture);
+                double l = Convert.ToDouble(leftObj, CultureInfo.InvariantCulture);
+                double r = Convert.ToDouble(rightObj, CultureInfo.InvariantCulture);
 
-                return check.Operator switch
+                return b.Operator switch
                 {
-                    ">" => left > right,
-                    "<" => left < right,
-                    "==" => Math.Abs(left - right) < 1e-7, 
-                    "!=" => Math.Abs(left - right) > 1e-7,
-                    ">=" => left >= right,
-                    "<=" => left <= right,
-                    _ => false
+                    "+" => l + r,
+                    "-" => l - r,
+                    "*" => l * r,
+                    "/" => Math.Abs(r) > 1e-9 ? l / r : 0.0,
+                    "%" => l % r,
+                    ">" => l > r,
+                    "<" => l < r,
+                    ">=" => l >= r,
+                    "<=" => l <= r,
+                    "==" => Math.Abs(l - r) < 1e-7,
+                    "!=" => Math.Abs(l - r) > 1e-7,
+                    _ => throw new Exception($"Unknown operator: {b.Operator}")
                 };
             }
-
-            return check.Operator switch
+    
+            return b.Operator switch
             {
                 "==" => Equals(leftObj, rightObj),
                 "!=" => !Equals(leftObj, rightObj),
-                _ => false
+                _ => throw new Exception($"Operator {b.Operator} not supported for these types")
             };
         }
 

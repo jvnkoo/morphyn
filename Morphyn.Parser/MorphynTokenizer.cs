@@ -35,6 +35,9 @@ namespace Morphyn.Parser
         Dot,
         
         // Operators
+        Or,
+        And,
+        Not,
         Equals,
         NotEquals,
         GreaterThan,
@@ -82,6 +85,9 @@ namespace Morphyn.Parser
                 .Match(Character.EqualTo(':'), MorphynToken.Colon)
                 .Match(Character.EqualTo('.'), MorphynToken.Dot)
                 
+                .Match(Span.EqualTo("or"), MorphynToken.Or)
+                .Match(Span.EqualTo("and"), MorphynToken.And)
+                .Match(Span.EqualTo("not"), MorphynToken.Not)
                 .Match(Span.EqualTo("=="), MorphynToken.DoubleEquals)
                 .Match(Span.EqualTo("!="), MorphynToken.NotEquals)
                 .Match(Span.EqualTo(">="), MorphynToken.GreaterThanOrEqual)

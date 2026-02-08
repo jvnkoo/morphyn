@@ -66,20 +66,15 @@ namespace Morphyn.Parser
         // These operators have higher precedence than addition and subtraction.
         private static TokenListParser<MorphynToken, MorphynExpression> Factor =>
             Parse.Chain(
-                Token.EqualTo(MorphynToken.Asterisk).Or(Token.EqualTo(MorphynToken.Slash))
-                    .Or(Token.EqualTo(MorphynToken.Percent)),
+                Token.EqualTo(MorphynToken.Asterisk).Or(Token.EqualTo(MorphynToken.Slash)).Or(Token.EqualTo(MorphynToken.Percent)),
                 Term,
-                (op, left, right) => (MorphynExpression)new BinaryExpression(op.ToStringValue(), left, right)
-            );
+                (op, left, right) => (MorphynExpression)new BinaryExpression(op.ToStringValue(), left, right));
 
         // Parser precedence for addition and subtraction.
         // These operators have lower precedence than multiplication and division.
         private static TokenListParser<MorphynToken, MorphynExpression> Expression =>
-            Parse.Chain(
-                Token.EqualTo(MorphynToken.Plus).Or(Token.EqualTo(MorphynToken.Minus)),
-                Factor,
-                (op, left, right) => (MorphynExpression)new BinaryExpression(op.ToStringValue(), left, right)
-            );
+            Parse.Chain(Token.EqualTo(MorphynToken.Or), AndParser, 
+                (op, left, right) => (MorphynExpression)new BinaryLogicExpression(left, "or", right));
 
         /// <summary>
         /// An arrow "->" is used in flow actions to indicate that the expression on the left should be assigned to the field on the right.
@@ -171,27 +166,43 @@ namespace Morphyn.Parser
                 Arguments = args.ToList()
             };
 
-        // Parse check action: check expression
+        private static TokenListParser<MorphynToken, MorphynExpression> ArithExpression =>
+            Parse.Chain(
+                Token.EqualTo(MorphynToken.Plus).Or(Token.EqualTo(MorphynToken.Minus)),
+                Factor,
+                (op, left, right) => (MorphynExpression)new BinaryExpression(op.ToStringValue(), left, right));
+
+        private static TokenListParser<MorphynToken, MorphynExpression> Comparison =>
+            Parse.Chain(
+                Token.EqualTo(MorphynToken.DoubleEquals).Or(Token.EqualTo(MorphynToken.NotEquals))
+                    .Or(Token.EqualTo(MorphynToken.GreaterThan)).Or(Token.EqualTo(MorphynToken.LessThan))
+                    .Or(Token.EqualTo(MorphynToken.GreaterThanOrEqual)).Or(Token.EqualTo(MorphynToken.LessThanOrEqual)),
+                ArithExpression, 
+                (op, left, right) => (MorphynExpression)new BinaryExpression(op.ToStringValue(), left, right));
+
+        private static TokenListParser<MorphynToken, MorphynExpression> NotParser =>
+            (from op in Token.EqualTo(MorphynToken.Not)
+                from expr in Comparison
+                select (MorphynExpression)new UnaryLogicExpression("not", expr))
+            .Or(Comparison); 
+
+        private static TokenListParser<MorphynToken, MorphynExpression> AndParser =>
+            Parse.Chain(Token.EqualTo(MorphynToken.And), NotParser, 
+                (op, left, right) => (MorphynExpression)new BinaryLogicExpression(left, "and", right));
+        
+        private static TokenListParser<MorphynToken, MorphynAction> SimpleActionParser =>
+            EmitAction.Try()
+                .Or(FlowAction.Try());
+        
         private static TokenListParser<MorphynToken, MorphynAction> CheckAction =>
             from checkKeyword in Token.EqualTo(MorphynToken.Check)
-            from leftExpr in Expression
-            from op in Token.EqualTo(MorphynToken.DoubleEquals).Select(_ => "==")
-                .Or(Token.EqualTo(MorphynToken.NotEquals).Select(_ => "!="))
-                .Or(Token.EqualTo(MorphynToken.GreaterThanOrEqual).Select(_ => ">="))
-                .Or(Token.EqualTo(MorphynToken.LessThanOrEqual).Select(_ => "<="))
-                .Or(Token.EqualTo(MorphynToken.GreaterThan).Select(_ => ">"))
-                .Or(Token.EqualTo(MorphynToken.LessThan).Select(_ => "<"))
-            from rightExpr in Expression
-            from inline in Token.EqualTo(MorphynToken.Colon)
-                .IgnoreThen(Parse.Ref(() => ActionParser))
-                .Cast<MorphynToken, MorphynAction, MorphynAction?>()
-                .OptionalOrDefault()
+            from condition in Expression 
+            from colon in Token.EqualTo(MorphynToken.Colon)
+            from action in Parse.Ref(() => ActionParser) 
             select (MorphynAction)new CheckAction
             {
-                Left = leftExpr,
-                Operator = op,
-                Right = rightExpr,
-                InlineAction = inline
+                Condition = condition,
+                InlineAction = action
             };
         
         private static TokenListParser<MorphynToken, MorphynAction> BlockActionParser =>
@@ -202,10 +213,9 @@ namespace Morphyn.Parser
 
         // Parse any action
         private static TokenListParser<MorphynToken, MorphynAction> ActionParser =>
-            Parse.Ref(() => BlockActionParser).Try()
+            BlockActionParser.Try()
                 .Or(CheckAction.Try())
-                .Or(EmitAction.Try())
-                .Or(FlowAction.Try());
+                .Or(SimpleActionParser);
 
         // Parse event: on eventName(params) { actions }
         private static TokenListParser<MorphynToken, Event> EventDeclaration =>
