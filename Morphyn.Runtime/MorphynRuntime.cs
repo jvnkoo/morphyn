@@ -126,9 +126,25 @@ namespace Morphyn.Runtime
 
                 case EmitAction emit:
                 {
-                    List<object> resolvedArgs = emit.Arguments
-                        .Select(a => EvaluateExpression(entity, a, localScope, data))
-                        .ToList();
+                    List<object> resolvedArgs = new List<object>();
+
+                    foreach (var argExpr in emit.Arguments)
+                    {
+                        try 
+                        {
+                            resolvedArgs.Add(EvaluateExpression(entity, argExpr, localScope, data));
+                        }
+                        catch (Exception) when (emit.EventName == "each" && argExpr is VariableExpression ve)
+                        {
+                            resolvedArgs.Add(ve.Name); 
+                        }
+                    }
+                    
+                    if (emit.TargetEntityName == "self" && emit.EventName == "destroy")
+                    {
+                        entity.IsDestroyed = true;
+                        return true;
+                    }
 
                     if (emit.EventName == "log")
                     {
