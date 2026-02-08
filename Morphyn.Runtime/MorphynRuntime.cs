@@ -150,12 +150,24 @@ namespace Morphyn.Runtime
                         }
                     }
 
-                    if (!string.IsNullOrEmpty(targetName) && 
-                        entity.Fields.TryGetValue(targetName, out var poolObj) && 
-                        poolObj is MorphynPool localPool && 
-                        HandlePoolCommand(localPool, emit.EventName, resolvedArgs))
+                    if (!string.IsNullOrEmpty(emit.TargetEntityName))
                     {
-                        return true;
+                        if (entity.Fields.TryGetValue(emit.TargetEntityName, out var poolObj) && poolObj is MorphynPool localPool)
+                        {
+                            if (emit.EventName == "each")
+                            {
+                                string subEventName = resolvedArgs[0].ToString()!;
+                                List<object> subArgs = resolvedArgs.Skip(1).ToList();
+                                foreach (var item in localPool.Values)
+                                {
+                                    if (item is Entity subE) Send(subE, subEventName, subArgs);
+                                    else if (item is string eName && data.Entities.TryGetValue(eName, out var extE)) Send(extE, subEventName, subArgs);
+                                }
+                                return true;
+                            }
+
+                            if (HandlePoolCommand(localPool, emit.EventName, resolvedArgs)) return true;
+                        }
                     }
 
                     Entity? target = string.IsNullOrEmpty(targetName) ? entity : 
