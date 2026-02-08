@@ -31,4 +31,9 @@ namespace Morphyn.Parser
         public MorphynExpression Expression;
         public string TargetField { get; set; }
     }
+    
+    public class BlockAction : MorphynAction
+    {
+        public List<MorphynAction> Actions { get; set; } = new();
+    }
 }

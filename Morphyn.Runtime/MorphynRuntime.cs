@@ -81,6 +81,14 @@ namespace Morphyn.Runtime
                         }
                         return false;
                     }
+                
+                case BlockAction block:
+                    foreach (var subAction in block.Actions)
+                    {
+                        if (!ExecuteAction(data, entity, subAction, localScope))
+                            return false;
+                    }
+                    return true;
 
                 case EmitAction emit:
                     List<object> resolvedArgs = emit.Arguments
