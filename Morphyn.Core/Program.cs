@@ -33,7 +33,7 @@ namespace Morphyn.Core
 
             try
             {
-                string code = File.ReadAllText(path);
+                string code = ResolveImports(path, new HashSet<string>());
                 EntityData context = MorphynParser.ParseFile(code);
                 
                 ValidateEntities(context);
@@ -67,7 +67,7 @@ namespace Morphyn.Core
                 
                 using var watcher = new FileSystemWatcher(Path.GetDirectoryName(Path.GetFullPath(path))!)
                 {
-                    Filter = Path.GetFileName(path),
+                    Filter = "*.morphyn", 
                     NotifyFilter = NotifyFilters.LastWrite
                 };
 
@@ -140,7 +140,7 @@ namespace Morphyn.Core
             try 
             {
                 Console.WriteLine("\n[Hot Reload] Changes detected! Processing...");
-                string code = File.ReadAllText(path);
+                string code = ResolveImports(path, new HashSet<string>());
         
                 EntityData newData = MorphynParser.ParseFile(code);
 
@@ -161,7 +161,6 @@ namespace Morphyn.Core
                         currentData.Entities.Add(name, newEntity);
                         Console.WriteLine($"[Hot Reload] New entity spawned: {name}");
 
-                        // Сразу инициализируем, если нужно
                         if (newEntity.Events.Any(e => e.Name == "init"))
                         {
                             MorphynRuntime.Send(newEntity, "init");
@@ -173,6 +172,37 @@ namespace Morphyn.Core
             {
                 Console.WriteLine($"[Hot Reload Error]: {ex.Message}");
             }
+        }
+        
+        static string ResolveImports(string filePath, HashSet<string> visited)
+        {
+            string absolutePath = Path.GetFullPath(filePath);
+            if (visited.Contains(absolutePath)) return ""; 
+            visited.Add(absolutePath);
+
+            string content = File.ReadAllText(absolutePath);
+            var lines = content.Split('\n');
+            var finalContent = new List<string>();
+
+            foreach (var line in lines)
+            {
+                var trimmed = line.Trim();
+                if (trimmed.StartsWith("import ") && trimmed.EndsWith(";")) 
+                {
+                    string fileName = trimmed.Replace("import", "").Replace("\"", "").Replace(";", "").Trim();
+                    string subPath = Path.Combine(Path.GetDirectoryName(absolutePath)!, fileName);
+            
+                    if (File.Exists(subPath))
+                        finalContent.Add(ResolveImports(subPath, visited));
+                    else
+                        Console.WriteLine($"[Warning] Import file not found: {subPath}");
+                }
+                else
+                {
+                    finalContent.Add(line);
+                }
+            }
+            return string.Join("\n", finalContent);
         }
     }
 }
