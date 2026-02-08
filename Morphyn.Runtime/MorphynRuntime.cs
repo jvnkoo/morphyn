@@ -29,68 +29,79 @@ namespace Morphyn.Runtime
         {
             var entity = pending.Target;
             if (!entity.EventCache.TryGetValue(pending.EventName, out var ev)) return;
-            
-            if (ev == null) return;
-            
+
+            var localScope = new Dictionary<string, object>();
+            for (int i = 0; i < ev.Parameters.Count; i++)
+            {
+                var val = i < pending.Args.Count
+                    ? pending.Args[i]
+                    : throw new Exception(
+                        $"Event '{pending.EventName}' expected {ev.Parameters.Count} arguments, but only {pending.Args.Count} provided.");
+                localScope[ev.Parameters[i]] = val;
+            }
+
             foreach (var action in ev.Actions)
             {
-                if (!ExecuteAction(data, entity, ev, action, pending.Args)) 
+                // Передаем localScope вместо голого pending.Args
+                if (!ExecuteAction(data, entity, action, localScope))
                 {
                     break;
                 }
             }
         }
 
-        private static bool ExecuteAction(EntityData data, Entity entity, Event ev, MorphynAction action, List<object> args)
+        private static bool ExecuteAction(EntityData data, Entity entity, MorphynAction action,
+            Dictionary<string, object> localScope)
         {
             switch (action)
             {
                 case SetAction set:
-                    object value = EvaluateExpression(entity, set.Expression, ev, args);
-                    
-                    if (entity.Fields.ContainsKey(set.TargetField)) {
+                    object value = EvaluateExpression(entity, set.Expression, localScope);
+
+                    if (entity.Fields.ContainsKey(set.TargetField))
+                    {
                         entity.Fields[set.TargetField] = value;
                     }
+
                     return true;
 
                 case CheckAction check:
-                    bool passed = EvaluateCheck(entity, check, ev, args);
-    
-                    if (check.InlineAction != null) {
-                        if (passed) {
-                            ExecuteAction(data, entity, ev, check.InlineAction, args);
-                        }
-                        return true; 
-                    }
+                    bool passed = EvaluateCheck(entity, check, localScope);
 
-                    return passed; 
+                    if (passed && check.InlineAction != null)
+                    {
+                        ExecuteAction(data, entity, check.InlineAction, localScope);
+                    }
+                    
+                    return check.InlineAction != null || passed;
 
                 case EmitAction emit:
                     int count = emit.Arguments.Count;
                     List<object> resolvedArgs = new List<object>(count);
                     for (int i = 0; i < count; i++)
                     {
-                        resolvedArgs.Add(MorphynEvaluator.EvaluateExpression(entity, emit.Arguments[i], ev, args));
+                        resolvedArgs.Add(EvaluateExpression(entity, emit.Arguments[i], localScope));
                     }
 
-                    if (emit.EventName == "log") 
+                    if (emit.EventName == "log")
                     {
                         Console.WriteLine($"[LOG]: {string.Join(" ", resolvedArgs)}");
                         return true;
                     }
 
                     Entity? target = entity;
-                    if (!string.IsNullOrEmpty(emit.TargetEntityName)) 
+                    if (!string.IsNullOrEmpty(emit.TargetEntityName))
                     {
                         data.Entities.TryGetValue(emit.TargetEntityName, out target);
                     }
 
-                    if (target != null) 
+                    if (target != null)
                     {
                         Send(target, emit.EventName, resolvedArgs);
                     }
+
                     return true;
-                
+
                 default:
                     return true;
             }
