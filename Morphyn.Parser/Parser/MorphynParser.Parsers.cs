@@ -62,12 +62,18 @@ namespace Morphyn.Parser
                 .Or(Identifier.Select(id => (MorphynExpression)new VariableExpression(id))) 
                 .Or(Parse.Ref(() => Expression).Between(Token.EqualTo(MorphynToken.LeftParen), Token.EqualTo(MorphynToken.RightParen)));
         
+        private static TokenListParser<MorphynToken, MorphynExpression> Unary =>
+            (from minus in Token.EqualTo(MorphynToken.Minus)
+                from term in Term
+                select (MorphynExpression)new BinaryExpression("-", new LiteralExpression(0), term))
+            .Or(Term);
+
         // Parser precedence for multiplication and division (and modulo).
         // These operators have higher precedence than addition and subtraction.
         private static TokenListParser<MorphynToken, MorphynExpression> Factor =>
             Parse.Chain(
                 Token.EqualTo(MorphynToken.Asterisk).Or(Token.EqualTo(MorphynToken.Slash)).Or(Token.EqualTo(MorphynToken.Percent)),
-                Term,
+                Unary, 
                 (op, left, right) => (MorphynExpression)new BinaryExpression(op.ToStringValue(), left, right));
 
         // Parser precedence for addition and subtraction.
