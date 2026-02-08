@@ -65,6 +65,9 @@ namespace Morphyn.Parser
                 .Match(Span.EqualTo("emit"), MorphynToken.Emit)
                 .Match(Span.EqualTo("check"), MorphynToken.Check)
                 
+                .Match(Span.EqualTo("true"), MorphynToken.True)
+                .Match(Span.EqualTo("false"), MorphynToken.False)
+                
                 .Match(Character.EqualTo('{'), MorphynToken.LeftBrace)
                 .Match(Character.EqualTo('}'), MorphynToken.RightBrace)
                 .Match(Character.EqualTo('('), MorphynToken.LeftParen)

@@ -38,6 +38,8 @@ namespace Morphyn.Parser
                     .Select(t => (MorphynExpression)new LiteralExpression(double.Parse(t.ToStringValue(), CultureInfo.InvariantCulture))))
                 .Or(Token.EqualTo(MorphynToken.String) 
                     .Select(t => (MorphynExpression)new LiteralExpression(t.ToStringValue().Trim('"'))))
+                .Or(Token.EqualTo(MorphynToken.True).Select(_ => (MorphynExpression)new LiteralExpression(true)))
+                .Or(Token.EqualTo(MorphynToken.False).Select(_ => (MorphynExpression)new LiteralExpression(false)))
                 .Or(Token.EqualTo(MorphynToken.Identifier)
                     .Select(t => (MorphynExpression)new VariableExpression(t.ToStringValue())))
                 .Or(Parse.Ref(() => Expression).Between(Token.EqualTo(MorphynToken.LeftParen),
