@@ -13,6 +13,8 @@ namespace Morphyn.Runtime
 
         public static void Send(Entity target, string eventName, List<object>? args = null)
         {
+            if (_eventQueue.Any(e => e.EventName == eventName && e.Target == target)) 
+                return;
             _eventQueue.Enqueue(new PendingEvent(target, eventName, args ?? EmptyArgs));
         }
 
@@ -54,7 +56,7 @@ namespace Morphyn.Runtime
             switch (action)
             {
                 case SetAction set:
-                    object value = EvaluateExpression(entity, set.Expression, localScope);
+                    object value = EvaluateExpression(entity, set.Expression, localScope, data);
                     
                     if (entity.Fields.ContainsKey(set.TargetField))
                         entity.Fields[set.TargetField] = value;
@@ -65,7 +67,7 @@ namespace Morphyn.Runtime
 
                 case CheckAction check:
                 {
-                    object result = EvaluateExpression(entity, check.Condition, localScope);
+                    object result = EvaluateExpression(entity, check.Condition, localScope, data);
                     bool passed = result is bool b && b;
                     
                     if (passed)
@@ -88,8 +90,8 @@ namespace Morphyn.Runtime
                 
                 case SetIndexAction setIdx:
                 {
-                    object newValue = EvaluateExpression(entity, setIdx.ValueExpr, localScope);
-                    int index = Convert.ToInt32(EvaluateExpression(entity, setIdx.IndexExpr, localScope)) - 1;
+                    object newValue = EvaluateExpression(entity, setIdx.ValueExpr, localScope, data);
+                    int index = Convert.ToInt32(EvaluateExpression(entity, setIdx.IndexExpr, localScope, data)) - 1;
 
                     if (entity.Fields.TryGetValue(setIdx.TargetPoolName, out var fieldObj) && fieldObj is MorphynPool pool)
                     {
@@ -120,7 +122,7 @@ namespace Morphyn.Runtime
                 case EmitAction emit:
                 {
                     List<object> resolvedArgs = emit.Arguments
-                        .Select(a => EvaluateExpression(entity, a, localScope))
+                        .Select(a => EvaluateExpression(entity, a, localScope, data))
                         .ToList();
 
                     if (emit.EventName == "log")
@@ -131,28 +133,39 @@ namespace Morphyn.Runtime
                         Console.WriteLine(string.Join(" ", logParts));
                         return true;
                     }
-    
-                    if (!string.IsNullOrEmpty(emit.TargetEntityName) && 
-                        entity.Fields.TryGetValue(emit.TargetEntityName, out var poolObj) && 
-                        poolObj is MorphynPool pool && 
-                        HandlePoolCommand(pool, emit.EventName, resolvedArgs))
+
+                    string targetName = emit.TargetEntityName;
+                    string poolName = emit.EventName; 
+
+                    if (!string.IsNullOrEmpty(targetName) && targetName.Contains('.'))
+                    {
+                        var parts = targetName.Split('.');
+                        string entityName = parts[0];
+                        string targetPoolName = parts[1];
+
+                        if (data.Entities.TryGetValue(entityName, out var extEntity) &&
+                            extEntity.Fields.TryGetValue(targetPoolName, out var pObj) && pObj is MorphynPool extPool)
+                        {
+                            if (HandlePoolCommand(extPool, emit.EventName, resolvedArgs)) return true;
+                        }
+                    }
+
+                    if (!string.IsNullOrEmpty(targetName) && 
+                        entity.Fields.TryGetValue(targetName, out var poolObj) && 
+                        poolObj is MorphynPool localPool && 
+                        HandlePoolCommand(localPool, emit.EventName, resolvedArgs))
                     {
                         return true;
                     }
 
-                    Entity? target = null;
-                    if (string.IsNullOrEmpty(emit.TargetEntityName)) {
-                        target = entity; 
-                    } else {
-                        data.Entities.TryGetValue(emit.TargetEntityName, out target);
-                    }
+                    Entity? target = string.IsNullOrEmpty(targetName) ? entity : 
+                        (data.Entities.TryGetValue(targetName, out var e) ? e : null);
 
                     if (target != null) {
                         Send(target, emit.EventName, resolvedArgs);
                     } else {
-                        Console.WriteLine($"[ERROR] Target entity '{emit.TargetEntityName}' not found for event '{emit.EventName}'");
+                        Console.WriteLine($"[ERROR] Target entity '{targetName}' not found for event '{emit.EventName}'");
                     }
-
                     return true;
                 }
 

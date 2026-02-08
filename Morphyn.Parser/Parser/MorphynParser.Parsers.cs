@@ -84,8 +84,8 @@ namespace Morphyn.Parser
             (from valExpr in Expression
                 from arrow in Token.EqualTo(MorphynToken.Arrow)
                 from poolName in Identifier
-                from dot in Token.EqualTo(MorphynToken.Dot)
-                from member in Token.EqualTo(MorphynToken.Identifier).Where(t => t.ToStringValue() == "at")
+                from dot in Token.EqualTo(MorphynToken.Dot).Optional()
+                from member in Token.EqualTo(MorphynToken.Identifier).Where(t => t.ToStringValue() == "at").Optional()
                 from indexExpr in Expression.Between(Token.EqualTo(MorphynToken.LeftBracket), Token.EqualTo(MorphynToken.RightBracket))
                 select (MorphynAction)new SetIndexAction { 
                     TargetPoolName = poolName, 
@@ -213,8 +213,8 @@ namespace Morphyn.Parser
 
         // Parse any action
         private static TokenListParser<MorphynToken, MorphynAction> ActionParser =>
-            BlockActionParser.Try()
-                .Or(CheckAction.Try())
+            Parse.Ref(() => BlockActionParser).Try()
+                .Or(Parse.Ref(() => CheckAction).Try())
                 .Or(SimpleActionParser);
 
         // Parse event: on eventName(params) { actions }

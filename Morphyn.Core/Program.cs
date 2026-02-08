@@ -107,7 +107,6 @@ namespace Morphyn.Core
                     throw new Exception($"[Semantic Error]: Entity '{entity.Name}' has multiple fields named '{duplicateField.Key}'.");
                 }
 
-                // 2. Проверка дубликатов ивентов (on)
                 var duplicateEvent = entity.Events
                     .GroupBy(e => e.Name)
                     .FirstOrDefault(g => g.Count() > 1);
