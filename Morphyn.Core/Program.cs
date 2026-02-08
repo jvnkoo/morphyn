@@ -64,9 +64,26 @@ namespace Morphyn.Core
                 Console.WriteLine("\n--- Engine Pulse Started (Press Ctrl+C to stop) ---");
 
                 DateTime lastTime = DateTime.Now;
+                
+                using var watcher = new FileSystemWatcher(Path.GetDirectoryName(Path.GetFullPath(path))!)
+                {
+                    Filter = Path.GetFileName(path),
+                    NotifyFilter = NotifyFilters.LastWrite
+                };
+
+                bool needsReload = false;
+                watcher.Changed += (s, e) => needsReload = true;
+                watcher.EnableRaisingEvents = true;
 
                 while (true)
                 {
+                    if (needsReload)
+                    {
+                        System.Threading.Thread.Sleep(50); 
+                        ReloadLogic(path, context);
+                        needsReload = false;
+                    }
+                    
                     DateTime currentTime = DateTime.Now;
                     // Calculate fps
                     double dtMs = (currentTime - lastTime).TotalMilliseconds;
@@ -115,6 +132,46 @@ namespace Morphyn.Core
                 {
                     throw new Exception($"[Semantic Error]: Entity '{entity.Name}' has multiple definitions for event '{duplicateEvent.Key}'. Event names must be unique.");
                 }
+            }
+        }
+        
+        static void ReloadLogic(string path, EntityData currentData)
+        {
+            try 
+            {
+                Console.WriteLine("\n[Hot Reload] Changes detected! Processing...");
+                string code = File.ReadAllText(path);
+        
+                EntityData newData = MorphynParser.ParseFile(code);
+
+                foreach (var newEntry in newData.Entities)
+                {
+                    string name = newEntry.Key;
+                    Entity newEntity = newEntry.Value;
+
+                    if (currentData.Entities.TryGetValue(name, out var existingEntity))
+                    {
+                        existingEntity.Events = newEntity.Events;
+                        existingEntity.BuildCache();
+                        Console.WriteLine($"[Hot Reload] Logic updated: {name}");
+                    }
+                    else
+                    {
+                        newEntity.BuildCache();
+                        currentData.Entities.Add(name, newEntity);
+                        Console.WriteLine($"[Hot Reload] New entity spawned: {name}");
+
+                        // Сразу инициализируем, если нужно
+                        if (newEntity.Events.Any(e => e.Name == "init"))
+                        {
+                            MorphynRuntime.Send(newEntity, "init");
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[Hot Reload Error]: {ex.Message}");
             }
         }
     }
