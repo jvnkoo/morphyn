@@ -42,7 +42,6 @@ namespace Morphyn.Runtime
 
             foreach (var action in ev.Actions)
             {
-                // Передаем localScope вместо голого pending.Args
                 if (!ExecuteAction(data, entity, action, localScope))
                 {
                     break;

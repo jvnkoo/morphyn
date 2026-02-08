@@ -21,12 +21,15 @@ namespace Morphyn.Parser
         On,
         Emit,
         Check,
+        Pool,
         
         // Symbols
         LeftBrace,
         RightBrace,
         LeftParen,
         RightParen,
+        LeftBracket,
+        RightBracket,
         Comma,
         Colon,
         Dot,
@@ -64,6 +67,7 @@ namespace Morphyn.Parser
                 .Match(Span.EqualTo("on"), MorphynToken.On)
                 .Match(Span.EqualTo("emit"), MorphynToken.Emit)
                 .Match(Span.EqualTo("check"), MorphynToken.Check)
+                .Match(Span.EqualTo("pool"), MorphynToken.Pool)
                 
                 .Match(Span.EqualTo("true"), MorphynToken.True)
                 .Match(Span.EqualTo("false"), MorphynToken.False)
@@ -72,6 +76,8 @@ namespace Morphyn.Parser
                 .Match(Character.EqualTo('}'), MorphynToken.RightBrace)
                 .Match(Character.EqualTo('('), MorphynToken.LeftParen)
                 .Match(Character.EqualTo(')'), MorphynToken.RightParen)
+                .Match(Character.EqualTo('['), MorphynToken.LeftBracket)
+                .Match(Character.EqualTo(']'), MorphynToken.RightBracket)
                 .Match(Character.EqualTo(','), MorphynToken.Comma)
                 .Match(Character.EqualTo(':'), MorphynToken.Colon)
                 .Match(Character.EqualTo('.'), MorphynToken.Dot)

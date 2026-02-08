@@ -30,11 +30,15 @@ namespace Morphyn.Parser
         // They include numbers, identifiers, and subexpressions in parentheses.
         // Subexpressions have higher priority than numbers and identifiers.
         private static TokenListParser<MorphynToken, MorphynExpression> Term =>
-            Token.EqualTo(MorphynToken.Double) 
-                .Select(t => (MorphynExpression)new LiteralExpression(double.Parse(t.ToStringValue(), CultureInfo.InvariantCulture)))
+            Token.EqualTo(MorphynToken.Double)
+                .Select(t =>
+                    (MorphynExpression)new LiteralExpression(double.Parse(t.ToStringValue(),
+                        CultureInfo.InvariantCulture)))
                 .Or(Token.EqualTo(MorphynToken.Number)
-                    .Select(t => (MorphynExpression)new LiteralExpression(double.Parse(t.ToStringValue(), CultureInfo.InvariantCulture))))
-                .Or(Token.EqualTo(MorphynToken.String) 
+                    .Select(t =>
+                        (MorphynExpression)new LiteralExpression(double.Parse(t.ToStringValue(),
+                            CultureInfo.InvariantCulture))))
+                .Or(Token.EqualTo(MorphynToken.String)
                     .Select(t => (MorphynExpression)new LiteralExpression(t.ToStringValue().Trim('"'))))
                 .Or(Token.EqualTo(MorphynToken.True).Select(_ => (MorphynExpression)new LiteralExpression(true)))
                 .Or(Token.EqualTo(MorphynToken.False).Select(_ => (MorphynExpression)new LiteralExpression(false)))
@@ -61,7 +65,7 @@ namespace Morphyn.Parser
                 Factor,
                 (op, left, right) => (MorphynExpression)new BinaryExpression(op.ToStringValue(), left, right)
             );
-        
+
         /// <summary>
         /// An arrow "->" is used in flow actions to indicate that the expression on the left should be assigned to the field on the right.
         /// For example, "entity.health -> player.health" sets the health of the entity to the health of the player.
@@ -85,13 +89,21 @@ namespace Morphyn.Parser
                 .Or(Token.EqualTo(MorphynToken.True).Select(_ => (object)true))
                 .Or(Token.EqualTo(MorphynToken.False).Select(_ => (object)false));
 
+        private static TokenListParser<MorphynToken, MorphynPool> PoolValues =>
+            from poolKeyword in Token.EqualTo(MorphynToken.Pool)
+            from values in LiteralValue.ManyDelimitedBy(Token.EqualTo(MorphynToken.Comma))
+                .Between(Token.EqualTo(MorphynToken.LeftBracket), Token.EqualTo(MorphynToken.RightBracket))
+            select new MorphynPool { Values = values.ToList() };
+
+
         // Parse field declaration: identifier : value
         // Maybe make "has" optional
         private static TokenListParser<MorphynToken, KeyValuePair<string, object>> FieldDeclaration =>
             (from hasKeyWord in Token.EqualTo(MorphynToken.Has)
                 from name in Identifier
                 from colon in Token.EqualTo(MorphynToken.Colon)
-                from value in LiteralValue
+                from value in PoolValues.Cast<MorphynToken, MorphynPool, object>().Try()
+                    .Or(LiteralValue)
                 select new KeyValuePair<string, object>(name, value)).Try();
 
         // Parse parameter list: (param1, param2, ...)
@@ -146,11 +158,11 @@ namespace Morphyn.Parser
                 from rightExpr in Expression
                 from inline in Token.EqualTo(MorphynToken.Colon)
                     .IgnoreThen(Parse.Ref(() => ActionParser))
-                    .OptionalOrDefault() 
-                select (MorphynAction)new CheckAction 
-                { 
-                    Left = leftExpr, 
-                    Operator = op, 
+                    .OptionalOrDefault()
+                select (MorphynAction)new CheckAction
+                {
+                    Left = leftExpr,
+                    Operator = op,
                     Right = rightExpr,
                     InlineAction = inline
                 });
@@ -184,14 +196,14 @@ namespace Morphyn.Parser
             from members in (
                 FieldDeclaration.Select(f => (object)f)
                     .Or(EventDeclaration.Select(e => (object)e))
-            ).Many() 
+            ).Many()
             from rightBrace in Token.EqualTo(MorphynToken.RightBrace)
             select new Entity
             {
                 Name = name,
                 Fields = members.OfType<KeyValuePair<string, object>>()
-                    .GroupBy(f => f.Key).Any(g => g.Count() > 1) 
-                    ? throw new Exception($"[Semantic Error]: Entity '{name}' has duplicate fields.") 
+                    .GroupBy(f => f.Key).Any(g => g.Count() > 1)
+                    ? throw new Exception($"[Semantic Error]: Entity '{name}' has duplicate fields.")
                     : members.OfType<KeyValuePair<string, object>>().ToDictionary(f => f.Key, f => f.Value),
 
                 Events = members.OfType<Event>()
@@ -199,9 +211,10 @@ namespace Morphyn.Parser
                     ? throw new Exception($"[Semantic Error]: Entity '{name}' has duplicate events.")
                     : members.OfType<Event>().ToList()
             };
+
         // Parse multiple entities
         private static TokenListParser<MorphynToken, Entity[]> RootParser =>
-            EntityDeclaration.Many().Select(entities => 
+            EntityDeclaration.Many().Select(entities =>
             {
                 var duplicate = entities.GroupBy(e => e.Name).FirstOrDefault(g => g.Count() > 1);
                 if (duplicate != null)
