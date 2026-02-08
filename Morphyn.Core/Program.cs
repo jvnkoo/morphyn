@@ -99,6 +99,8 @@ namespace Morphyn.Core
                     
                     MorphynRuntime.RunFullCycle(context);
                     
+                    MorphynRuntime.GarbageCollect(context);
+                    
                     System.Threading.Thread.Sleep(16);
                 }
 

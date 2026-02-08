@@ -271,5 +271,19 @@ namespace Morphyn.Runtime
                     return false;
             }
         }
+        
+        public static void GarbageCollect(EntityData data)
+        {
+            foreach (var e in data.Entities.Values)
+            {
+                foreach (var field in e.Fields.Values)
+                {
+                    if (field is MorphynPool pool)
+                    {
+                        pool.Values.RemoveAll(item => item is Entity { IsDestroyed: true });
+                    }
+                }
+            }
+        }
     }
 }
