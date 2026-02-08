@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Morphyn.Parser;
 using static Morphyn.Runtime.MorphynEvaluator;
@@ -8,7 +9,6 @@ namespace Morphyn.Runtime
     public static class MorphynRuntime
     {
         private static readonly Queue<PendingEvent> _eventQueue = new();
-
         private static readonly List<object> EmptyArgs = new List<object>(0);
 
         public static void Send(Entity target, string eventName, List<object>? args = null)
@@ -35,8 +35,7 @@ namespace Morphyn.Runtime
             {
                 var val = i < pending.Args.Count
                     ? pending.Args[i]
-                    : throw new Exception(
-                        $"Event '{pending.EventName}' expected {ev.Parameters.Count} arguments, but only {pending.Args.Count} provided.");
+                    : throw new Exception($"Event '{pending.EventName}' expected {ev.Parameters.Count} arguments.");
                 localScope[ev.Parameters[i]] = val;
             }
 
@@ -56,53 +55,118 @@ namespace Morphyn.Runtime
             {
                 case SetAction set:
                     object value = EvaluateExpression(entity, set.Expression, localScope);
-
+                    
                     if (entity.Fields.ContainsKey(set.TargetField))
-                    {
                         entity.Fields[set.TargetField] = value;
-                    }
+                    else
+                        localScope[set.TargetField] = value;
 
                     return true;
 
                 case CheckAction check:
                     bool passed = EvaluateCheck(entity, check, localScope);
-
-                    if (passed && check.InlineAction != null)
+                    if (passed)
                     {
-                        ExecuteAction(data, entity, check.InlineAction, localScope);
+                        if (check.InlineAction != null)
+                        {
+                            return ExecuteAction(data, entity, check.InlineAction, localScope);
+                        }
+                        return true; 
                     }
-                    
-                    return check.InlineAction != null || passed;
+                    else
+                    {
+                        if (check.InlineAction != null)
+                        {
+                            return true; 
+                        }
+                        return false;
+                    }
 
                 case EmitAction emit:
-                    int count = emit.Arguments.Count;
-                    List<object> resolvedArgs = new List<object>(count);
-                    for (int i = 0; i < count; i++)
-                    {
-                        resolvedArgs.Add(EvaluateExpression(entity, emit.Arguments[i], localScope));
-                    }
+                    List<object> resolvedArgs = emit.Arguments
+                        .Select(a => EvaluateExpression(entity, a, localScope))
+                        .ToList();
 
                     if (emit.EventName == "log")
                     {
-                        Console.WriteLine($"[LOG]: {string.Join(" ", resolvedArgs)}");
+                        var logParts = resolvedArgs.Select(arg => arg is MorphynPool p 
+                            ? "pool[" + string.Join(", ", p.Values) + "]" 
+                            : arg?.ToString() ?? "null");
+                        Console.WriteLine(string.Join(" ", logParts));
+                        return true;
+                    }
+    
+                    if (!string.IsNullOrEmpty(emit.TargetEntityName) && 
+                        entity.Fields.TryGetValue(emit.TargetEntityName, out var field) && 
+                        field is MorphynPool pool && 
+                        HandlePoolCommand(pool, emit.EventName, resolvedArgs))
+                    {
                         return true;
                     }
 
-                    Entity? target = entity;
-                    if (!string.IsNullOrEmpty(emit.TargetEntityName))
-                    {
+                    Entity? target = null;
+                    if (string.IsNullOrEmpty(emit.TargetEntityName)) {
+                        target = entity; 
+                    } else {
                         data.Entities.TryGetValue(emit.TargetEntityName, out target);
                     }
 
-                    if (target != null)
-                    {
+                    if (target != null) {
+                        // Console.WriteLine($"[DEBUG] Sending {emit.EventName} to {target.Name}");
                         Send(target, emit.EventName, resolvedArgs);
+                    } else {
+                        Console.WriteLine($"[ERROR] Target entity '{emit.TargetEntityName}' not found for event '{emit.EventName}'");
                     }
 
                     return true;
 
                 default:
                     return true;
+            }
+        }
+        
+        private static bool HandlePoolCommand(MorphynPool pool, string command, List<object> args)
+        {
+            switch (command)
+            {
+                case "add":
+                    pool.Values.Add(args[0]);
+                    return true;
+                case "push": 
+                    pool.Values.Insert(0, args[0]);
+                    return true;
+                case "insert": 
+                    pool.Values.Insert(Convert.ToInt32(args[0]) - 1, args[1]);
+                    return true;
+                case "remove_at": 
+                    int idxRem = Convert.ToInt32(args[0]) - 1;
+                    if (idxRem >= 0 && idxRem < pool.Values.Count)
+                        pool.Values.RemoveAt(idxRem);
+                    return true;
+                case "remove": 
+                    pool.Values.Remove(args[0]);
+                    return true;
+                case "pop":
+                    if (pool.Values.Count > 0) pool.Values.RemoveAt(pool.Values.Count - 1);
+                    return true;
+                case "shift":
+                    if (pool.Values.Count > 0) pool.Values.RemoveAt(0);
+                    return true;
+                case "swap": 
+                    int i1 = Convert.ToInt32(args[0]) - 1;
+                    int i2 = Convert.ToInt32(args[1]) - 1;
+                    if (i1 >= 0 && i1 < pool.Values.Count && i2 >= 0 && i2 < pool.Values.Count)
+                    {
+                        var temp = pool.Values[i1];
+                        pool.Values[i1] = pool.Values[i2];
+                        pool.Values[i2] = temp;
+                    }
+                    return true;
+                case "clear": 
+                    pool.Values.Clear();
+                    return true;
+                default:
+                    return false; 
             }
         }
     }

@@ -25,28 +25,42 @@ namespace Morphyn.Parser
                 var str = t.ToStringValue();
                 return str.Substring(1, str.Length - 2);
             });
+        
+        private static TokenListParser<MorphynToken, MorphynExpression> IndexAccess =>
+            (from name in Identifier
+                from dot in Token.EqualTo(MorphynToken.Dot)
+                from member in Identifier 
+                from index in Expression.Between(
+                    Token.EqualTo(MorphynToken.LeftBracket), 
+                    Token.EqualTo(MorphynToken.RightBracket))
+                select (MorphynExpression)new IndexAccessExpression { 
+                    TargetName = name, 
+                    IndexExpr = index 
+                }).Try();
+
+        private static TokenListParser<MorphynToken, MorphynExpression> PropertyAccess =>
+            (from name in Identifier
+                from dot in Token.EqualTo(MorphynToken.Dot)
+                from prop in Identifier
+                select (MorphynExpression)new PoolPropertyExpression { 
+                    TargetName = name, 
+                    Property = prop 
+                }).Try();
 
         // Terms are the lowest level of the expression.
         // They include numbers, identifiers, and subexpressions in parentheses.
         // Subexpressions have higher priority than numbers and identifiers.
         private static TokenListParser<MorphynToken, MorphynExpression> Term =>
-            Token.EqualTo(MorphynToken.Double)
-                .Select(t =>
-                    (MorphynExpression)new LiteralExpression(double.Parse(t.ToStringValue(),
-                        CultureInfo.InvariantCulture)))
-                .Or(Token.EqualTo(MorphynToken.Number)
-                    .Select(t =>
-                        (MorphynExpression)new LiteralExpression(double.Parse(t.ToStringValue(),
-                            CultureInfo.InvariantCulture))))
-                .Or(Token.EqualTo(MorphynToken.String)
-                    .Select(t => (MorphynExpression)new LiteralExpression(t.ToStringValue().Trim('"'))))
+            Token.EqualTo(MorphynToken.Double).Select(t => (MorphynExpression)new LiteralExpression(double.Parse(t.ToStringValue(), CultureInfo.InvariantCulture)))
+                .Or(Token.EqualTo(MorphynToken.Number).Select(t => (MorphynExpression)new LiteralExpression(double.Parse(t.ToStringValue(), CultureInfo.InvariantCulture))))
+                .Or(Token.EqualTo(MorphynToken.String).Select(t => (MorphynExpression)new LiteralExpression(t.ToStringValue().Trim('"'))))
                 .Or(Token.EqualTo(MorphynToken.True).Select(_ => (MorphynExpression)new LiteralExpression(true)))
                 .Or(Token.EqualTo(MorphynToken.False).Select(_ => (MorphynExpression)new LiteralExpression(false)))
-                .Or(Token.EqualTo(MorphynToken.Identifier)
-                    .Select(t => (MorphynExpression)new VariableExpression(t.ToStringValue())))
-                .Or(Parse.Ref(() => Expression).Between(Token.EqualTo(MorphynToken.LeftParen),
-                    Token.EqualTo(MorphynToken.RightParen)));
-
+                .Or(IndexAccess)   
+                .Or(PropertyAccess) 
+                .Or(Identifier.Select(id => (MorphynExpression)new VariableExpression(id))) 
+                .Or(Parse.Ref(() => Expression).Between(Token.EqualTo(MorphynToken.LeftParen), Token.EqualTo(MorphynToken.RightParen)));
+        
         // Parser precedence for multiplication and division (and modulo).
         // These operators have higher precedence than addition and subtraction.
         private static TokenListParser<MorphynToken, MorphynExpression> Factor =>
@@ -169,9 +183,9 @@ namespace Morphyn.Parser
 
         // Parse any action
         private static TokenListParser<MorphynToken, MorphynAction> ActionParser =>
-            EmitAction.Try()
-                .Or(CheckAction.Try())
-                .Or(FlowAction);
+            CheckAction.Try() 
+                .Or(EmitAction.Try())
+                .Or(FlowAction.Try());
 
         // Parse event: on eventName(params) { actions }
         private static TokenListParser<MorphynToken, Event> EventDeclaration =>

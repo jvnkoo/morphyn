@@ -1,6 +1,18 @@
 namespace Morphyn.Parser
 {
     public class MorphynExpression { }
+    
+    public class IndexAccessExpression : MorphynExpression
+    {
+        public string TargetName { get; set; }
+        public MorphynExpression IndexExpr { get; set; }
+    }
+    
+    public class PoolPropertyExpression : MorphynExpression
+    {
+        public string TargetName { get; set; } = default!;
+        public string Property { get; set; } = default!;
+    }
 
     public class LiteralExpression : MorphynExpression
     {
