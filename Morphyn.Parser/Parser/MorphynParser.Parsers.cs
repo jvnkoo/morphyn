@@ -86,10 +86,21 @@ namespace Morphyn.Parser
         /// For example, "entity.health -> player.health" sets the health of the entity to the health of the player.
         /// </summary>
         private static TokenListParser<MorphynToken, MorphynAction> FlowAction =>
-            from expr in Expression
-            from arrow in Token.EqualTo(MorphynToken.Arrow)
-            from target in Identifier
-            select (MorphynAction)new SetAction { Expression = expr, TargetField = target };
+            (from valExpr in Expression
+                from arrow in Token.EqualTo(MorphynToken.Arrow)
+                from poolName in Identifier
+                from dot in Token.EqualTo(MorphynToken.Dot)
+                from member in Token.EqualTo(MorphynToken.Identifier).Where(t => t.ToStringValue() == "at")
+                from indexExpr in Expression.Between(Token.EqualTo(MorphynToken.LeftBracket), Token.EqualTo(MorphynToken.RightBracket))
+                select (MorphynAction)new SetIndexAction { 
+                    TargetPoolName = poolName, 
+                    IndexExpr = indexExpr, 
+                    ValueExpr = valExpr 
+                }).Try()
+            .Or(from expr in Expression
+                from arrow in Token.EqualTo(MorphynToken.Arrow)
+                from target in Identifier
+                select (MorphynAction)new SetAction { Expression = expr, TargetField = target });
 
         /// <summary>
         /// Flow actions consist of an expression followed by an arrow and an identifier.

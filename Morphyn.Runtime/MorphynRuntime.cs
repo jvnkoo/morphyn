@@ -64,6 +64,7 @@ namespace Morphyn.Runtime
                     return true;
 
                 case CheckAction check:
+                {
                     bool passed = EvaluateCheck(entity, check, localScope);
                     if (passed)
                     {
@@ -81,6 +82,30 @@ namespace Morphyn.Runtime
                         }
                         return false;
                     }
+                }
+                
+                case SetIndexAction setIdx:
+                {
+                    object newValue = EvaluateExpression(entity, setIdx.ValueExpr, localScope);
+                    int index = Convert.ToInt32(EvaluateExpression(entity, setIdx.IndexExpr, localScope)) - 1;
+
+                    if (entity.Fields.TryGetValue(setIdx.TargetPoolName, out var fieldObj) && fieldObj is MorphynPool pool)
+                    {
+                        if (index >= 0 && index < pool.Values.Count)
+                        {
+                            pool.Values[index] = newValue;
+                        }
+                        else
+                        {
+                            throw new Exception($"Index {index + 1} out of bounds for pool '{setIdx.TargetPoolName}'");
+                        }
+                    }
+                    else
+                    {
+                        throw new Exception($"Target '{setIdx.TargetPoolName}' is not a pool or not found.");
+                    }
+                    return true;
+                }
                 
                 case BlockAction block:
                     foreach (var subAction in block.Actions)
@@ -91,6 +116,7 @@ namespace Morphyn.Runtime
                     return true;
 
                 case EmitAction emit:
+                {
                     List<object> resolvedArgs = emit.Arguments
                         .Select(a => EvaluateExpression(entity, a, localScope))
                         .ToList();
@@ -105,8 +131,8 @@ namespace Morphyn.Runtime
                     }
     
                     if (!string.IsNullOrEmpty(emit.TargetEntityName) && 
-                        entity.Fields.TryGetValue(emit.TargetEntityName, out var field) && 
-                        field is MorphynPool pool && 
+                        entity.Fields.TryGetValue(emit.TargetEntityName, out var poolObj) && 
+                        poolObj is MorphynPool pool && 
                         HandlePoolCommand(pool, emit.EventName, resolvedArgs))
                     {
                         return true;
@@ -120,13 +146,13 @@ namespace Morphyn.Runtime
                     }
 
                     if (target != null) {
-                        // Console.WriteLine($"[DEBUG] Sending {emit.EventName} to {target.Name}");
                         Send(target, emit.EventName, resolvedArgs);
                     } else {
                         Console.WriteLine($"[ERROR] Target entity '{emit.TargetEntityName}' not found for event '{emit.EventName}'");
                     }
 
                     return true;
+                }
 
                 default:
                     return true;

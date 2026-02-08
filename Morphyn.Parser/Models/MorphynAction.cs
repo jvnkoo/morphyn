@@ -32,6 +32,13 @@ namespace Morphyn.Parser
         public string TargetField { get; set; }
     }
     
+    public class SetIndexAction : MorphynAction
+    {
+        public string TargetPoolName { get; set; }
+        public MorphynExpression IndexExpr { get; set; }
+        public MorphynExpression ValueExpr { get; set; }
+    }
+    
     public class BlockAction : MorphynAction
     {
         public List<MorphynAction> Actions { get; set; } = new();
