@@ -89,7 +89,7 @@ namespace Morphyn.Runtime
     public static class MorphynRuntime
     {
         private static readonly Queue<PendingEvent> _eventQueue = new();
-        private static readonly List<object> EmptyArgs = new List<object>(0);
+        private static readonly List<object?> EmptyArgs = new List<object?>(0);
 
         /**
          * \brief Send an event to an entity
@@ -104,7 +104,7 @@ namespace Morphyn.Runtime
          * emit log("message")
          * \endcode
          */
-        public static void Send(Entity target, string eventName, List<object>? args = null)
+        public static void Send(Entity target, string eventName, List<object?>? args = null)
         {
             if (_eventQueue.Any(e => e.EventName == eventName && e.Target == target))
                 return;
@@ -125,7 +125,7 @@ namespace Morphyn.Runtime
             var entity = pending.Target;
             if (!entity.EventCache.TryGetValue(pending.EventName, out var ev)) return;
 
-            var localScope = new Dictionary<string, object>();
+            var localScope = new Dictionary<string, object?>();
             for (int i = 0; i < ev.Parameters.Count; i++)
             {
                 var val = i < pending.Args.Count
@@ -144,12 +144,12 @@ namespace Morphyn.Runtime
         }
 
         private static bool ExecuteAction(EntityData data, Entity entity, MorphynAction action,
-            Dictionary<string, object> localScope)
+            Dictionary<string, object?> localScope)
         {
             switch (action)
             {
                 case SetAction set:
-                    object value = EvaluateExpression(entity, set.Expression, localScope, data);
+                    object? value = EvaluateExpression(entity, set.Expression, localScope, data);
 
                     if (entity.Fields.ContainsKey(set.TargetField))
                         entity.Fields[set.TargetField] = value;
@@ -160,7 +160,7 @@ namespace Morphyn.Runtime
 
                 case CheckAction check:
                 {
-                    object result = EvaluateExpression(entity, check.Condition, localScope, data);
+                    object? result = EvaluateExpression(entity, check.Condition, localScope, data);
                     bool passed = result is bool b && b;
 
                     if (passed)
@@ -185,8 +185,13 @@ namespace Morphyn.Runtime
 
                 case SetIndexAction setIdx:
                 {
-                    object newValue = EvaluateExpression(entity, setIdx.ValueExpr, localScope, data);
-                    int index = Convert.ToInt32(EvaluateExpression(entity, setIdx.IndexExpr, localScope, data)) - 1;
+                    object? newValue = EvaluateExpression(entity, setIdx.ValueExpr, localScope, data);
+                    var indexResult = EvaluateExpression(entity, setIdx.IndexExpr, localScope, data);
+                    
+                    if (indexResult == null)
+                        throw new Exception($"Index expression evaluated to null for pool '{setIdx.TargetPoolName}'");
+                    
+                    int index = Convert.ToInt32(indexResult) - 1;
 
                     if (entity.Fields.TryGetValue(setIdx.TargetPoolName, out var fieldObj) &&
                         fieldObj is MorphynPool pool)
@@ -219,7 +224,7 @@ namespace Morphyn.Runtime
 
                 case EmitAction emit:
                 {
-                    List<object> resolvedArgs = new List<object>();
+                    List<object?> resolvedArgs = new List<object?>();
 
                     foreach (var argExpr in emit.Arguments)
                     {
@@ -241,14 +246,17 @@ namespace Morphyn.Runtime
 
                     if (emit.EventName == "log")
                     {
-                        var logParts = resolvedArgs.Select(arg => arg is MorphynPool p
-                            ? "pool[" + string.Join(", ", p.Values) + "]"
-                            : arg?.ToString() ?? "null");
+                        var logParts = resolvedArgs.Select(arg => arg switch
+                        {
+                            MorphynPool p => "pool[" + string.Join(", ", p.Values) + "]",
+                            null => "null",
+                            _ => arg.ToString()
+                        });
                         Console.WriteLine(string.Join(" ", logParts));
                         return true;
                     }
 
-                    string targetName = emit.TargetEntityName;
+                    string? targetName = emit.TargetEntityName;
                     string poolName = emit.EventName;
 
                     if (!string.IsNullOrEmpty(targetName) && targetName.Contains('.'))
@@ -271,8 +279,8 @@ namespace Morphyn.Runtime
                         {
                             if (emit.EventName == "each")
                             {
-                                string subEventName = resolvedArgs[0].ToString()!;
-                                List<object> subArgs = resolvedArgs.Skip(1).ToList();
+                                string subEventName = resolvedArgs[0]?.ToString() ?? "";
+                                List<object?> subArgs = resolvedArgs.Skip(1).ToList();
                                 foreach (var item in localPool.Values)
                                 {
                                     if (item is Entity subE) Send(subE, subEventName, subArgs);
@@ -404,11 +412,14 @@ namespace Morphyn.Runtime
          * new_value -> pool.at[index]
          * \endcode
          */
-        private static bool HandlePoolCommand(MorphynPool pool, string command, List<object> args, EntityData data)
+        private static bool HandlePoolCommand(MorphynPool pool, string command, List<object?> args, EntityData data)
         {
             switch (command)
             {
                 case "add":
+                    if (args.Count == 0 || args[0] == null)
+                        throw new Exception("Pool add command requires a non-null argument");
+                        
                     string typeName = args[0].ToString()!;
                     if (data.Entities.TryGetValue(typeName, out var prototype))
                     {
@@ -425,9 +436,13 @@ namespace Morphyn.Runtime
                     pool.Values.Insert(0, args[0]);
                     return true;
                 case "insert":
+                    if (args[0] == null)
+                        throw new Exception("Insert index cannot be null");
                     pool.Values.Insert(Convert.ToInt32(args[0]) - 1, args[1]);
                     return true;
                 case "remove_at":
+                    if (args[0] == null)
+                        throw new Exception("Remove_at index cannot be null");
                     int idxRem = Convert.ToInt32(args[0]) - 1;
                     if (idxRem >= 0 && idxRem < pool.Values.Count)
                         pool.Values.RemoveAt(idxRem);
@@ -442,6 +457,8 @@ namespace Morphyn.Runtime
                     if (pool.Values.Count > 0) pool.Values.RemoveAt(0);
                     return true;
                 case "swap":
+                    if (args[0] == null || args[1] == null)
+                        throw new Exception("Swap indices cannot be null");
                     int i1 = Convert.ToInt32(args[0]) - 1;
                     int i2 = Convert.ToInt32(args[1]) - 1;
                     if (i1 >= 0 && i1 < pool.Values.Count && i2 >= 0 && i2 < pool.Values.Count)

@@ -14,6 +14,7 @@ namespace Morphyn.Parser
         String,
         True,
         False,
+        Null,
         
         // Keywords
         Entity,
@@ -77,6 +78,7 @@ namespace Morphyn.Parser
             
             .Match(Span.EqualTo("true"), MorphynToken.True, requireDelimiters: true)
             .Match(Span.EqualTo("false"), MorphynToken.False, requireDelimiters: true)
+            .Match(Span.EqualTo("null"), MorphynToken.Null, requireDelimiters: true)  
             
             .Match(Character.EqualTo('{'), MorphynToken.LeftBrace)
             .Match(Character.EqualTo('}'), MorphynToken.RightBrace)

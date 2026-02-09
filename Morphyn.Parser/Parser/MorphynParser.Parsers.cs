@@ -57,6 +57,7 @@ namespace Morphyn.Parser
                 .Or(Token.EqualTo(MorphynToken.String).Select(t => (MorphynExpression)new LiteralExpression(t.ToStringValue().Trim('"'))))
                 .Or(Token.EqualTo(MorphynToken.True).Select(_ => (MorphynExpression)new LiteralExpression(true)))
                 .Or(Token.EqualTo(MorphynToken.False).Select(_ => (MorphynExpression)new LiteralExpression(false)))
+                .Or(Token.EqualTo(MorphynToken.Null).Select(_ => (MorphynExpression)new LiteralExpression(null)))
                 .Or(IndexAccess)   
                 .Or(PropertyAccess) 
                 .Or(Identifier.Select(id => (MorphynExpression)new VariableExpression(id))) 
@@ -114,7 +115,8 @@ namespace Morphyn.Parser
                     (object)double.Parse(t.ToStringValue(), CultureInfo.InvariantCulture)))
                 .Or(Token.EqualTo(MorphynToken.String).Select(t => (object)t.ToStringValue().Trim('"')))
                 .Or(Token.EqualTo(MorphynToken.True).Select(_ => (object)true))
-                .Or(Token.EqualTo(MorphynToken.False).Select(_ => (object)false));
+                .Or(Token.EqualTo(MorphynToken.False).Select(_ => (object)false))
+                .Or(Token.EqualTo(MorphynToken.Null).Select(_ => (object)null));
 
         private static TokenListParser<MorphynToken, MorphynPool> PoolValues =>
             from poolKeyword in Token.EqualTo(MorphynToken.Pool)

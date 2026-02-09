@@ -124,8 +124,8 @@ namespace Morphyn.Runtime
      */
     public static class MorphynEvaluator
     {
-        public static object EvaluateExpression(Entity entity, MorphynExpression expr, 
-            Dictionary<string, object> localScope, EntityData data)
+        public static object? EvaluateExpression(Entity entity, MorphynExpression expr, 
+            Dictionary<string, object?> localScope, EntityData data)
         {
             return expr switch
             {
@@ -151,21 +151,38 @@ namespace Morphyn.Runtime
             };
         }
 
-        private static bool EvaluateLogic(Entity entity, BinaryLogicExpression b, Dictionary<string, object> localScope, EntityData data)
+        private static bool EvaluateLogic(Entity entity, BinaryLogicExpression b, Dictionary<string, object?> localScope, EntityData data)
         {
-            var left = (bool)EvaluateExpression(entity, b.Left, localScope, data);
-            if (b.Operator == "or") return left || (bool)EvaluateExpression(entity, b.Right, localScope, data);
-            if (b.Operator == "and") return left && (bool)EvaluateExpression(entity, b.Right, localScope, data);
+            var left = EvaluateExpression(entity, b.Left, localScope, data);
+            if (left == null) return false;
+            
+            bool leftBool = (bool)left;
+            
+            if (b.Operator == "or") 
+            {
+                if (leftBool) return true;
+                var right = EvaluateExpression(entity, b.Right, localScope, data);
+                return right != null && (bool)right;
+            }
+            
+            if (b.Operator == "and") 
+            {
+                if (!leftBool) return false;
+                var right = EvaluateExpression(entity, b.Right, localScope, data);
+                return right != null && (bool)right;
+            }
+            
             throw new Exception($"Unknown logic operator: {b.Operator}");
         }
 
-        private static bool EvaluateUnary(Entity entity, UnaryLogicExpression u, Dictionary<string, object> localScope, EntityData data)
+        private static bool EvaluateUnary(Entity entity, UnaryLogicExpression u, Dictionary<string, object?> localScope, EntityData data)
         {
-            var val = (bool)EvaluateExpression(entity, u.Inner, localScope, data);
-            return !val;
+            var val = EvaluateExpression(entity, u.Inner, localScope, data);
+            if (val == null) return true;
+            return !(bool)val;
         }
 
-        private static object GetPoolProperty(Entity entity, PoolPropertyExpression p, EntityData data)
+        private static object? GetPoolProperty(Entity entity, PoolPropertyExpression p, EntityData data)
         {
             if (entity.Fields.TryGetValue(p.TargetName, out var obj) && obj is MorphynPool pool)
             {
@@ -185,11 +202,14 @@ namespace Morphyn.Runtime
             throw new Exception($"Entity or Pool '{p.TargetName}' not found.");
         }
 
-        private static object GetFromPool(Entity entity, IndexAccessExpression idx, Dictionary<string, object> localScope, EntityData data)
+        private static object? GetFromPool(Entity entity, IndexAccessExpression idx, Dictionary<string, object?> localScope, EntityData data)
         {
             if (entity.Fields.TryGetValue(idx.TargetName, out var val) && val is MorphynPool pool)
             {
                 var evalIndex = EvaluateExpression(entity, idx.IndexExpr, localScope, data);
+                if (evalIndex == null)
+                    throw new Exception($"Index expression evaluated to null for pool '{idx.TargetName}'");
+                
                 int index = Convert.ToInt32(evalIndex) - 1; 
         
                 if (index >= 0 && index < pool.Values.Count)
@@ -200,10 +220,27 @@ namespace Morphyn.Runtime
             throw new Exception($"Target '{idx.TargetName}' is not a pool.");
         }
 
-        private static object EvaluateBinary(Entity entity, BinaryExpression b, Dictionary<string, object> localScope, EntityData data)
+        private static object EvaluateBinary(Entity entity, BinaryExpression b, Dictionary<string, object?> localScope, EntityData data)
         {
             var leftObj = EvaluateExpression(entity, b.Left, localScope, data);
             var rightObj = EvaluateExpression(entity, b.Right, localScope, data);
+
+            // Handle null comparisons for equality operators
+            if (b.Operator == "==" || b.Operator == "!=")
+            {
+                if (leftObj == null || rightObj == null)
+                {
+                    return b.Operator == "==" ? Equals(leftObj, rightObj) : !Equals(leftObj, rightObj);
+                }
+            }
+            else
+            {
+                // For non-equality operators, null is not allowed
+                if (leftObj == null || rightObj == null)
+                {
+                    throw new Exception($"Cannot perform operation '{b.Operator}' with null operand");
+                }
+            }
 
             if (IsNumeric(leftObj) && IsNumeric(rightObj))
             {
@@ -226,7 +263,7 @@ namespace Morphyn.Runtime
                     _ => throw new Exception($"Unknown operator: {b.Operator}")
                 };
             }
-    
+
             return b.Operator switch
             {
                 "==" => Equals(leftObj, rightObj),

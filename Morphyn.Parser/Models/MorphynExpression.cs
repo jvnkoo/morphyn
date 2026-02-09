@@ -20,7 +20,7 @@ namespace Morphyn.Parser
 
     public class LiteralExpression : MorphynExpression
     {
-        public object Value { get; }
+        public object? Value { get; }
         public LiteralExpression(object value) => Value = value;
     }
 
