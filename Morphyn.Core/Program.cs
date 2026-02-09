@@ -12,6 +12,9 @@ using Morphyn.Runtime;
 
 namespace Morphyn.Core
 {
+    using System.Collections.Generic;
+    using System.Linq;
+
     /**
      * \class Program
      * \brief Main entry point for Morphyn language interpreter
@@ -72,7 +75,7 @@ namespace Morphyn.Core
         {
             if (args.Length == 0)
             {
-                Console.WriteLine("Usage: morphyn <filename.morphyn>");
+                // Console.WriteLine("Usage: morphyn <filename.morphyn>");
                 return;
             }
 
@@ -99,14 +102,14 @@ namespace Morphyn.Core
                 
                 ValidateEntities(context);
                 
-                Console.WriteLine($"[System] Loaded {context.Entities.Count} entities.");
+                // Console.WriteLine($"[System] Loaded {context.Entities.Count} entities.");
 
                 foreach (var entity in context.Entities.Values)
                 {
                     entity.BuildCache();
-                    Console.WriteLine($"[AST] Entity loaded: {entity.Name}");
-                    foreach (var field in entity.Fields)
-                        Console.WriteLine($"  -> {field.Key}: {field.Value}");
+                    // Console.WriteLine($"[AST] Entity loaded: {entity.Name}");
+                    // foreach (var field in entity.Fields)
+                    //    Console.WriteLine($"  -> {field.Key}: {field.Value}");
 
                     if (entity.Events.Any(e => e.Name == "init"))
                     {
@@ -114,7 +117,7 @@ namespace Morphyn.Core
                     }
                     else 
                     {
-                        Console.WriteLine($"  [Info] {entity.Name} has no 'init' event. Static data only.");
+                        // Console.WriteLine($"  [Info] {entity.Name} has no 'init' event. Static data only.");
                     }
                 }
 
