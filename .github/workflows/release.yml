@@ -1,0 +1,67 @@
+name: Build and Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      
+      # 1. Build for Windows
+      - name: Build Windows
+        run: |
+          dotnet publish Morphyn.Core -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:PublishTrimmed=false -o ./dist/win
+          # Rename Morphyn.Core.exe to morphyn-windows-x64.exe
+          mv ./dist/win/Morphyn.Core.exe ./dist/win/morphyn-windows-x64.exe
+          # Safe copy for installer
+          cp install.ps1 ./dist/win/ 2>/dev/null || echo "install.ps1 not found, skipping"
+
+      # 2. Build for Linux
+      - name: Build Linux
+        run: |
+          dotnet publish Morphyn.Core -c Release -r linux-x64 --self-contained true -p:PublishSingleFile=true -p:PublishTrimmed=false -o ./dist/linux
+          # Rename Morphyn.Core to morphyn-linux-x64
+          mv ./dist/linux/Morphyn.Core ./dist/linux/morphyn-linux-x64
+          # Safe copy for installer
+          cp install.sh ./dist/linux/ 2>/dev/null || echo "install.sh not found, skipping"
+
+      # 3. Generate Changelog
+      - name: Generate Changelog
+        id: changelog
+        run: |
+          prevTag=$(git describe --tags --abbrev=0 ${{ github.ref_name }}^ 2>/dev/null || echo "")
+          if [ -z "$prevTag" ]; then
+            git log --pretty=format:"* %s (%h)" > changelog.txt
+          else
+            git log ${prevTag}..${{ github.ref_name }} --pretty=format:"* %s (%h)" --no-merges > changelog.txt
+          fi
+
+      # 4. Create GitHub Release
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            dist/win/morphyn-windows-x64.exe
+            dist/win/install.ps1
+            dist/linux/morphyn-linux-x64
+            dist/linux/install.sh
+          body_path: changelog.txt
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
