@@ -1,0 +1,230 @@
+/**
+\mainpage Morphyn Language Documentation
+
+\tableofcontents
+
+\section intro Introduction
+
+Morphyn is a declarative, event-driven programming language designed for game logic and entity behavior.
+Unlike traditional imperative languages, Morphyn uses data flows and reactions instead of loops and branches.
+
+\subsection philosophy Philosophy
+
+- **Entity** — A world with its own laws
+- **has** — The laws of that world
+- **on** — Reactions to events
+- **emit** — The physics of interaction
+- **check** — Guards for invariants
+- **->** — The flow of energy/data
+
+\subsection features Key Features
+
+- Event-driven architecture (no control flow)
+- Hot reload support
+- Real-time execution with tick-based updates
+- Simple, readable syntax
+- Built for game development
+
+\section getting_started Getting Started
+
+\subsection installation Installation
+
+\code{.sh}
+# Clone the repository
+git clone https://github.com/jvnkoo/morphyn.git
+
+# Build the project
+dotnet build
+
+# Run a Morphyn program
+morphyn program.morphyn
+\endcode
+
+\subsection first_program Your First Program
+
+\code{.morphyn}
+entity Player {
+  has hp: 100
+  has name: "Hero"
+  
+  on init {
+    emit log("Player created!")
+  }
+  
+  on damage(amount) {
+    hp - amount -> hp
+    check hp <= 0: emit die
+  }
+  
+  on die {
+    emit log("Game Over")
+  }
+}
+\endcode
+
+\section quick_reference Quick Reference
+
+See \ref language_syntax for complete syntax reference.
+
+See \ref examples for more examples.
+
+\section architecture Architecture
+
+The Morphyn runtime consists of:
+- **Parser** - Converts .morphyn files into AST
+- **Runtime** - Executes events and manages entity lifecycle
+- **Evaluator** - Evaluates expressions and operators
+
+*/
+
+/**
+\page examples Example Programs
+
+\tableofcontents
+
+\section example_simple Simple Counter
+
+\code{.morphyn}
+entity Counter {
+  has value: 0
+  
+  on init {
+    emit log("Counter initialized")
+  }
+  
+  on tick(dt) {
+    value + 1 -> value
+    emit log("Counter:", value)
+  }
+}
+\endcode
+
+\section example_health Health System
+
+\code{.morphyn}
+entity Player {
+  has hp: 100
+  has max_hp: 100
+  has alive: true
+  
+  on damage(amount) {
+    hp - amount -> hp
+    check hp <= 0: {
+      0 -> hp
+      false -> alive
+      emit die
+    }
+  }
+  
+  on heal(amount) {
+    check alive: {
+      hp + amount -> hp
+      check hp > max_hp: max_hp -> hp
+    }
+  }
+  
+  on die {
+    emit log("Player died")
+  }
+}
+\endcode
+
+\section example_enemy Enemy AI
+
+\code{.morphyn}
+entity Enemy {
+  has hp: 50
+  has damage: 10
+  has state: "idle"
+  
+  on see_player {
+    "chase" -> state
+  }
+  
+  on tick(dt) {
+    check state == "chase": emit attack
+  }
+  
+  on attack {
+    emit player.damage(damage)
+  }
+  
+  on take_damage(amount) {
+    hp - amount -> hp
+    check hp <= 0: emit self.destroy
+  }
+}
+\endcode
+
+\section example_inventory Inventory System
+
+\code{.morphyn}
+entity Inventory {
+  has items: pool["sword", "shield"]
+  has capacity: 10
+  
+  on add_item(item) {
+    check items.count < capacity: emit items.add(item)
+  }
+  
+  on remove_item(index) {
+    emit items.remove_at(index)
+  }
+  
+  on use_item(index) {
+    items.at[index] -> current_item
+    emit log("Using:", current_item)
+  }
+  
+  on list_items {
+    emit log("Inventory size:", items.count)
+    emit items.each(show_item)
+  }
+  
+  on show_item(item) {
+    emit log("  -", item)
+  }
+}
+\endcode
+
+\section example_game Complete Game Example
+
+\code{.morphyn}
+import "player.morphyn";
+import "enemy.morphyn";
+
+entity Game {
+  has score: 0
+  has enemies: pool[]
+  has spawn_timer: 0
+  has spawn_interval: 2000
+  
+  on init {
+    emit log("Game started!")
+    emit spawn_enemy
+  }
+  
+  on tick(dt) {
+    spawn_timer + dt -> spawn_timer
+    
+    check spawn_timer >= spawn_interval: {
+      emit spawn_enemy
+      0 -> spawn_timer
+    }
+    
+    emit enemies.each(update, dt)
+  }
+  
+  on spawn_enemy {
+    emit enemies.add(Enemy)
+    emit log("Enemy spawned! Total:", enemies.count)
+  }
+  
+  on enemy_killed {
+    score + 100 -> score
+    emit log("Score:", score)
+  }
+}
+\endcode
+
+*/

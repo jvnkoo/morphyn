@@ -1,3 +1,10 @@
+/**
+ * \file MorphynRuntime.cs
+ * \brief Morphyn Runtime System
+ * \defgroup runtime Runtime System
+ * @{
+ */
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,11 +13,97 @@ using static Morphyn.Runtime.MorphynEvaluator;
 
 namespace Morphyn.Runtime
 {
+    
+    /**
+     * \class MorphynRuntime
+     * \brief Event processing and entity lifecycle management
+     *
+     * \page event_system Event System
+     *
+     * \section event_overview Overview
+     *
+     * Morphyn uses an event queue to process entity reactions. Events are processed
+     * in order, and each event can trigger additional events.
+     *
+     * \section builtin_events Built-in Events
+     *
+     * \subsection init_event init
+     *
+     * Called when an entity is first created or spawned:
+     *
+     * \code{.morphyn}
+     * entity Enemy {
+     *   has hp: 50
+     *
+     *   on init {
+     *     emit log("Enemy spawned")
+     *   }
+     * }
+     * \endcode
+     *
+     * \subsection tick_event tick(dt)
+     *
+     * Called every frame with delta time in milliseconds:
+     *
+     * \code{.morphyn}
+     * entity Timer {
+     *   has time: 0
+     *
+     *   on tick(dt) {
+     *     time + dt -> time
+     *   }
+     * }
+     * \endcode
+     *
+     * \subsection destroy_event destroy
+     *
+     * Marks entity for garbage collection:
+     *
+     * \code{.morphyn}
+     * entity Enemy {
+     *   has hp: 50
+     *
+     *   on damage(v) {
+     *     hp - v -> hp
+     *     check hp <= 0: emit self.destroy
+     *   }
+     * }
+     * \endcode
+     *
+     * \section custom_events Custom Events
+     *
+     * Define your own events:
+     *
+     * \code{.morphyn}
+     * entity Player {
+     *   on jump {
+     *     emit log("Player jumped!")
+     *   }
+     *
+     *   on heal(amount) {
+     *     hp + amount -> hp
+     *   }
+     * }
+     * \endcode
+     */
     public static class MorphynRuntime
     {
         private static readonly Queue<PendingEvent> _eventQueue = new();
         private static readonly List<object> EmptyArgs = new List<object>(0);
 
+        /**
+         * \brief Send an event to an entity
+         * \param target The entity that will receive the event
+         * \param eventName Name of the event to send
+         * \param args Optional arguments to pass to the event handler
+         *
+         * \par Example (Morphyn):
+         * \code{.morphyn}
+         * emit target.damage(10)
+         * emit self.destroy
+         * emit log("message")
+         * \endcode
+         */
         public static void Send(Entity target, string eventName, List<object>? args = null)
         {
             if (_eventQueue.Any(e => e.EventName == eventName && e.Target == target))
@@ -216,6 +309,101 @@ namespace Morphyn.Runtime
             }
         }
 
+        /**
+         * \page pools Pool System
+         * 
+         * \section pool_overview Overview
+         * 
+         * Pools are collections of entities or values in Morphyn. They provide
+         * high-performance storage for game objects.
+         * 
+         * \section pool_declaration Declaration
+         * 
+         * \code{.morphyn}
+         * entity World {
+         *   has enemies: pool[1, 2, 3]
+         *   has items: pool["sword", "shield"]
+         *   has positions: pool[0.0, 10.5, 20.3]
+         * }
+         * \endcode
+         * 
+         * \section pool_commands Pool Commands
+         * 
+         * \subsection pool_add Adding Elements
+         * 
+         * \par add - Add entity instance
+         * \code{.morphyn}
+         * emit enemies.add(Enemy)  # Creates new Enemy and adds to pool
+         * \endcode
+         * 
+         * \par push - Add to front
+         * \code{.morphyn}
+         * emit items.push("new_item")
+         * \endcode
+         * 
+         * \par insert - Insert at position (1-based index)
+         * \code{.morphyn}
+         * emit items.insert(2, "middle_item")
+         * \endcode
+         * 
+         * \subsection pool_remove Removing Elements
+         * 
+         * \par remove - Remove specific value
+         * \code{.morphyn}
+         * emit enemies.remove(target)
+         * \endcode
+         * 
+         * \par remove_at - Remove at index (1-based)
+         * \code{.morphyn}
+         * emit enemies.remove_at(3)
+         * \endcode
+         * 
+         * \par pop - Remove last element
+         * \code{.morphyn}
+         * emit items.pop
+         * \endcode
+         * 
+         * \par shift - Remove first element
+         * \code{.morphyn}
+         * emit items.shift
+         * \endcode
+         * 
+         * \par clear - Remove all elements
+         * \code{.morphyn}
+         * emit enemies.clear
+         * \endcode
+         * 
+         * \subsection pool_other Other Operations
+         * 
+         * \par swap - Swap two elements (1-based indices)
+         * \code{.morphyn}
+         * emit items.swap(1, 3)
+         * \endcode
+         * 
+         * \par each - Call event on each element
+         * \code{.morphyn}
+         * emit enemies.each(update, dt)
+         * emit items.each(collect, player)
+         * \endcode
+         * 
+         * \section pool_access Accessing Pools
+         * 
+         * \par Get pool size
+         * \code{.morphyn}
+         * enemies.count -> num_enemies
+         * \endcode
+         * 
+         * \par Access by index (1-based)
+         * \code{.morphyn}
+         * enemies.at[1] -> first_enemy
+         * enemies.at[i] -> current_enemy
+         * \endcode
+         * 
+         * \par Set by index
+         * \code{.morphyn}
+         * new_value -> pool.at[index]
+         * \endcode
+         */
         private static bool HandlePoolCommand(MorphynPool pool, string command, List<object> args, EntityData data)
         {
             switch (command)
@@ -287,3 +475,4 @@ namespace Morphyn.Runtime
         }
     }
 }
+/** @} */ // end of runtime group2

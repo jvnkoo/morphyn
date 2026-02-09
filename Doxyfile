@@ -1,0 +1,97 @@
+# Doxyfile Configuration for Morphyn
+PROJECT_NAME           = "Morphyn Language"
+PROJECT_NUMBER         = 1.0
+PROJECT_BRIEF          = "Declarative dataflow language for reactive systems"
+OUTPUT_DIRECTORY       = ./docs
+CREATE_SUBDIRS         = NO
+OUTPUT_LANGUAGE        = English
+INPUT_ENCODING         = UTF-8
+
+# Include all three projects recursively + documentation file
+INPUT                  = ./Morphyn.Core \
+                         ./Morphyn.Parser \
+                         ./Morphyn.Runtime \
+                         ./documentation.dox
+                         
+RECURSIVE              = YES
+
+# Exclude build directories and binaries
+EXCLUDE                = */bin/ \
+                         */obj/ \
+                         */Build/ \
+                         */.git/ \
+                         */.vs/ \
+                         */packages/
+                         
+EXCLUDE_PATTERNS       = *.dll \
+                         *.exe \
+                         *.pdb \
+                         *.cache \
+                         *.suo \
+                         *.user
+
+FILE_PATTERNS          = *.cs \
+                         *.dox
+
+# Extraction settings
+EXTRACT_ALL            = YES
+EXTRACT_PRIVATE        = NO
+EXTRACT_STATIC         = YES
+EXTRACT_LOCAL_CLASSES  = YES
+EXTRACT_LOCAL_METHODS  = NO
+
+# Source browsing
+SOURCE_BROWSER         = YES
+INLINE_SOURCES         = NO
+STRIP_CODE_COMMENTS    = NO
+
+# Referencing
+REFERENCES_LINK_SOURCE = YES
+REFERENCED_BY_RELATION = YES
+REFERENCES_RELATION    = YES
+
+# HTML output
+GENERATE_HTML          = YES
+HTML_OUTPUT            = html
+HTML_FILE_EXTENSION    = .html
+HTML_COLORSTYLE_HUE    = 220
+HTML_COLORSTYLE_SAT    = 100
+HTML_COLORSTYLE_GAMMA  = 80
+HTML_TIMESTAMP         = YES
+HTML_DYNAMIC_SECTIONS  = YES
+
+# Search
+SEARCHENGINE           = YES
+SERVER_BASED_SEARCH    = NO
+
+# Index
+ALPHABETICAL_INDEX     = YES
+COLS_IN_ALPHA_INDEX    = 5
+
+# Diagrams
+HAVE_DOT               = NO
+CLASS_DIAGRAMS         = YES
+
+# For C# code
+OPTIMIZE_OUTPUT_FOR_C  = NO
+OPTIMIZE_OUTPUT_JAVA   = YES
+BUILTIN_STL_SUPPORT    = NO
+CPP_CLI_SUPPORT        = NO
+
+# TOC
+GENERATE_TREEVIEW      = YES
+DISABLE_INDEX          = NO
+FULL_PATH_NAMES        = YES
+STRIP_FROM_PATH        = 
+
+# Warnings
+WARN_IF_UNDOCUMENTED   = NO
+WARN_IF_DOC_ERROR      = YES
+WARN_NO_PARAMDOC       = NO
+
+# Other outputs
+GENERATE_LATEX         = NO
+GENERATE_RTF           = NO
+GENERATE_MAN           = NO
+GENERATE_XML           = NO
+GENERATE_DOCBOOK       = NO
