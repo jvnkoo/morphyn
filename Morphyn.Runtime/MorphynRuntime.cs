@@ -13,7 +13,6 @@ using static Morphyn.Runtime.MorphynEvaluator;
 
 namespace Morphyn.Runtime
 {
-    
     /**
      * \class MorphynRuntime
      * \brief Event processing and entity lifecycle management
@@ -90,6 +89,8 @@ namespace Morphyn.Runtime
     {
         private static readonly Queue<PendingEvent> _eventQueue = new();
         private static readonly List<object?> EmptyArgs = new List<object?>(0);
+
+        public static Action<string, object?[]>? UnityCallback { get; set; }
 
         /**
          * \brief Send an event to an entity
@@ -187,10 +188,10 @@ namespace Morphyn.Runtime
                 {
                     object? newValue = EvaluateExpression(entity, setIdx.ValueExpr, localScope, data);
                     var indexResult = EvaluateExpression(entity, setIdx.IndexExpr, localScope, data);
-                    
+
                     if (indexResult == null)
                         throw new Exception($"Index expression evaluated to null for pool '{setIdx.TargetPoolName}'");
-                    
+
                     int index = Convert.ToInt32(indexResult) - 1;
 
                     if (entity.Fields.TryGetValue(setIdx.TargetPoolName, out var fieldObj) &&
@@ -228,16 +229,16 @@ namespace Morphyn.Runtime
 
                     foreach (var argExpr in emit.Arguments)
                     {
-                        try 
+                        try
                         {
                             resolvedArgs.Add(EvaluateExpression(entity, argExpr, localScope, data));
                         }
                         catch (Exception) when (emit.EventName == "each" && argExpr is VariableExpression ve)
                         {
-                            resolvedArgs.Add(ve.Name); 
+                            resolvedArgs.Add(ve.Name);
                         }
                     }
-                    
+
                     if (emit.TargetEntityName == "self" && emit.EventName == "destroy")
                     {
                         entity.IsDestroyed = true;
@@ -253,6 +254,20 @@ namespace Morphyn.Runtime
                             _ => arg.ToString()
                         });
                         Console.WriteLine(string.Join(" ", logParts));
+                        return true;
+                    }
+
+                    if (emit.EventName == "unity")
+                    {
+                        if (UnityCallback != null && resolvedArgs.Count > 0)
+                        {
+                            string callbackName = resolvedArgs[0]?.ToString() ?? "";
+                            object?[] callbackArgs = resolvedArgs.Count > 1 
+                                ? resolvedArgs.GetRange(1, resolvedArgs.Count - 1).ToArray() 
+                                : Array.Empty<object?>();
+                            
+                            UnityCallback(callbackName, callbackArgs);
+                        }
                         return true;
                     }
 
@@ -319,14 +334,14 @@ namespace Morphyn.Runtime
 
         /**
          * \page pools Pool System
-         * 
+         *
          * \section pool_overview Overview
-         * 
+         *
          * Pools are collections of entities or values in Morphyn. They provide
          * high-performance storage for game objects.
-         * 
+         *
          * \section pool_declaration Declaration
-         * 
+         *
          * \code{.morphyn}
          * entity World {
          *   has enemies: pool[1, 2, 3]
@@ -334,79 +349,79 @@ namespace Morphyn.Runtime
          *   has positions: pool[0.0, 10.5, 20.3]
          * }
          * \endcode
-         * 
+         *
          * \section pool_commands Pool Commands
-         * 
+         *
          * \subsection pool_add Adding Elements
-         * 
+         *
          * \par add - Add entity instance
          * \code{.morphyn}
          * emit enemies.add(Enemy)  # Creates new Enemy and adds to pool
          * \endcode
-         * 
+         *
          * \par push - Add to front
          * \code{.morphyn}
          * emit items.push("new_item")
          * \endcode
-         * 
+         *
          * \par insert - Insert at position (1-based index)
          * \code{.morphyn}
          * emit items.insert(2, "middle_item")
          * \endcode
-         * 
+         *
          * \subsection pool_remove Removing Elements
-         * 
+         *
          * \par remove - Remove specific value
          * \code{.morphyn}
          * emit enemies.remove(target)
          * \endcode
-         * 
+         *
          * \par remove_at - Remove at index (1-based)
          * \code{.morphyn}
          * emit enemies.remove_at(3)
          * \endcode
-         * 
+         *
          * \par pop - Remove last element
          * \code{.morphyn}
          * emit items.pop
          * \endcode
-         * 
+         *
          * \par shift - Remove first element
          * \code{.morphyn}
          * emit items.shift
          * \endcode
-         * 
+         *
          * \par clear - Remove all elements
          * \code{.morphyn}
          * emit enemies.clear
          * \endcode
-         * 
+         *
          * \subsection pool_other Other Operations
-         * 
+         *
          * \par swap - Swap two elements (1-based indices)
          * \code{.morphyn}
          * emit items.swap(1, 3)
          * \endcode
-         * 
+         *
          * \par each - Call event on each element
          * \code{.morphyn}
          * emit enemies.each(update, dt)
          * emit items.each(collect, player)
          * \endcode
-         * 
+         *
          * \section pool_access Accessing Pools
-         * 
+         *
          * \par Get pool size
          * \code{.morphyn}
          * enemies.count -> num_enemies
          * \endcode
-         * 
+         *
          * \par Access by index (1-based)
          * \code{.morphyn}
          * enemies.at[1] -> first_enemy
          * enemies.at[i] -> current_enemy
          * \endcode
-         * 
+         *
          * \par Set by index
          * \code{.morphyn}
          * new_value -> pool.at[index]
@@ -419,7 +434,7 @@ namespace Morphyn.Runtime
                 case "add":
                     if (args.Count == 0 || args[0] == null)
                         throw new Exception("Pool add command requires a non-null argument");
-                        
+
                     string typeName = args[0].ToString()!;
                     if (data.Entities.TryGetValue(typeName, out var prototype))
                     {
@@ -431,6 +446,7 @@ namespace Morphyn.Runtime
                     {
                         pool.Values.Add(args[0]);
                     }
+
                     return true;
                 case "push":
                     pool.Values.Insert(0, args[0]);
@@ -476,7 +492,7 @@ namespace Morphyn.Runtime
                     return false;
             }
         }
-        
+
         public static void GarbageCollect(EntityData data)
         {
             foreach (var e in data.Entities.Values)
