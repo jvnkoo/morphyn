@@ -105,7 +105,7 @@ Think of entities as worlds with their own physics:
 
 ## License
 
-Morphyn source files are distributed under the Apache License 2.0 License. See [LICENSE](LICENSE) for details.
+Morphyn source files are distributed under the Apache License 2.0. See [LICENSE](LICENSE) for details.
 
 ## Links
 
