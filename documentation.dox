@@ -228,3 +228,570 @@ entity Game {
 \endcode
 
 */
+
+/**
+\page unity_integration Unity Integration
+\tableofcontents
+
+\section unity_overview Overview
+
+**Morphyn = JSON + Logic**
+
+Stop using dumb JSON configs. Morphyn is a smart configuration language that runs logic when values change.
+
+**Why Morphyn > JSON:**
+
+| JSON | Morphyn |
+|------|---------|
+| Only stores data | Stores data + behavior |
+| Needs external code for validation | Built-in checks |
+| Can't react to changes | Event-driven reactions |
+| Static values | Dynamic calculations |
+| No hot reload | Edit configs in Play mode |
+
+**Think of it as:**
+- Config files that validate themselves
+- PlayerPrefs with built-in logic
+- ScriptableObjects without C# code
+- Smart data containers
+
+\section unity_installation Installation
+
+1. Download `Morphyn.unitypackage` from [GitHub Releases](https://github.com/jvnkoo/morphyn/releases)
+2. Import: `Assets > Import Package > Custom Package`
+3. Add to scene: `GameObject > Create Empty > Add Component > Morphyn Controller`
+4. Drag .morphyn files into `Morphyn Scripts` array
+5. Enable `Run On Start`
+
+Done.
+
+\section unity_comparison JSON vs Morphyn
+
+\subsection unity_json_example The JSON Way (BAD)
+
+**player_config.json:**
+\code{.json}
+{
+  "hp": 100,
+  "maxHp": 100,
+  "level": 1,
+  "exp": 0
+}
+\endcode
+
+**PlayerController.cs:**
+\code{.cs}
+public class PlayerController : MonoBehaviour
+{
+    private PlayerConfig config;
+    
+    void Start() {
+        string json = File.ReadAllText("player_config.json");
+        config = JsonUtility.FromJson<PlayerConfig>(json);
+    }
+    
+    public void AddExp(int amount) {
+        config.exp += amount;
+        
+        // Manual logic every time
+        if (config.exp >= 100) {
+            config.level++;
+            config.exp = 0;
+            config.maxHp += 20;
+            config.hp = config.maxHp;
+            Debug.Log("LEVEL UP!");
+        }
+    }
+    
+    public void Damage(int amount) {
+        config.hp -= amount;
+        
+        // More manual logic
+        if (config.hp <= 0) {
+            Debug.Log("GAME OVER");
+        }
+    }
+}
+\endcode
+
+\subsection unity_morphyn_example The Morphyn Way (GOOD)
+
+**player.morphyn:**
+\code{.morphyn}
+entity Player {
+  has hp: 100
+  has maxHp: 100
+  has level: 1
+  has exp: 0
+  
+  on add_exp(amount) {
+    exp + amount -> exp
+    
+    check exp >= 100: {
+      level + 1 -> level
+      0 -> exp
+      maxHp + 20 -> maxHp
+      maxHp -> hp
+      emit unity("Log", "LEVEL UP! Now level", level)
+    }
+  }
+  
+  on damage(amount) {
+    hp - amount -> hp
+    check hp <= 0: emit unity("Log", "GAME OVER")
+  }
+}
+\endcode
+
+**PlayerController.cs:**
+\code{.cs}
+public class PlayerController : MonoBehaviour
+{
+    void Update() {
+        if (Input.GetKeyDown(KeyCode.Space)) {
+            MorphynController.Instance.SendEventToEntity("Player", "add_exp", 35);
+        }
+        
+        if (Input.GetKeyDown(KeyCode.D)) {
+            MorphynController.Instance.SendEventToEntity("Player", "damage", 20);
+        }
+    }
+}
+\endcode
+
+**Result:** Config file handles ALL logic. No C# boilerplate.
+
+\section unity_quickstart Quick Start Example
+
+\subsection unity_step1 Step 1: Create Config File
+
+Right-click in Project: `Create > Morphyn File`
+
+\code{.morphyn}
+entity GameSettings {
+  has playerSpeed: 5.0
+  has enemyDamage: 10
+  has maxEnemies: 50
+  has difficulty: "normal"
+  
+  on set_difficulty(mode) {
+    mode -> difficulty
+    
+    check difficulty == "hard": {
+      15 -> enemyDamage
+      100 -> maxEnemies
+    }
+    
+    check difficulty == "easy": {
+      5 -> enemyDamage
+      20 -> maxEnemies
+    }
+  }
+}
+\endcode
+
+\subsection unity_step2 Step 2: Read Values from Unity
+
+\code{.cs}
+using UnityEngine;
+
+public class GameManager : MonoBehaviour
+{
+    void Start()
+    {
+        // Read config values
+        double speed = System.Convert.ToDouble(
+            MorphynController.Instance.GetField("GameSettings", "playerSpeed")
+        );
+        
+        double damage = System.Convert.ToDouble(
+            MorphynController.Instance.GetField("GameSettings", "enemyDamage")
+        );
+        
+        Debug.Log($"Speed: {speed}, Damage: {damage}");
+    }
+    
+    public void SetHardMode()
+    {
+        // Trigger logic inside config
+        MorphynController.Instance.SendEventToEntity("GameSettings", "set_difficulty", "hard");
+        
+        // Values auto-updated!
+        double newDamage = System.Convert.ToDouble(
+            MorphynController.Instance.GetField("GameSettings", "enemyDamage")
+        );
+        Debug.Log($"Hard mode damage: {newDamage}"); // 15
+    }
+}
+\endcode
+
+\section unity_controller MorphynController
+
+The main component that loads and runs .morphyn files.
+
+\subsection unity_controller_settings Settings
+
+| Setting | Description |
+|---------|-------------|
+| **Morphyn Scripts** | Drag .morphyn files here |
+| **Run On Start** | Auto-load on Start() |
+| **Enable Tick** | Send tick(dt) every frame |
+| **Enable Hot Reload** | Edit files during Play mode |
+| **Auto Save** | Save on quit |
+| **Save Folder** | Where to save state |
+
+\subsection unity_controller_api API
+
+\code{.cs}
+MorphynController morphyn = MorphynController.Instance;
+
+// Get value
+object hp = morphyn.GetField("Player", "hp");
+double hpValue = System.Convert.ToDouble(hp);
+
+// Set value
+morphyn.SetField("Player", "hp", 50);
+
+// Trigger event
+morphyn.SendEventToEntity("Player", "damage", 25);
+
+// Save/Load
+morphyn.SaveState();
+morphyn.LoadState("Player");
+\endcode
+
+\section unity_bridge Unity Bridge
+
+Call Unity functions from .morphyn files.
+
+\subsection unity_bridge_setup Setup
+
+\code{.cs}
+using UnityEngine;
+using Morphyn.Unity;
+
+public class GameManager : MonoBehaviour
+{
+    void Start()
+    {
+        // Register callback BEFORE MorphynController.Start()
+        UnityBridge.Instance.RegisterCallback("PlaySound", args => {
+            string soundName = args[0]?.ToString() ?? "";
+            AudioSource.PlayOneShot(Resources.Load<AudioClip>(soundName));
+        });
+        
+        UnityBridge.Instance.RegisterCallback("ShowMessage", args => {
+            Debug.Log($"Message: {string.Join(" ", args)}");
+        });
+    }
+}
+\endcode
+
+\subsection unity_bridge_call Calling from Morphyn
+
+\code{.morphyn}
+entity Enemy {
+  has hp: 50
+  
+  on damage(amount) {
+    hp - amount -> hp
+    emit unity("PlaySound", "hit")
+    
+    check hp <= 0: {
+      emit unity("PlaySound", "explosion")
+      emit unity("ShowMessage", "Enemy destroyed!")
+    }
+  }
+}
+\endcode
+
+\subsection unity_bridge_builtin Built-in Callbacks
+
+MorphynController includes these by default:
+
+\code{.morphyn}
+emit unity("Log", "Hello", "World")     // Debug.Log
+emit unity("Move", 1, 0, 0)             // Move controller transform
+emit unity("Rotate", 45)                // Rotate controller
+\endcode
+
+\section unity_examples Real Examples
+
+\subsection unity_example_shop Shop with Discount Logic
+
+**shop.morphyn:**
+\code{.morphyn}
+entity Shop {
+  has swordPrice: 100
+  has potionPrice: 20
+  has armorPrice: 150
+  
+  on apply_sale(percent) {
+    swordPrice - 50 -> swordPrice
+    potionPrice - 10 -> potionPrice
+    armorPrice - 75 -> armorPrice
+    emit unity("Log", "SALE! 50% OFF!")
+  }
+}
+\endcode
+
+**ShopUI.cs:**
+\code{.cs}
+using UnityEngine;
+using UnityEngine.UI;
+
+public class ShopUI : MonoBehaviour
+{
+    [SerializeField] private Text swordPriceText;
+    
+    void Start()
+    {
+        UpdatePrices();
+    }
+    
+    void UpdatePrices()
+    {
+        double price = System.Convert.ToDouble(
+            MorphynController.Instance.GetField("Shop", "swordPrice")
+        );
+        swordPriceText.text = $"Sword: ${price}";
+    }
+    
+    public void OnSaleButtonClick()
+    {
+        MorphynController.Instance.SendEventToEntity("Shop", "apply_sale", 50);
+        UpdatePrices(); // Shows 50
+    }
+}
+\endcode
+
+\subsection unity_example_inventory Inventory with Capacity
+
+**inventory.morphyn:**
+\code{.morphyn}
+entity Inventory {
+  has items: pool[]
+  has capacity: 10
+  has gold: 100
+  
+  on add_item(name) {
+    check items.count < capacity: {
+      emit items.add(name)
+      emit unity("Log", "Added:", name)
+    }
+    
+    check items.count >= capacity: {
+      emit unity("Log", "Inventory full!")
+    }
+  }
+  
+  on buy_item(name, cost) {
+    check gold >= cost: {
+      gold - cost -> gold
+      emit add_item(name)
+    }
+  }
+}
+\endcode
+
+**InventoryUI.cs:**
+\code{.cs}
+using UnityEngine;
+using Morphyn.Runtime;
+
+public class InventoryUI : MonoBehaviour
+{
+    public void AddSword()
+    {
+        MorphynController.Instance.SendEventToEntity("Inventory", "add_item", "sword");
+    }
+    
+    public void BuyPotion()
+    {
+        MorphynController.Instance.SendEventToEntity("Inventory", "buy_item", "potion", 20);
+    }
+    
+    public void ShowItems()
+    {
+        MorphynPool items = (MorphynPool)MorphynController.Instance.GetField("Inventory", "items");
+        
+        foreach (var item in items.Values)
+        {
+            Debug.Log($"Item: {item}");
+        }
+    }
+}
+\endcode
+
+\subsection unity_example_spawner Enemy Spawner with Timer
+
+**spawner.morphyn:**
+\code{.morphyn}
+entity Spawner {
+  has timer: 0
+  has interval: 2000
+  has maxEnemies: 10
+  has currentCount: 0
+  
+  on tick(dt) {
+    timer + dt -> timer
+    
+    check timer >= interval: {
+      check currentCount < maxEnemies: {
+        emit spawn
+        0 -> timer
+      }
+    }
+  }
+  
+  on spawn {
+    currentCount + 1 -> currentCount
+    emit unity("SpawnEnemy")
+  }
+  
+  on enemy_died {
+    currentCount - 1 -> currentCount
+  }
+}
+\endcode
+
+**Spawner.cs:**
+\code{.cs}
+using UnityEngine;
+using Morphyn.Unity;
+
+public class Spawner : MonoBehaviour
+{
+    [SerializeField] private GameObject enemyPrefab;
+    
+    void Start()
+    {
+        UnityBridge.Instance.RegisterCallback("SpawnEnemy", args => {
+            Instantiate(enemyPrefab, transform.position, Quaternion.identity);
+        });
+    }
+    
+    public void OnEnemyKilled()
+    {
+        MorphynController.Instance.SendEventToEntity("Spawner", "enemy_died");
+    }
+}
+\endcode
+
+\section unity_hotreload Hot Reload
+
+Edit .morphyn files during Play mode - changes apply instantly.
+
+**Enable:** Check `Enable Hot Reload` on MorphynController
+
+**Example:**
+1. Start Play mode
+2. Open player.morphyn
+3. Change `has damage: 10` to `has damage: 999`
+4. Save file
+5. Damage updates immediately - no restart needed
+
+\section unity_save Save/Load
+
+Morphyn saves entity state as readable .morphyn files.
+
+\code{.cs}
+// Save all entities
+MorphynController.Instance.SaveState();
+// Saved to: Application.persistentDataPath/MorphynData/
+
+// Load single entity
+MorphynController.Instance.LoadState("Player");
+
+// Auto-save on quit
+MorphynController.Instance.autoSave = true;
+\endcode
+
+**Saved file example:**
+\code{.morphyn}
+entity Player {
+  has hp: 75
+  has level: 5
+  has gold: 230
+}
+\endcode
+
+\section unity_best_practices Best Practices
+
+**1. One MorphynController per scene**
+\code{.cs}
+// Singleton - only one instance exists
+MorphynController.Instance
+\endcode
+
+**2. Register callbacks early**
+\code{.cs}
+[DefaultExecutionOrder(-100)]
+public class Setup : MonoBehaviour
+{
+    void Awake() // Use Awake, not Start
+    {
+        UnityBridge.Instance.RegisterCallback("MyCallback", args => {});
+    }
+}
+\endcode
+
+**3. Use for configs, not gameplay code**
+\code{.cs}
+// GOOD - config with logic
+entity ShopPrices { has swordCost: 100 }
+
+// BAD - complex gameplay
+entity ComplexAI { /* don't do this */ }
+\endcode
+
+\section unity_troubleshooting Common Issues
+
+**"MorphynController not found"**
+\code{.cs}
+if (MorphynController.Instance == null)
+{
+    Debug.LogError("Add MorphynController to scene!");
+}
+\endcode
+
+**"Callback not found"**
+- Register callbacks in Awake(), not Start()
+- Register BEFORE MorphynController loads scripts
+
+**Hot reload not working**
+- Editor only (not in builds)
+- File must be in Assets folder
+- Check `Enable Hot Reload` is enabled
+
+**Values not updating**
+\code{.cs}
+// After changing values, read again
+morphyn.SetField("Player", "hp", 50);
+double hp = System.Convert.ToDouble(morphyn.GetField("Player", "hp")); // 50
+\endcode
+
+*/
+
+/**
+\page vsix_extension Visual Studio Extension
+\tableofcontents
+
+\section vsix_overview Overview
+
+Syntax highlighting for .morphyn files in Visual Studio.
+
+\section vsix_install Installation
+
+1. Download `Morphyn.vsix` from [Releases](https://github.com/jvnkoo/morphyn/releases)
+2. Double-click to install
+3. Restart Visual Studio
+
+\section vsix_features Features
+
+- Syntax highlighting (keywords, strings, numbers)
+- File support: .morphyn, .mrph, .morph
+- Auto-indent and bracket matching
+- Comment support (# and /* */)
+
+*/

@@ -51,6 +51,7 @@ namespace Morphyn.Parser
      * has hp: 100
      * has name: "Player"
      * has alive: true
+     * has exist : null
      * \endcode
      * 
      * \par Pool Fields

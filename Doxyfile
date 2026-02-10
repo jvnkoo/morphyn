@@ -60,7 +60,7 @@ HTML_COLORSTYLE_GAMMA  = 80
 HTML_TIMESTAMP         = YES
 HTML_DYNAMIC_SECTIONS  = YES
 HTML_EXTRA_STYLESHEET  = doxygen-awesome-css/doxygen-awesome.css
-HTML_COLORSTYLE        = LIGHT
+HTML_COLORSTYLE        = DARK
 
 # Search
 SEARCHENGINE           = YES
