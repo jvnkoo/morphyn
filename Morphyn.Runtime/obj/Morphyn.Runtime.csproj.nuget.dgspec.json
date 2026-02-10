@@ -1,0 +1,148 @@
+{
+  "format": 1,
+  "restore": {
+    "/run/media/zolof/hdd/dev/sharp/Morphyn/Morphyn.Runtime/Morphyn.Runtime.csproj": {}
+  },
+  "projects": {
+    "/run/media/zolof/hdd/dev/sharp/Morphyn/Morphyn.Parser/Morphyn.Parser.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/run/media/zolof/hdd/dev/sharp/Morphyn/Morphyn.Parser/Morphyn.Parser.csproj",
+        "projectName": "Morphyn.Parser",
+        "projectPath": "/run/media/zolof/hdd/dev/sharp/Morphyn/Morphyn.Parser/Morphyn.Parser.csproj",
+        "packagesPath": "/home/zolof/.nuget/packages/",
+        "outputPath": "/run/media/zolof/hdd/dev/sharp/Morphyn/Morphyn.Parser/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/home/zolof/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "netstandard2.1"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "netstandard2.1": {
+            "targetAlias": "netstandard2.1",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "10.0.100"
+      },
+      "frameworks": {
+        "netstandard2.1": {
+          "targetAlias": "netstandard2.1",
+          "dependencies": {
+            "Superpower": {
+              "target": "Package",
+              "version": "[3.1.1-dev-00257, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "downloadDependencies": [
+            {
+              "name": "NETStandard.Library.Ref",
+              "version": "[2.1.0, 2.1.0]"
+            }
+          ],
+          "frameworkReferences": {
+            "NETStandard.Library": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/10.0.100/RuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "/run/media/zolof/hdd/dev/sharp/Morphyn/Morphyn.Runtime/Morphyn.Runtime.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/run/media/zolof/hdd/dev/sharp/Morphyn/Morphyn.Runtime/Morphyn.Runtime.csproj",
+        "projectName": "Morphyn.Runtime",
+        "projectPath": "/run/media/zolof/hdd/dev/sharp/Morphyn/Morphyn.Runtime/Morphyn.Runtime.csproj",
+        "packagesPath": "/home/zolof/.nuget/packages/",
+        "outputPath": "/run/media/zolof/hdd/dev/sharp/Morphyn/Morphyn.Runtime/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/home/zolof/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "netstandard2.1"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "netstandard2.1": {
+            "targetAlias": "netstandard2.1",
+            "projectReferences": {
+              "/run/media/zolof/hdd/dev/sharp/Morphyn/Morphyn.Parser/Morphyn.Parser.csproj": {
+                "projectPath": "/run/media/zolof/hdd/dev/sharp/Morphyn/Morphyn.Parser/Morphyn.Parser.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "10.0.100"
+      },
+      "frameworks": {
+        "netstandard2.1": {
+          "targetAlias": "netstandard2.1",
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "downloadDependencies": [
+            {
+              "name": "NETStandard.Library.Ref",
+              "version": "[2.1.0, 2.1.0]"
+            }
+          ],
+          "frameworkReferences": {
+            "NETStandard.Library": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/10.0.100/RuntimeIdentifierGraph.json"
+        }
+      }
+    }
+  }
+}
