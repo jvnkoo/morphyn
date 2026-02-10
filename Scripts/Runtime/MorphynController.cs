@@ -1,0 +1,330 @@
+using UnityEngine;
+using System;
+using System.IO;
+using System.Linq;
+using System.Collections.Generic;
+using Morphyn.Parser;
+using Morphyn.Runtime;
+using Morphyn.Unity;
+
+/// <summary>
+/// Core Morphyn engine - SINGLETON
+/// ONE instance manages ALL .morphyn files in the project
+/// </summary>
+public class MorphynController : MonoBehaviour
+{
+    private static MorphynController _instance;
+    public static MorphynController Instance
+    {
+        get
+        {
+            if (_instance == null)
+            {
+                _instance = FindObjectOfType<MorphynController>();
+            }
+            return _instance;
+        }
+    }
+    
+    [Header("Morphyn Scripts")]
+    [Tooltip("Add ALL your .morphyn files here")]
+    [SerializeField] private TextAsset[] morphynScripts;
+    
+    [Header("Settings")]
+    [SerializeField] private bool runOnStart = true;
+    [SerializeField] private bool enableTick = true;
+    [SerializeField] private bool enableHotReload = false;
+    [SerializeField] private bool autoSave = false;
+    [SerializeField] private string saveFolder = "MorphynData";
+    
+    private EntityData _context;
+    private float _lastTime;
+    private List<FileSystemWatcher> _watchers = new();
+    private bool _needsReload = false;
+    
+    public EntityData Context => _context;
+
+    void Awake()
+    {
+        if (_instance != null && _instance != this)
+        {
+            Debug.LogWarning("[Morphyn] Duplicate MorphynController detected! Destroying.");
+            Destroy(gameObject);
+            return;
+        }
+        _instance = this;
+    }
+
+    void Start()
+    {
+        MorphynRuntime.UnityCallback = (name, args) =>
+        {
+            UnityBridge.Instance.InvokeUnityCallback(name, args);
+        };
+        
+        if (runOnStart)
+        {
+            LoadAndRun();
+            if (enableHotReload) SetupHotReload();
+        }
+    }
+
+    public void LoadAndRun()
+    {
+        try
+        {
+            RegisterUnityCallbacks();
+            
+            string combinedCode = "";
+            foreach (var script in morphynScripts)
+            {
+                if (script != null)
+                {
+                    combinedCode += script.text + "\n";
+                }
+            }
+            
+            _context = MorphynParser.ParseFile(combinedCode);
+            Debug.Log($"[Morphyn] Loaded {_context.Entities.Count} entities");
+            
+            foreach (var entity in _context.Entities.Values)
+            {
+                entity.BuildCache();
+                if (entity.Events.Any(e => e.Name == "init"))
+                {
+                    MorphynRuntime.Send(entity, "init");
+                }
+            }
+            
+            MorphynRuntime.RunFullCycle(_context);
+            _lastTime = Time.time;
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError($"[Morphyn Error]: {ex.Message}\n{ex.StackTrace}");
+        }
+    }
+
+    void SetupHotReload()
+    {
+#if UNITY_EDITOR
+        foreach (var script in morphynScripts)
+        {
+            if (script == null) continue;
+            
+            try
+            {
+                string scriptPath = UnityEditor.AssetDatabase.GetAssetPath(script);
+                if (string.IsNullOrEmpty(scriptPath)) continue;
+                
+                string fullPath = Path.GetFullPath(scriptPath);
+                string directory = Path.GetDirectoryName(fullPath);
+                string fileName = Path.GetFileName(fullPath);
+                
+                var watcher = new FileSystemWatcher(directory)
+                {
+                    Filter = fileName,
+                    NotifyFilter = NotifyFilters.LastWrite
+                };
+                
+                watcher.Changed += (s, e) => { _needsReload = true; };
+                watcher.EnableRaisingEvents = true;
+                _watchers.Add(watcher);
+            }
+            catch (Exception ex)
+            {
+                Debug.LogWarning($"[Morphyn] Hot reload setup failed: {ex.Message}");
+            }
+        }
+#endif
+    }
+
+    void Update()
+    {
+        if (_context == null) return;
+        
+        try
+        {
+            if (_needsReload && enableHotReload)
+            {
+                ReloadLogic();
+                _needsReload = false;
+            }
+            
+            if (enableTick)
+            {
+                float currentTime = Time.time;
+                float dt = (currentTime - _lastTime) * 1000f;
+                _lastTime = currentTime;
+                
+                foreach (var entity in _context.Entities.Values)
+                {
+                    if (entity.Events.Any(e => e.Name == "tick"))
+                    {
+                        MorphynRuntime.Send(entity, "tick", new List<object?> { (double)dt });
+                    }
+                }
+                
+                MorphynRuntime.RunFullCycle(_context);
+                MorphynRuntime.GarbageCollect(_context);
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError($"[Morphyn Runtime Error]: {ex.Message}");
+        }
+    }
+
+    void ReloadLogic()
+    {
+#if UNITY_EDITOR
+        try
+        {
+            UnityEditor.AssetDatabase.Refresh();
+            
+            string combinedCode = "";
+            foreach (var script in morphynScripts)
+            {
+                if (script != null) combinedCode += script.text + "\n";
+            }
+            
+            EntityData newData = MorphynParser.ParseFile(combinedCode);
+
+            foreach (var newEntry in newData.Entities)
+            {
+                string name = newEntry.Key;
+                Entity newEntity = newEntry.Value;
+
+                if (_context.Entities.TryGetValue(name, out var existingEntity))
+                {
+                    existingEntity.Events = newEntity.Events;
+                    existingEntity.BuildCache();
+                }
+                else
+                {
+                    newEntity.BuildCache();
+                    _context.Entities.Add(name, newEntity);
+                    if (newEntity.Events.Any(e => e.Name == "init"))
+                    {
+                        MorphynRuntime.Send(newEntity, "init");
+                    }
+                }
+            }
+            
+            MorphynRuntime.RunFullCycle(_context);
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError($"[Morphyn Hot Reload Error]: {ex.Message}");
+        }
+#endif
+    }
+
+    public object? GetField(string entityName, string fieldName)
+    {
+        if (_context?.Entities.TryGetValue(entityName, out var entity) == true)
+        {
+            if (entity.Fields.TryGetValue(fieldName, out var value))
+            {
+                return value;
+            }
+        }
+        return null;
+    }
+
+    public void SetField(string entityName, string fieldName, object? value)
+    {
+        if (_context?.Entities.TryGetValue(entityName, out var entity) == true)
+        {
+            entity.Fields[fieldName] = value;
+        }
+    }
+
+    public Dictionary<string, object?> GetAllFields(string entityName)
+    {
+        if (_context?.Entities.TryGetValue(entityName, out var entity) == true)
+        {
+            return new Dictionary<string, object?>(entity.Fields);
+        }
+        return new Dictionary<string, object?>();
+    }
+
+    public void SendEventToEntity(string entityName, string eventName, params object[] args)
+    {
+        if (_context?.Entities.TryGetValue(entityName, out var entity) == true)
+        {
+            var argsList = new List<object?>(args);
+            MorphynRuntime.Send(entity, eventName, argsList);
+            MorphynRuntime.RunFullCycle(_context);
+        }
+    }
+
+    public void SaveState()
+    {
+        if (_context == null) return;
+        string path = Path.Combine(Application.persistentDataPath, saveFolder);
+        MorphynSerializer.SaveAllEntities(_context, path);
+    }
+
+    public void LoadState(string entityName)
+    {
+        if (_context?.Entities.TryGetValue(entityName, out var entity) != true) return;
+        string path = Path.Combine(Application.persistentDataPath, saveFolder, $"{entityName}.morphyn");
+        MorphynSerializer.LoadEntityFields(entity, path);
+    }
+
+    public void LoadAllStates()
+    {
+        if (_context == null) return;
+        foreach (var entityName in _context.Entities.Keys)
+        {
+            LoadState(entityName);
+        }
+    }
+
+    private void RegisterUnityCallbacks()
+    {
+        UnityBridge.Instance.RegisterCallback("Log", args =>
+        {
+            Debug.Log($"[Morphyn]: {string.Join(" ", args)}");
+        });
+        
+        UnityBridge.Instance.RegisterCallback("Move", args =>
+        {
+            if (args.Length >= 3)
+            {
+                float x = Convert.ToSingle(args[0]);
+                float y = Convert.ToSingle(args[1]);
+                float z = Convert.ToSingle(args[2]);
+                transform.position += new Vector3(x, y, z);
+            }
+        });
+        
+        UnityBridge.Instance.RegisterCallback("Rotate", args =>
+        {
+            if (args.Length >= 1)
+            {
+                float angle = Convert.ToSingle(args[0]);
+                transform.Rotate(0, angle, 0);
+            }
+        });
+    }
+
+    void OnApplicationQuit()
+    {
+        if (autoSave) SaveState();
+    }
+
+    void OnDestroy()
+    {
+        foreach (var watcher in _watchers)
+        {
+            watcher.EnableRaisingEvents = false;
+            watcher.Dispose();
+        }
+        _watchers.Clear();
+        
+        MorphynRuntime.UnityCallback = null;
+        UnityBridge.Instance.ClearCallbacks();
+    }
+}
