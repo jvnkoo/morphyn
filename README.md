@@ -83,7 +83,7 @@ morphyn hello.morphyn
 3. Drag `.morphyn` files into the controller
 4. Use Morphyn as smart configs with built-in logic
 
-See [Unity documentation](https://jvnkoo.github.io/morphyn/unity) for details.
+See [Unity documentation](https://jvnkoo.github.io/morphyn/) for details.
 
 ## Contributing
 
@@ -109,7 +109,7 @@ Morphyn source files are distributed under the Apache License 2.0 License. See [
 
 ## Links
 
-- **Documentation:** https://jvnkoo.github.io/morphyn/docs
+- **Documentation:** https://jvnkoo.github.io/morphyn/
 - **GitHub:** https://github.com/jvnkoo/morphyn
 - **Releases:** https://github.com/jvnkoo/morphyn/releases
 
