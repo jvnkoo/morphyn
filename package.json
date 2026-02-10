@@ -1,0 +1,23 @@
+{
+  "name": "morphyn-lang",
+  "displayName": "Morphyn Language",
+  "version": "v1.0.0-beta-2",
+  "engines": { "vscode": "^1.50.0" },
+  "contributes": {
+    "languages": [{
+      "id": "morphyn",
+      "aliases": ["Morphyn"],
+      "extensions": [".morphyn"],
+      "configuration": "./language-configuration.json"
+    }],
+    "grammars": [{
+      "language": "morphyn",
+      "scopeName": "source.morphyn",
+      "path": "./morphyn.tmLanguage.json"
+    }],
+    "snippets": [{
+      "language": "morphyn",
+      "path": "./snippets.json"
+    }]
+  }
+}

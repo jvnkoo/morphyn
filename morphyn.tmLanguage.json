@@ -1,0 +1,66 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "Morphyn",
+  "scopeName": "source.morphyn",
+  "patterns": [
+    {
+      "name": "comment.line.number-sign.morphyn",
+      "match": "#.*$"
+    },
+    {
+      "name": "comment.block.morphyn",
+      "begin": "/\\*",
+      "end": "\\*/"
+    },
+    {
+      "name": "comment.line.double-slash.morphyn",
+      "match": "//.*$"
+    },
+    {
+      "name": "string.quoted.double.morphyn",
+      "begin": "\"",
+      "end": "\"",
+      "patterns": [{ "name": "constant.character.escape.morphyn", "match": "\\\\." }]
+    },
+    {
+      "name": "keyword.control.morphyn",
+      "match": "\\b(entity|on|has|check|import|emit)\\b"
+    },
+    {
+      "name": "constant.language.morphyn",
+      "match": "\\b(true|false|self|pool)\\b"
+    },
+    {
+      "name": "keyword.operator.flow.morphyn",
+      "match": "->"
+    },
+    {
+      "name": "keyword.operator.comparison.morphyn",
+      "match": "(==|!=|<=|>=|<|>)"
+    },
+    {
+      "name": "keyword.operator.arithmetic.morphyn",
+      "match": "(\\+|\\-|\\*|/)"
+    },
+    {
+      "name": "entity.name.type.morphyn",
+      "match": "\\b[A-Z][a-zA-Z0-9_]*\\b"
+    },
+    {
+      "name": "entity.name.function.morphyn",
+      "match": "(?<=on\\s+)[a-z_][a-zA-Z0-9_]*"
+    },
+    {
+      "name": "variable.other.property.morphyn",
+      "match": "(?<=has\\s+)[a-z_][a-zA-Z0-9_]*"
+    },
+    {
+      "name": "constant.numeric.morphyn",
+      "match": "\\b\\d+(\\.\\d+)?\\b"
+    },
+    {
+      "name": "support.function.builtin.morphyn",
+      "match": "\\b(log|count|add|remove_at|at|each)\\b"
+    }
+  ]
+}

@@ -1,0 +1,34 @@
+{
+  "Entity Block": {
+    "prefix": "entity",
+    "body": [
+      "entity ${1:Name} {",
+      "\thas ${2:property}: ${3:value}",
+      "",
+      "\ton init {",
+      "\t\t${0}",
+      "\t}",
+      "}"
+    ]
+  },
+  "On Event": {
+    "prefix": "on",
+    "body": [
+      "on ${1:event_name}(${2:params}) {",
+      "\t${0}",
+      "}"
+    ]
+  },
+  "Check Guard": {
+    "prefix": "check",
+    "body": [
+      "check ${1:condition}: ${2:emit action}"
+    ]
+  },
+  "Flow Update": {
+    "prefix": "flow",
+    "body": [
+      "${1:value} + ${2:delta} -> ${1:value}"
+    ]
+  }
+}
