@@ -91,9 +91,14 @@ namespace Morphyn.Parser
      * \subsection syntax_check Check (Guard)
      * 
      * \code{.morphyn}
+     * # Check with an inline action
      * check condition: action
      * check hp > 0: emit alive
      * check state == "idle": emit can_move
+     *
+     * # Check without an inline action (guard)
+     * # If false, the event execution is stopped
+     * check i < 0
      * \endcode
      * 
      * \subsection syntax_emit Emit (Event Dispatch)

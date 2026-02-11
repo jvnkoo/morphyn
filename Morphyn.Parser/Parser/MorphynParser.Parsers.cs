@@ -203,15 +203,27 @@ namespace Morphyn.Parser
                 .Or(FlowAction.Try());
         
         private static TokenListParser<MorphynToken, MorphynAction> CheckAction =>
-            from checkKeyword in Token.EqualTo(MorphynToken.Check)
-            from condition in Expression 
-            from colon in Token.EqualTo(MorphynToken.Colon)
-            from action in Parse.Ref(() => ActionParser) 
-            select (MorphynAction)new CheckAction
-            {
-                Condition = condition,
-                InlineAction = action
-            };
+            (
+                from checkKeyword in Token.EqualTo(MorphynToken.Check)
+                from condition in Expression
+                from colon in Token.EqualTo(MorphynToken.Colon)
+                from action in Parse.Ref(() => ActionParser)
+                select (MorphynAction)new CheckAction
+                {
+                    Condition = condition,
+                    InlineAction = action
+                }
+            )
+            .Try()
+            .Or(
+                from checkKeyword in Token.EqualTo(MorphynToken.Check)
+                from condition in Expression
+                select (MorphynAction)new CheckAction
+                {
+                    Condition = condition,
+                    InlineAction = null
+                }
+            );
         
         private static TokenListParser<MorphynToken, MorphynAction> BlockActionParser =>
             from leftBrace in Token.EqualTo(MorphynToken.LeftBrace)

@@ -162,27 +162,19 @@ namespace Morphyn.Runtime
                 case CheckAction check:
                 {
                     object? result = EvaluateExpression(entity, check.Condition, localScope, data);
-                    bool passed = result is bool b && b;
+                    bool passed = Convert.ToBoolean(result);
 
-                    if (passed)
+                    if (!passed)
                     {
-                        if (check.InlineAction != null)
-                        {
-                            return ExecuteAction(data, entity, check.InlineAction, localScope);
-                        }
-
-                        return true;
+                        return check.InlineAction != null;
                     }
-                    else
-                    {
-                        if (check.InlineAction != null)
-                        {
-                            return true;
-                        }
 
-                        return false;
-                    }
+                    if (check.InlineAction != null)
+                        return ExecuteAction(data, entity, check.InlineAction, localScope);
+
+                    return true;
                 }
+
 
                 case SetIndexAction setIdx:
                 {
