@@ -161,9 +161,14 @@ Data Flow (Arrow)</h2>
 <div class="line">0 -&gt; counter</div>
 </div><!-- fragment --><h2><a class="anchor" id="syntax_check"></a>
 Check (Guard)</h2>
-<div class="fragment"><div class="line">check condition: action</div>
+<div class="fragment"><div class="line"># Check with an inline action</div>
+<div class="line">check condition: action</div>
 <div class="line">check hp &gt; 0: emit alive</div>
 <div class="line">check state == &quot;idle&quot;: emit can_move</div>
+<div class="line"> </div>
+<div class="line"># Check without an inline action (guard)</div>
+<div class="line"># If false, the event execution is stopped</div>
+<div class="line">check i &lt; 0</div>
 </div><!-- fragment --><h2><a class="anchor" id="syntax_emit"></a>
 Emit (Event Dispatch)</h2>
 <div class="fragment"><div class="line">emit event_name</div>
@@ -262,7 +267,7 @@ Keywords</h1>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Tue Feb 10 2026 21:14:39 for Morphyn Language by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.8 </li>
+    <li class="footer">Generated on Wed Feb 11 2026 20:10:50 for Morphyn Language by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.8 </li>
   </ul>
 </div>
 </body>
