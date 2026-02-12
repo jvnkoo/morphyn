@@ -83,13 +83,21 @@ morphyn hello.morphyn
 3. Drag `.morphyn` files into the controller
 4. Use Morphyn as smart configs with built-in logic
 
-See [Unity documentation](https://jvnkoo.github.io/morphyn/) for details.
+> [!TIP]
+> Development for Unity-specific features is active in the [`unity-bridge`](https://github.com/jvnkoo/morphyn/tree/unity-bridge) branch.
+
+See [Unity documentation](https://jvnkoo.github.io/morphyn/unity_integration.html) for details.
 
 ## Contributing
 
 Morphyn is open source and welcomes contributions!
 
 Found a bug or have a feature idea? Open an issue on [GitHub](https://github.com/jvnkoo/morphyn/issues).
+
+**Main Branching:**
+- **Core Runtime:** Development happens on the `main` branch.
+- **Unity Integration:** Use the `unity-bridge` branch.
+- **VS Code Extension:** Use the `vscode-extension` branch.
 
 ## Philosophy
 
