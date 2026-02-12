@@ -115,4 +115,4 @@ Morphyn source files are distributed under the Apache License 2.0. See [LICENSE]
 
 ---
 
-<img src="https://github.com/user-attachments/assets/602c1dce-191d-49df-a3f3-873678bf65c7" width="1000" height="300" alt="gif">
+<img src="https://media1.tenor.com/m/ugRQCY7AKEsAAAAd/texh-texhnolyze.gif" width="1000" height="300" alt="gif">
