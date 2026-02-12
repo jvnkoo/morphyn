@@ -40,6 +40,10 @@ dotnet build
 morphyn program.morphyn
 \endcode
 
+\note Development of ecosystem components is organized into branches:
+- **Unity Package:** Switch to the \c unity-bridge branch.
+- **VS Code Extension:** Switch to the \c vscode-extension branch.
+
 \subsection first_program Your First Program
 
 \code{.morphyn}
