@@ -1,0 +1,12 @@
+{
+  "iconDefinitions": {
+    "morph_icon": {
+      "iconPath": "./media/icon.png"
+    }
+  },
+  "fileExtensions": {
+    "morph": "morph_icon",
+    "morphyn": "morph_icon",
+    "mrph": "morph_icon"
+  }
+}
