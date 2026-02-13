@@ -1,5 +1,9 @@
 # The Morphyn Programming Language
 
+<div align="center">
+  <img src="https://github.com/user-attachments/assets/7c061775-2683-4dd6-acf5-01a5835acf60" width="256" height="256" alt="Morphyn Logo" />
+</div>
+
 Morphyn is an event-driven language for game logic and smart configurations. It replaces JSON with executable logic, enabling reactive data flows without control flow complexity.
 
 **Key Features:**
