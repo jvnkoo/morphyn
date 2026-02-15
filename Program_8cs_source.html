@@ -150,10 +150,10 @@ $(document).ready(function(){initNavTree('Program_8cs_source.html',''); initResi
 <div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span><span class="comment">     *</span></div>
 <div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span><span class="comment">     * \code{.morphyn}</span></div>
 <div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span><span class="comment">     * entity Player {</span></div>
-<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span><span class="comment">     *   on tick(dt) {</span></div>
-<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span><span class="comment">     *     # dt = milliseconds since last frame</span></div>
-<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span><span class="comment">     *     emit log(&quot;Frame time:&quot;, dt)</span></div>
-<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span><span class="comment">     *   }</span></div>
+<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span><span class="comment">     * on tick(dt) {</span></div>
+<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span><span class="comment">     * # dt = milliseconds since last frame</span></div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span><span class="comment">     * emit log(&quot;Frame time:&quot;, dt)</span></div>
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span><span class="comment">     * }</span></div>
 <div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span><span class="comment">     * }</span></div>
 <div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span><span class="comment">     * \endcode</span></div>
 <div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span><span class="comment">     *</span></div>
@@ -163,11 +163,11 @@ $(document).ready(function(){initNavTree('Program_8cs_source.html',''); initResi
 <div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span><span class="comment">     *</span></div>
 <div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span><span class="comment">     * \code{.morphyn}</span></div>
 <div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span><span class="comment">     * entity Player {</span></div>
-<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span><span class="comment">     *   has hp: 100</span></div>
+<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span><span class="comment">     * has hp: 100</span></div>
 <div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span><span class="comment">     *</span></div>
-<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span><span class="comment">     *   on init {</span></div>
-<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span><span class="comment">     *     emit log(&quot;Player spawned with&quot;, hp, &quot;HP&quot;)</span></div>
-<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span><span class="comment">     *   }</span></div>
+<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span><span class="comment">     * on init {</span></div>
+<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span><span class="comment">     * emit log(&quot;Player spawned with&quot;, hp, &quot;HP&quot;)</span></div>
+<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span><span class="comment">     * }</span></div>
 <div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span><span class="comment">     * }</span></div>
 <div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span><span class="comment">     * \endcode</span></div>
 <div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span><span class="comment">     */</span></div>
@@ -175,7 +175,7 @@ $(document).ready(function(){initNavTree('Program_8cs_source.html',''); initResi
 <div class="line"><a id="l00072" name="l00072"></a><span class="lineno"><a class="line" href="classMorphyn_1_1Core_1_1Program.html">   72</a></span>    <span class="keyword">class </span><a class="code hl_class" href="classMorphyn_1_1Core_1_1Program.html">Program</a></div>
 <div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>    {</div>
 <div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>        <span class="keyword">private</span> <span class="keyword">static</span> readonly <span class="keywordtype">string</span>[] ValidExtensions = { <span class="stringliteral">&quot;.mrph&quot;</span>, <span class="stringliteral">&quot;.morph&quot;</span>, <span class="stringliteral">&quot;.morphyn&quot;</span> };</div>
-<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span>        <span class="keyword">private</span> <span class="keyword">static</span> readonly List&lt;object&gt; TickArgsBuffer = <span class="keyword">new</span> List&lt;object&gt;(1) { 0.0 };</div>
+<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span>        <span class="keyword">private</span> <span class="keyword">static</span> readonly List&lt;object?&gt; TickArgsBuffer = <span class="keyword">new</span> List&lt;object?&gt;(1) { 0.0 };</div>
 <div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span> </div>
 <div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span>        <span class="keyword">static</span> <span class="keywordtype">void</span> Main(<span class="keywordtype">string</span>[] args)</div>
 <div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span>        {</div>
@@ -287,7 +287,7 @@ $(document).ready(function(){initNavTree('Program_8cs_source.html',''); initResi
 <div class="line"><a id="l00184" name="l00184"></a><span class="lineno">  184</span>                    <span class="comment">// System.Threading.Thread.Sleep(16); </span></div>
 <div class="line"><a id="l00185" name="l00185"></a><span class="lineno">  185</span>                }</div>
 <div class="line"><a id="l00186" name="l00186"></a><span class="lineno">  186</span> </div>
-<div class="line"><a id="l00187" name="l00187"></a><span class="lineno">  187</span>                Console.WriteLine(<span class="stringliteral">&quot;--- Simulation Finished ---&quot;</span>);</div>
+<div class="line"><a id="l00187" name="l00187"></a><span class="lineno">  187</span>                <span class="comment">// Console.WriteLine(&quot;--- Simulation Finished ---&quot;);</span></div>
 <div class="line"><a id="l00188" name="l00188"></a><span class="lineno">  188</span>            }</div>
 <div class="line"><a id="l00189" name="l00189"></a><span class="lineno">  189</span>            <span class="keywordflow">catch</span> (Exception ex)</div>
 <div class="line"><a id="l00190" name="l00190"></a><span class="lineno">  190</span>            {</div>
@@ -476,7 +476,7 @@ $(document).ready(function(){initNavTree('Program_8cs_source.html',''); initResi
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_a04859155963e2101b9d7710d73093ab.html">Morphyn.Core</a></li><li class="navelem"><a class="el" href="Program_8cs.html">Program.cs</a></li>
-    <li class="footer">Generated on Sun Feb 15 2026 17:19:24 for Morphyn Language by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.8 </li>
+    <li class="footer">Generated on Sun Feb 15 2026 17:31:16 for Morphyn Language by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.8 </li>
   </ul>
 </div>
 </body>

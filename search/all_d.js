@@ -8,7 +8,7 @@ var searchData=
   ['leftparen_5',['LeftParen',['../namespaceMorphyn_1_1Parser.html#a3200d949b0507c8b2702d8ecc8a1f61eaf02071a8b56c676adabcad98429fa14e',1,'Morphyn::Parser']]],
   ['lessthan_6',['LessThan',['../namespaceMorphyn_1_1Parser.html#a3200d949b0507c8b2702d8ecc8a1f61eac6d9d7bb9939f62f01c80f8b1251501c',1,'Morphyn::Parser']]],
   ['lessthanorequal_7',['LessThanOrEqual',['../namespaceMorphyn_1_1Parser.html#a3200d949b0507c8b2702d8ecc8a1f61ea4ab671acbbaacb0db7d8477cfe4f4e0b',1,'Morphyn::Parser']]],
-  ['literalexpression_8',['literalexpression',['../classMorphyn_1_1Parser_1_1LiteralExpression.html',1,'Morphyn.Parser.LiteralExpression'],['../classMorphyn_1_1Parser_1_1LiteralExpression.html#a213ac617a0fac2bda43d80eb364cbe67',1,'Morphyn.Parser.LiteralExpression.LiteralExpression()']]],
+  ['literalexpression_8',['literalexpression',['../classMorphyn_1_1Parser_1_1LiteralExpression.html',1,'Morphyn.Parser.LiteralExpression'],['../classMorphyn_1_1Parser_1_1LiteralExpression.html#a7e327e8eebf7298825ade333696fd5a5',1,'Morphyn.Parser.LiteralExpression.LiteralExpression()']]],
   ['literals_9',['Literals',['../expressions.html#literals',1,'']]],
   ['load_10',['Save/Load',['../unity_integration.html#unity_save',1,'']]],
   ['logic_11',['logic',['../language_syntax.html#syntax_logic',1,'Logic'],['../unity_integration.html#unity_example_shop',1,'Shop with Discount Logic']]],

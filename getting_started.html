@@ -113,20 +113,20 @@ Hot Reload</h2>
 Tick System</h2>
 <p>Entities with a <code>tick</code> event handler receive delta time updates every frame:</p>
 <div class="fragment"><div class="line">entity Player {</div>
-<div class="line">  on tick(dt) {</div>
-<div class="line">    # dt = milliseconds since last frame</div>
-<div class="line">    emit log(&quot;Frame time:&quot;, dt)</div>
-<div class="line">  }</div>
+<div class="line">on tick(dt) {</div>
+<div class="line"># dt = milliseconds since last frame</div>
+<div class="line">emit log(&quot;Frame time:&quot;, dt)</div>
+<div class="line">}</div>
 <div class="line">}</div>
 </div><!-- fragment --><h2><a class="anchor" id="init_event"></a>
 Init Event</h2>
 <p>Entities with an <code>init</code> event are automatically initialized on load:</p>
 <div class="fragment"><div class="line">entity Player {</div>
-<div class="line">  has hp: 100</div>
+<div class="line">has hp: 100</div>
 <div class="line"> </div>
-<div class="line">  on init {</div>
-<div class="line">    emit log(&quot;Player spawned with&quot;, hp, &quot;HP&quot;)</div>
-<div class="line">  }</div>
+<div class="line">on init {</div>
+<div class="line">emit log(&quot;Player spawned with&quot;, hp, &quot;HP&quot;)</div>
+<div class="line">}</div>
 <div class="line">}</div>
 </div><!-- fragment --> </div></div><!-- contents -->
 </div><!-- PageDoc -->
@@ -134,7 +134,7 @@ Init Event</h2>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Sun Feb 15 2026 17:19:24 for Morphyn Language by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.8 </li>
+    <li class="footer">Generated on Sun Feb 15 2026 17:31:16 for Morphyn Language by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.8 </li>
   </ul>
 </div>
 </body>
