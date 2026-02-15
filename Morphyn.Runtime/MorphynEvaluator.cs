@@ -8,6 +8,7 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Runtime.CompilerServices;
 using Morphyn.Parser;
 
 namespace Morphyn.Runtime
@@ -124,33 +125,46 @@ namespace Morphyn.Runtime
      */
     public static class MorphynEvaluator
     {
+        private const double EPSILON = 1e-9;
+        private const double COMPARISON_EPSILON = 1e-7;
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static object? EvaluateExpression(Entity entity, MorphynExpression expr, 
             Dictionary<string, object?> localScope, EntityData data)
         {
-            return expr switch
+            switch (expr)
             {
-                LiteralExpression l => l.Value,
+                case LiteralExpression l:
+                    return l.Value;
 
-                VariableExpression v => 
-                    localScope.TryGetValue(v.Name, out var argVal) ? argVal :
-                        (entity.Fields.TryGetValue(v.Name, out var fieldVal) 
-                            ? fieldVal 
-                            : throw new Exception($"Variable '{v.Name}' not found in '{entity.Name}'")),
+                case VariableExpression v:
+                    if (localScope.TryGetValue(v.Name, out var argVal))
+                        return argVal;
+                    if (entity.Fields.TryGetValue(v.Name, out var fieldVal))
+                        return fieldVal;
+                    throw new Exception($"Variable '{v.Name}' not found in '{entity.Name}'");
 
-                BinaryExpression b => EvaluateBinary(entity, b, localScope, data), 
+                case BinaryExpression b:
+                    return EvaluateBinary(entity, b, localScope, data);
 
-                BinaryLogicExpression bl => EvaluateLogic(entity, bl, localScope, data),
+                case BinaryLogicExpression bl:
+                    return EvaluateLogic(entity, bl, localScope, data);
                 
-                UnaryLogicExpression u => EvaluateUnary(entity, u, localScope, data), 
+                case UnaryLogicExpression u:
+                    return EvaluateUnary(entity, u, localScope, data);
 
-                IndexAccessExpression idx => GetFromPool(entity, idx, localScope, data), 
+                case IndexAccessExpression idx:
+                    return GetFromPool(entity, idx, localScope, data);
         
-                PoolPropertyExpression p => GetPoolProperty(entity, p, data), 
+                case PoolPropertyExpression p:
+                    return GetPoolProperty(entity, p, data);
 
-                _ => throw new Exception($"Unsupported expression: {expr.GetType().Name}")
-            };
+                default:
+                    throw new Exception($"Unsupported expression: {expr.GetType().Name}");
+            }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static bool EvaluateLogic(Entity entity, BinaryLogicExpression b, Dictionary<string, object?> localScope, EntityData data)
         {
             var left = EvaluateExpression(entity, b.Left, localScope, data);
@@ -175,6 +189,7 @@ namespace Morphyn.Runtime
             throw new Exception($"Unknown logic operator: {b.Operator}");
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static bool EvaluateUnary(Entity entity, UnaryLogicExpression u, Dictionary<string, object?> localScope, EntityData data)
         {
             var val = EvaluateExpression(entity, u.Inner, localScope, data);
@@ -182,6 +197,7 @@ namespace Morphyn.Runtime
             return !(bool)val;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static object? GetPoolProperty(Entity entity, PoolPropertyExpression p, EntityData data)
         {
             if (entity.Fields.TryGetValue(p.TargetName, out var obj) && obj is MorphynPool pool)
@@ -202,24 +218,25 @@ namespace Morphyn.Runtime
             throw new Exception($"Entity or Pool '{p.TargetName}' not found.");
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static object? GetFromPool(Entity entity, IndexAccessExpression idx, Dictionary<string, object?> localScope, EntityData data)
         {
-            if (entity.Fields.TryGetValue(idx.TargetName, out var val) && val is MorphynPool pool)
-            {
-                var evalIndex = EvaluateExpression(entity, idx.IndexExpr, localScope, data);
-                if (evalIndex == null)
-                    throw new Exception($"Index expression evaluated to null for pool '{idx.TargetName}'");
-                
-                int index = Convert.ToInt32(evalIndex) - 1; 
-        
-                if (index >= 0 && index < pool.Values.Count)
-                    return pool.Values[index];
+            if (!entity.Fields.TryGetValue(idx.TargetName, out var val) || !(val is MorphynPool pool))
+                throw new Exception($"Target '{idx.TargetName}' is not a pool.");
+
+            var evalIndex = EvaluateExpression(entity, idx.IndexExpr, localScope, data);
+            if (evalIndex == null)
+                throw new Exception($"Index expression evaluated to null for pool '{idx.TargetName}'");
             
+            int index = Convert.ToInt32(evalIndex) - 1; 
+    
+            if (index < 0 || index >= pool.Values.Count)
                 throw new Exception($"Runtime Error: Index {index + 1} is out of bounds for pool '{idx.TargetName}'");
-            }
-            throw new Exception($"Target '{idx.TargetName}' is not a pool.");
+        
+            return pool.Values[index];
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static object EvaluateBinary(Entity entity, BinaryExpression b, Dictionary<string, object?> localScope, EntityData data)
         {
             var leftObj = EvaluateExpression(entity, b.Left, localScope, data);
@@ -244,22 +261,22 @@ namespace Morphyn.Runtime
 
             if (IsNumeric(leftObj) && IsNumeric(rightObj))
             {
-                double l = Convert.ToDouble(leftObj, CultureInfo.InvariantCulture);
-                double r = Convert.ToDouble(rightObj, CultureInfo.InvariantCulture);
+                double l = Convert.ToDouble(leftObj);
+                double r = Convert.ToDouble(rightObj);
 
                 return b.Operator switch
                 {
                     "+" => l + r,
                     "-" => l - r,
                     "*" => l * r,
-                    "/" => Math.Abs(r) > 1e-9 ? l / r : 0.0,
+                    "/" => Math.Abs(r) > EPSILON ? l / r : 0.0,
                     "%" => l % r,
                     ">" => l > r,
                     "<" => l < r,
                     ">=" => l >= r,
                     "<=" => l <= r,
-                    "==" => Math.Abs(l - r) < 1e-7,
-                    "!=" => Math.Abs(l - r) > 1e-7,
+                    "==" => Math.Abs(l - r) < COMPARISON_EPSILON,
+                    "!=" => Math.Abs(l - r) > COMPARISON_EPSILON,
                     _ => throw new Exception($"Unknown operator: {b.Operator}")
                 };
             }
@@ -272,6 +289,7 @@ namespace Morphyn.Runtime
             };
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static bool IsNumeric(object? obj) => 
             obj is sbyte || obj is byte || obj is short || obj is ushort || 
             obj is int || obj is uint || obj is long || obj is ulong || 

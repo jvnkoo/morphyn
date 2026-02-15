@@ -71,6 +71,9 @@ namespace Morphyn.Core
      */
     class Program
     {
+        private static readonly string[] ValidExtensions = { ".mrph", ".morph", ".morphyn" };
+        private static readonly List<object> TickArgsBuffer = new List<object>(1) { 0.0 };
+
         static void Main(string[] args)
         {
             if (args.Length == 0)
@@ -80,10 +83,9 @@ namespace Morphyn.Core
             }
 
             string path = args[0];
-            string[] validExtensions = { ".mrph", ".morph", ".morphyn" };
             string ext = Path.GetExtension(path).ToLower();
 
-            if (!validExtensions.Contains(ext))
+            if (!ValidExtensions.Contains(ext))
             {
                 Console.WriteLine($"[Error]: Running file with non-standard extension '{ext}'.");
                 return;
@@ -129,7 +131,10 @@ namespace Morphyn.Core
 
                 DateTime lastTime = DateTime.Now;
                 
-                using var watcher = new FileSystemWatcher(Path.GetDirectoryName(Path.GetFullPath(path))!)
+                string fullPath = Path.GetFullPath(path);
+                string? directory = Path.GetDirectoryName(fullPath);
+                
+                using var watcher = new FileSystemWatcher(directory ?? Environment.CurrentDirectory)
                 {
                     Filter = "*.morphyn", 
                     NotifyFilter = NotifyFilters.LastWrite
@@ -139,12 +144,20 @@ namespace Morphyn.Core
                 watcher.Changed += (s, e) => needsReload = true;
                 watcher.EnableRaisingEvents = true;
 
+                // Pre-collect entities with tick handlers
+                var tickEntities = new List<Entity>();
+                foreach (var entity in context.Entities.Values)
+                {
+                    if (entity.Events.Any(e => e.Name == "tick"))
+                        tickEntities.Add(entity);
+                }
+
                 while (true)
                 {
                     if (needsReload)
                     {
                         System.Threading.Thread.Sleep(50); 
-                        ReloadLogic(path, context);
+                        ReloadLogic(path, context, tickEntities);
                         needsReload = false;
                     }
                     
@@ -153,12 +166,12 @@ namespace Morphyn.Core
                     double dtMs = (currentTime - lastTime).TotalMilliseconds;
                     lastTime = currentTime;
 
-                    foreach (var entity in context.Entities.Values)
+                    TickArgsBuffer[0] = dtMs;
+                    
+                    int tickCount = tickEntities.Count;
+                    for (int i = 0; i < tickCount; i++)
                     {
-                        if (entity.Events.Any(e => e.Name == "tick"))
-                        {
-                            MorphynRuntime.Send(entity, "tick", new List<object>() { dtMs });
-                        }
+                        MorphynRuntime.Send(tickEntities[i], "tick", TickArgsBuffer);
                     }
                     
                     MorphynRuntime.RunFullCycle(context);
@@ -201,7 +214,7 @@ namespace Morphyn.Core
             }
         }
         
-        static void ReloadLogic(string path, EntityData currentData)
+        static void ReloadLogic(string path, EntityData currentData, List<Entity> tickEntities)
         {
             try 
             {
@@ -230,6 +243,11 @@ namespace Morphyn.Core
                         if (newEntity.Events.Any(e => e.Name == "init"))
                         {
                             MorphynRuntime.Send(newEntity, "init");
+                        }
+                        
+                        if (newEntity.Events.Any(e => e.Name == "tick"))
+                        {
+                            tickEntities.Add(newEntity);
                         }
                     }
                 }
@@ -277,7 +295,7 @@ namespace Morphyn.Core
 
             string content = File.ReadAllText(absolutePath);
             var lines = content.Split('\n');
-            var finalContent = new List<string>();
+            var finalContent = new List<string>(lines.Length);
 
             foreach (var line in lines)
             {
@@ -285,7 +303,8 @@ namespace Morphyn.Core
                 if (trimmed.StartsWith("import ") && trimmed.EndsWith(";")) 
                 {
                     string fileName = trimmed.Replace("import", "").Replace("\"", "").Replace(";", "").Trim();
-                    string subPath = Path.Combine(Path.GetDirectoryName(absolutePath)!, fileName);
+                    string? directory = Path.GetDirectoryName(absolutePath);
+                    string subPath = Path.Combine(directory ?? "", fileName);
             
                     if (File.Exists(subPath))
                         finalContent.Add(ResolveImports(subPath, visited));

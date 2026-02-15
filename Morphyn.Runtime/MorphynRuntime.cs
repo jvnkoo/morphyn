@@ -1,6 +1,6 @@
 /**
  * \file MorphynRuntime.cs
- * \brief Morphyn Runtime System
+ * \brief Morphyn Runtime System 
  * \defgroup runtime Runtime System
  * @{
  */
@@ -8,6 +8,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using Morphyn.Parser;
 using static Morphyn.Runtime.MorphynEvaluator;
 
@@ -89,6 +90,8 @@ namespace Morphyn.Runtime
     {
         private static readonly Queue<PendingEvent> _eventQueue = new();
         private static readonly List<object?> EmptyArgs = new List<object?>(0);
+        private static readonly HashSet<(Entity, string)> _pendingEventSet = new();
+        private const int HASH_SET_THRESHOLD = 20; // Use HashSet only when queue grows
 
         public static Action<string, object?[]>? UnityCallback { get; set; }
 
@@ -107,8 +110,22 @@ namespace Morphyn.Runtime
          */
         public static void Send(Entity target, string eventName, List<object?>? args = null)
         {
-            if (_eventQueue.Any(e => e.EventName == eventName && e.Target == target))
-                return;
+            // Hybrid approach: use linear search for small queues, HashSet for large ones
+            if (_eventQueue.Count < HASH_SET_THRESHOLD)
+            {
+                // Linear search is faster for small collections
+                if (_eventQueue.Any(e => e.EventName == eventName && e.Target == target))
+                    return;
+            }
+            else
+            {
+                // HashSet is faster for large collections
+                var key = (target, eventName);
+                if (_pendingEventSet.Contains(key))
+                    return;
+                _pendingEventSet.Add(key);
+            }
+            
             _eventQueue.Enqueue(new PendingEvent(target, eventName, args ?? EmptyArgs));
         }
 
@@ -117,8 +134,23 @@ namespace Morphyn.Runtime
             while (_eventQueue.Count > 0)
             {
                 var current = _eventQueue.Dequeue();
+                
+                // Clean up HashSet when queue becomes small again
+                if (_eventQueue.Count < HASH_SET_THRESHOLD / 2 && _pendingEventSet.Count > 0)
+                {
+                    _pendingEventSet.Clear();
+                }
+                else if (_pendingEventSet.Count > 0)
+                {
+                    _pendingEventSet.Remove((current.Target, current.EventName));
+                }
+                
                 ProcessEvent(data, current);
             }
+            
+            // Final cleanup
+            if (_pendingEventSet.Count > 0)
+                _pendingEventSet.Clear();
         }
 
         private static void ProcessEvent(EntityData data, PendingEvent pending)
@@ -126,7 +158,7 @@ namespace Morphyn.Runtime
             var entity = pending.Target;
             if (!entity.EventCache.TryGetValue(pending.EventName, out var ev)) return;
 
-            var localScope = new Dictionary<string, object?>();
+            var localScope = new Dictionary<string, object?>(ev.Parameters.Count);
             for (int i = 0; i < ev.Parameters.Count; i++)
             {
                 var val = i < pending.Args.Count
@@ -138,12 +170,11 @@ namespace Morphyn.Runtime
             foreach (var action in ev.Actions)
             {
                 if (!ExecuteAction(data, entity, action, localScope))
-                {
                     break;
-                }
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static bool ExecuteAction(EntityData data, Entity entity, MorphynAction action,
             Dictionary<string, object?> localScope)
         {
@@ -212,12 +243,11 @@ namespace Morphyn.Runtime
                         if (!ExecuteAction(data, entity, subAction, localScope))
                             return false;
                     }
-
                     return true;
 
                 case EmitAction emit:
                 {
-                    List<object?> resolvedArgs = new List<object?>();
+                    List<object?> resolvedArgs = new List<object?>(emit.Arguments.Count);
 
                     foreach (var argExpr in emit.Arguments)
                     {
