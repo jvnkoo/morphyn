@@ -101,9 +101,9 @@ namespace Morphyn.Core
             {
                 string code = ResolveImports(path, new HashSet<string>());
                 EntityData context = MorphynParser.ParseFile(code);
-                
+
                 ValidateEntities(context);
-                
+
                 // Console.WriteLine($"[System] Loaded {context.Entities.Count} entities.");
 
                 foreach (var entity in context.Entities.Values)
@@ -117,7 +117,7 @@ namespace Morphyn.Core
                     {
                         MorphynRuntime.Send(entity, "init");
                     }
-                    else 
+                    else
                     {
                         // Console.WriteLine($"  [Info] {entity.Name} has no 'init' event. Static data only.");
                     }
@@ -126,15 +126,15 @@ namespace Morphyn.Core
                 Console.WriteLine("\n--- Starting Runtime ---");
 
                 MorphynRuntime.RunFullCycle(context);
-                
+
                 Console.WriteLine("\n--- Engine Pulse Started (Press Ctrl+C to stop) ---");
 
                 string fullPath = Path.GetFullPath(path);
                 string? directory = Path.GetDirectoryName(fullPath);
-                
+
                 using var watcher = new FileSystemWatcher(directory ?? Environment.CurrentDirectory)
                 {
-                    Filter = "*.morphyn", 
+                    Filter = "*.morphyn",
                     NotifyFilter = NotifyFilters.LastWrite
                 };
 
@@ -157,30 +157,30 @@ namespace Morphyn.Core
                 {
                     if (needsReload)
                     {
-                        System.Threading.Thread.Sleep(50); 
+                        System.Threading.Thread.Sleep(50);
                         ReloadLogic(path, context, tickEntities);
                         needsReload = false;
                         stopwatch.Restart();
                         lastFrameTime = 0;
                     }
-                    
+
                     double currentFrameTime = stopwatch.Elapsed.TotalMilliseconds;
                     // Calculate fps
                     double dtMs = currentFrameTime - lastFrameTime;
                     lastFrameTime = currentFrameTime;
 
                     TickArgsBuffer[0] = dtMs;
-                    
+
                     int tickCount = tickEntities.Count;
                     for (int i = 0; i < tickCount; i++)
                     {
                         MorphynRuntime.Send(tickEntities[i], "tick", TickArgsBuffer);
                     }
-                    
+
                     MorphynRuntime.RunFullCycle(context);
-                    
+
                     MorphynRuntime.GarbageCollect(context);
-                    
+
                     // System.Threading.Thread.Sleep(16); 
                 }
 
@@ -192,7 +192,7 @@ namespace Morphyn.Core
                 Console.WriteLine(ex.StackTrace);
             }
         }
-        
+
         static void ValidateEntities(EntityData data)
         {
             foreach (var entity in data.Entities.Values)
@@ -203,7 +203,8 @@ namespace Morphyn.Core
 
                 if (duplicateField != null)
                 {
-                    throw new Exception($"[Semantic Error]: Entity '{entity.Name}' has multiple fields named '{duplicateField.Key}'.");
+                    throw new Exception(
+                        $"[Semantic Error]: Entity '{entity.Name}' has multiple fields named '{duplicateField.Key}'.");
                 }
 
                 var duplicateEvent = entity.Events
@@ -212,18 +213,19 @@ namespace Morphyn.Core
 
                 if (duplicateEvent != null)
                 {
-                    throw new Exception($"[Semantic Error]: Entity '{entity.Name}' has multiple definitions for event '{duplicateEvent.Key}'. Event names must be unique.");
+                    throw new Exception(
+                        $"[Semantic Error]: Entity '{entity.Name}' has multiple definitions for event '{duplicateEvent.Key}'. Event names must be unique.");
                 }
             }
         }
-        
+
         static void ReloadLogic(string path, EntityData currentData, List<Entity> tickEntities)
         {
-            try 
+            try
             {
                 Console.WriteLine("\n[Hot Reload] Changes detected! Processing...");
                 string code = ResolveImports(path, new HashSet<string>());
-        
+
                 EntityData newData = MorphynParser.ParseFile(code);
 
                 foreach (var newEntry in newData.Entities)
@@ -247,7 +249,7 @@ namespace Morphyn.Core
                         {
                             MorphynRuntime.Send(newEntity, "init");
                         }
-                        
+
                         if (newEntity.Events.Any(e => e.Name == "tick"))
                         {
                             tickEntities.Add(newEntity);
@@ -260,41 +262,48 @@ namespace Morphyn.Core
                 Console.WriteLine($"[Hot Reload Error]: {ex.Message}");
             }
         }
-        
+
         /**
-         * \brief Resolves import statements recursively
-         * \param filePath Path to the file to process
-         * \param visited Set of already processed files (prevents circular imports)
-         * \return Combined content of all imported files
-         *
-         * \page imports Import System
-         *
-         * \section import_syntax Import Syntax
-         *
-         * Import other Morphyn files:
-         *
-         * \code{.morphyn}
-         * import "enemies.morphyn";
-         * import "weapons.morphyn";
-         * import "items.morphyn";
-         *
-         * entity Player {
-         *   # Can use entities from imported files
-         * }
-         * \endcode
-         *
-         * \section import_rules Import Rules
-         *
-         * - Imports are resolved relative to the importing file
-         * - Circular imports are automatically prevented
-         * - Import statements must end with semicolon
-         * - Missing import files generate warnings but don't stop execution
-         */
+          * \brief Resolves import statements recursively
+          * \param filePath Path to the file to process
+          * \param visited Set of already processed files (prevents circular imports)
+          * \return Combined content of all imported files
+          *
+          * \page imports Import System
+          *
+          * \section import_syntax Import Syntax
+          *
+          * Import other Morphyn files:
+          *
+          * \code{.morphyn}
+          * import "enemies.morphyn";
+          * import "core/weapons.morphyn";
+          * import "../shared/items.morphyn";
+          *
+          * entity Player {
+          * # Can use entities from imported files
+          * }
+          * \endcode
+          *
+          * \section import_rules Import Rules
+          *
+          * - Imports are resolved relative to the importing file
+          * - Circular imports are automatically prevented
+          * - Import statements must end with semicolon
+          * - Missing import files generate warnings but don't stop execution
+          */
         static string ResolveImports(string filePath, HashSet<string> visited)
         {
+            // Get absolute path to ensure uniqueness in 'visited' set
             string absolutePath = Path.GetFullPath(filePath);
-            if (visited.Contains(absolutePath)) return ""; 
+            if (visited.Contains(absolutePath)) return "";
             visited.Add(absolutePath);
+
+            if (!File.Exists(absolutePath))
+            {
+                Console.WriteLine($"[Error] File not found: {absolutePath}");
+                return "";
+            }
 
             string content = File.ReadAllText(absolutePath);
             var lines = content.Split('\n');
@@ -303,22 +312,38 @@ namespace Morphyn.Core
             foreach (var line in lines)
             {
                 var trimmed = line.Trim();
-                if (trimmed.StartsWith("import ") && trimmed.EndsWith(";")) 
+
+                // Improved import parsing to support subdirectories and relative paths
+                if (trimmed.StartsWith("import ") && trimmed.EndsWith(";"))
                 {
-                    string fileName = trimmed.Replace("import", "").Replace("\"", "").Replace(";", "").Trim();
-                    string? directory = Path.GetDirectoryName(absolutePath);
-                    string subPath = Path.Combine(directory ?? "", fileName);
-            
-                    if (File.Exists(subPath))
-                        finalContent.Add(ResolveImports(subPath, visited));
-                    else
-                        Console.WriteLine($"[Warning] Import file not found: {subPath}");
+                    int firstQuote = trimmed.IndexOf('"');
+                    int lastQuote = trimmed.LastIndexOf('"');
+
+                    if (firstQuote != -1 && lastQuote > firstQuote)
+                    {
+                        string fileName = trimmed.Substring(firstQuote + 1, lastQuote - firstQuote - 1);
+
+                        // Resolve path relative to the directory of the current file
+                        string? currentDir = Path.GetDirectoryName(absolutePath);
+                        string subPath = Path.GetFullPath(Path.Combine(currentDir ?? "", fileName));
+
+                        if (File.Exists(subPath))
+                        {
+                            finalContent.Add(ResolveImports(subPath, visited));
+                        }
+                        else
+                        {
+                            Console.WriteLine(
+                                $"[Warning] Import file not found: {subPath} (imported from {absolutePath})");
+                        }
+                    }
                 }
                 else
                 {
                     finalContent.Add(line);
                 }
             }
+
             return string.Join("\n", finalContent);
         }
     }
