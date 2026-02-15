@@ -129,8 +129,6 @@ namespace Morphyn.Core
                 
                 Console.WriteLine("\n--- Engine Pulse Started (Press Ctrl+C to stop) ---");
 
-                DateTime lastTime = DateTime.Now;
-                
                 string fullPath = Path.GetFullPath(path);
                 string? directory = Path.GetDirectoryName(fullPath);
                 
@@ -152,6 +150,9 @@ namespace Morphyn.Core
                         tickEntities.Add(entity);
                 }
 
+                var stopwatch = System.Diagnostics.Stopwatch.StartNew();
+                double lastFrameTime = 0;
+
                 while (true)
                 {
                     if (needsReload)
@@ -159,12 +160,14 @@ namespace Morphyn.Core
                         System.Threading.Thread.Sleep(50); 
                         ReloadLogic(path, context, tickEntities);
                         needsReload = false;
+                        stopwatch.Restart();
+                        lastFrameTime = 0;
                     }
                     
-                    DateTime currentTime = DateTime.Now;
+                    double currentFrameTime = stopwatch.Elapsed.TotalMilliseconds;
                     // Calculate fps
-                    double dtMs = (currentTime - lastTime).TotalMilliseconds;
-                    lastTime = currentTime;
+                    double dtMs = currentFrameTime - lastFrameTime;
+                    lastFrameTime = currentFrameTime;
 
                     TickArgsBuffer[0] = dtMs;
                     
@@ -178,7 +181,7 @@ namespace Morphyn.Core
                     
                     MorphynRuntime.GarbageCollect(context);
                     
-                    System.Threading.Thread.Sleep(16);
+                    // System.Threading.Thread.Sleep(16); 
                 }
 
                 Console.WriteLine("--- Simulation Finished ---");
