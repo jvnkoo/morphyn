@@ -42,6 +42,10 @@ public class MorphynController : MonoBehaviour
     private List<FileSystemWatcher> _watchers = new();
     private bool _needsReload = false;
     
+    // Optimization: Pre-cache tick entities and reuse tick args buffer
+    private List<Entity> _tickEntities = new();
+    private readonly List<object> _tickArgsBuffer = new List<object>(1) { 0.0 };
+    
     public EntityData Context => _context;
 
     void Awake()
@@ -97,6 +101,17 @@ public class MorphynController : MonoBehaviour
             }
             
             MorphynRuntime.RunFullCycle(_context);
+            
+            // Optimization: Pre-collect entities with tick handlers
+            _tickEntities.Clear();
+            foreach (var entity in _context.Entities.Values)
+            {
+                if (entity.Events.Any(e => e.Name == "tick"))
+                {
+                    _tickEntities.Add(entity);
+                }
+            }
+            
             _lastTime = Time.time;
         }
         catch (Exception ex)
@@ -157,12 +172,13 @@ public class MorphynController : MonoBehaviour
                 float dt = (currentTime - _lastTime) * 1000f;
                 _lastTime = currentTime;
                 
-                foreach (var entity in _context.Entities.Values)
+                // Optimization: Use pre-cached tick entities and buffer
+                _tickArgsBuffer[0] = (double)dt;
+                
+                int tickCount = _tickEntities.Count;
+                for (int i = 0; i < tickCount; i++)
                 {
-                    if (entity.Events.Any(e => e.Name == "tick"))
-                    {
-                        MorphynRuntime.Send(entity, "tick", new List<object?> { (double)dt });
-                    }
+                    MorphynRuntime.Send(_tickEntities[i], "tick", _tickArgsBuffer);
                 }
                 
                 MorphynRuntime.RunFullCycle(_context);
@@ -207,6 +223,12 @@ public class MorphynController : MonoBehaviour
                     if (newEntity.Events.Any(e => e.Name == "init"))
                     {
                         MorphynRuntime.Send(newEntity, "init");
+                    }
+                    
+                    // Optimization: Add new tick entities to cache
+                    if (newEntity.Events.Any(e => e.Name == "tick"))
+                    {
+                        _tickEntities.Add(newEntity);
                     }
                 }
             }
