@@ -48,10 +48,10 @@ namespace Morphyn.Core
      *
      * \code{.morphyn}
      * entity Player {
-     *   on tick(dt) {
-     *     # dt = milliseconds since last frame
-     *     emit log("Frame time:", dt)
-     *   }
+     * on tick(dt) {
+     * # dt = milliseconds since last frame
+     * emit log("Frame time:", dt)
+     * }
      * }
      * \endcode
      *
@@ -61,18 +61,18 @@ namespace Morphyn.Core
      *
      * \code{.morphyn}
      * entity Player {
-     *   has hp: 100
+     * has hp: 100
      *
-     *   on init {
-     *     emit log("Player spawned with", hp, "HP")
-     *   }
+     * on init {
+     * emit log("Player spawned with", hp, "HP")
+     * }
      * }
      * \endcode
      */
     class Program
     {
         private static readonly string[] ValidExtensions = { ".mrph", ".morph", ".morphyn" };
-        private static readonly List<object> TickArgsBuffer = new List<object>(1) { 0.0 };
+        private static readonly List<object?> TickArgsBuffer = new List<object?>(1) { 0.0 };
 
         static void Main(string[] args)
         {
@@ -184,7 +184,7 @@ namespace Morphyn.Core
                     // System.Threading.Thread.Sleep(16); 
                 }
 
-                Console.WriteLine("--- Simulation Finished ---");
+                // Console.WriteLine("--- Simulation Finished ---");
             }
             catch (Exception ex)
             {

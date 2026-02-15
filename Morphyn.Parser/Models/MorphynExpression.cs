@@ -8,8 +8,8 @@ namespace Morphyn.Parser
 
     public class IndexAccessExpression : MorphynExpression
     {
-        public string TargetName { get; set; }
-        public MorphynExpression IndexExpr { get; set; }
+        public required string TargetName { get; set; }
+        public required MorphynExpression IndexExpr { get; set; }
     }
 
     public class PoolPropertyExpression : MorphynExpression
@@ -21,7 +21,7 @@ namespace Morphyn.Parser
     public class LiteralExpression : MorphynExpression
     {
         public object? Value { get; }
-        public LiteralExpression(object value) => Value = value;
+        public LiteralExpression(object? value) => Value = value;
     }
 
     public class VariableExpression : MorphynExpression

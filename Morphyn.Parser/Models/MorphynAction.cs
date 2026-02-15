@@ -23,23 +23,23 @@ namespace Morphyn.Parser
     public class CheckAction : MorphynAction
     {
         public required MorphynExpression Condition { get; set; }
-        public MorphynExpression Left { get; set; }
-        public string Operator { get; set; }
-        public MorphynExpression Right { get; set; }
+        public MorphynExpression Left { get; set; } = null!;
+        public string Operator { get; set; } = null!;
+        public MorphynExpression Right { get; set; } = null!;
         public MorphynAction? InlineAction { get; set; }
     }
     
     public class SetAction : MorphynAction
     {
-        public MorphynExpression Expression;
-        public string TargetField { get; set; }
+        public MorphynExpression Expression = null!;
+        public required string TargetField { get; set; }
     }
     
     public class SetIndexAction : MorphynAction
     {
-        public string TargetPoolName { get; set; }
-        public MorphynExpression IndexExpr { get; set; }
-        public MorphynExpression ValueExpr { get; set; }
+        public required string TargetPoolName { get; set; }
+        public required MorphynExpression IndexExpr { get; set; }
+        public required MorphynExpression ValueExpr { get; set; }
     }
     
     public class BlockAction : MorphynAction
