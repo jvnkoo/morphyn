@@ -80,11 +80,27 @@ public class MorphynController : MonoBehaviour
             RegisterUnityCallbacks();
             
             string combinedCode = "";
+            HashSet<string> visitedFiles = new HashSet<string>();
+
             foreach (var script in morphynScripts)
             {
                 if (script != null)
                 {
+#if UNITY_EDITOR
+                    // In Editor, we can resolve real paths for recursive imports
+                    string assetPath = UnityEditor.AssetDatabase.GetAssetPath(script);
+                    if (!string.IsNullOrEmpty(assetPath))
+                    {
+                        combinedCode += ResolveImports(Path.GetFullPath(assetPath), visitedFiles) + "\n";
+                    }
+                    else
+                    {
+                        combinedCode += script.text + "\n";
+                    }
+#else
+                    // In Build, we rely on the pre-loaded TextAsset content
                     combinedCode += script.text + "\n";
+#endif
                 }
             }
             
@@ -102,7 +118,6 @@ public class MorphynController : MonoBehaviour
             
             MorphynRuntime.RunFullCycle(_context);
             
-            // Optimization: Pre-collect entities with tick handlers
             _tickEntities.Clear();
             foreach (var entity in _context.Entities.Values)
             {
@@ -118,6 +133,51 @@ public class MorphynController : MonoBehaviour
         {
             Debug.LogError($"[Morphyn Error]: {ex.Message}\n{ex.StackTrace}");
         }
+    }
+
+    /**
+     * Recursive import resolution for Unity
+     */
+    private string ResolveImports(string absolutePath, HashSet<string> visited)
+    {
+        if (visited.Contains(absolutePath)) return "";
+        visited.Add(absolutePath);
+
+        if (!File.Exists(absolutePath))
+        {
+            Debug.LogWarning($"[Morphyn] Import not found: {absolutePath}");
+            return "";
+        }
+
+        string content = File.ReadAllText(absolutePath);
+        string[] lines = content.Split('\n');
+        List<string> finalContent = new List<string>(lines.Length);
+
+        string currentDir = Path.GetDirectoryName(absolutePath);
+
+        foreach (var line in lines)
+        {
+            string trimmed = line.Trim();
+            if (trimmed.StartsWith("import ") && trimmed.EndsWith(";"))
+            {
+                int firstQuote = trimmed.IndexOf('"');
+                int lastQuote = trimmed.LastIndexOf('"');
+
+                if (firstQuote != -1 && lastQuote > firstQuote)
+                {
+                    string relativePath = trimmed.Substring(firstQuote + 1, lastQuote - firstQuote - 1);
+                    string fullSubPath = Path.GetFullPath(Path.Combine(currentDir, relativePath));
+                    
+                    finalContent.Add(ResolveImports(fullSubPath, visited));
+                }
+            }
+            else
+            {
+                finalContent.Add(line);
+            }
+        }
+
+        return string.Join("\n", finalContent);
     }
 
     void SetupHotReload()
