@@ -2,11 +2,12 @@
 
 ## Installation Steps
 
-1. Download `Morphyn.unitypackage` from [GitHub Releases](https://github.com/yourusername/morphyn/releases)
+1. Download `Morphyn.unitypackage` from [Releases](https://github.com/jvnkoo/morphyn/releases/latest)
 2. Import: `Assets > Import Package > Custom Package`
 3. Add to scene: `GameObject > Create Empty > Add Component > Morphyn Controller`
-4. Drag .morphyn files into `Morphyn Scripts` array
-5. Enable `Run On Start`
+4. Drag `.morphyn` files into `Morphyn Scripts` array
+5. Check `Enable Hot Reload`
+6. Press Play
 
 Done.
 
@@ -14,60 +15,59 @@ Done.
 
 ### Step 1: Create Config File
 
-Right-click in Project: `Create > Morphyn File`
+Create `player.morphyn` in your Assets folder:
 ```morphyn
-entity GameSettings {
-  has playerSpeed: 5.0
-  has enemyDamage: 10
-  has maxEnemies: 50
-  has difficulty: "normal"
+entity Player {
+  has hp: 100
+  has damage: 25
+  has level: 1
   
-  on set_difficulty(mode) {
-    mode -> difficulty
-    
-    check difficulty == "hard": {
-      15 -> enemyDamage
-      100 -> maxEnemies
-    }
-    
-    check difficulty == "easy": {
-      5 -> enemyDamage
-      20 -> maxEnemies
-    }
+  on level_up {
+    level + 1 -> level
+    hp + 20 -> hp
+    emit unity("Log", "Level up! New level:", level)
   }
 }
 ```
 
-### Step 2: Read Values from Unity
+### Step 2: Use in C#
 ```cs
 using UnityEngine;
+using Morphyn.Unity;
 
-public class GameManager : MonoBehaviour
+public class PlayerController : MonoBehaviour
 {
     void Start()
     {
-        // Read config values
-        double speed = System.Convert.ToDouble(
-            MorphynController.Instance.GetField("GameSettings", "playerSpeed")
+        // Read values
+        double hp = System.Convert.ToDouble(
+            MorphynController.Instance.GetField("Player", "hp")
         );
         
-        double damage = System.Convert.ToDouble(
-            MorphynController.Instance.GetField("GameSettings", "enemyDamage")
-        );
-        
-        Debug.Log($"Speed: {speed}, Damage: {damage}");
+        Debug.Log($"Player HP: {hp}");
     }
     
-    public void SetHardMode()
+    void Update()
     {
-        // Trigger logic inside config
-        MorphynController.Instance.SendEventToEntity("GameSettings", "set_difficulty", "hard");
-        
-        // Values auto-updated!
-        double newDamage = System.Convert.ToDouble(
-            MorphynController.Instance.GetField("GameSettings", "enemyDamage")
-        );
-        Debug.Log($"Hard mode damage: {newDamage}"); // 15
+        if (Input.GetKeyDown(KeyCode.L))
+        {
+            // Trigger event
+            MorphynController.Instance.SendEventToEntity("Player", "level_up");
+        }
     }
 }
 ```
+
+### Step 3: Test Hot Reload
+
+1. Enter Play mode
+2. Open `player.morphyn`
+3. Change `has hp: 100` to `has hp: 999`
+4. Save
+5. **HP updates instantly in running game!**
+
+## Next Steps
+
+- [Unity API Reference](api.md)
+- [Unity Examples](examples.md)
+- [Hot Reload Guide](overview.md#hot-reload)

@@ -1,14 +1,37 @@
 # Installation
 
 ## Requirements
-
 - .NET 6.0 or higher
 
-## From Source
+## Standalone Runtime
+
+**Download from [Releases](https://github.com/jvnkoo/morphyn/releases/latest):**
+- Runtime: `morphyn-windows-x64.exe` (Windows) / `morphyn-linux-x64` (Linux/macOS)
+- Install script: `install.ps1` / `install.sh`
+
+**Setup:**
+1. Download both files for your platform
+2. Run install script to add `morphyn` to PATH:
+   - Windows: `.\install.ps1`
+   - Linux/macOS: `./install.sh`
+
+!!! note
+    The install script only needs to be run once.
+
+**Usage:**
+```bash
+# Create a file
+echo 'entity Game { has score: 0 }' > game.morphyn
+
+# Run it
+morphyn game.morphyn
+```
+
+## Build from Source
 
 Clone the repository:
 ```sh
-git clone https://github.com/yourusername/morphyn.git
+git clone https://github.com/jvnkoo/morphyn.git
 cd morphyn
 ```
 
@@ -17,18 +40,14 @@ Build the project:
 dotnet build
 ```
 
-Run a Morphyn program:
-```sh
-morphyn program.morphyn
-```
+The compiled binary will be in `bin/Debug/net6.0/` or `bin/Release/net6.0/`.
 
 ## File Extensions
 
 Morphyn recognizes the following file extensions:
-
-- `.mrph`
+- `.morphyn` (recommended)
 - `.morph`
-- `.morphyn`
+- `.mrph`
 
 ## Development Branches
 

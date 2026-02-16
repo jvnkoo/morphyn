@@ -1,5 +1,8 @@
 # Basic Examples
 
+!!! note
+    Custom events (like `damage`, `heal`) must be triggered either from `init`/`tick` events, or externally via C# code using `MorphynController.SendEventToEntity()`. They don't run automatically.
+
 ## Simple Counter
 ```morphyn
 entity Counter {
@@ -15,6 +18,12 @@ entity Counter {
   }
 }
 ```
+
+**What happens:**
+- `init` runs once when entity is created
+- `tick` runs every frame, incrementing counter
+
+---
 
 ## Health System
 ```morphyn
@@ -45,6 +54,26 @@ entity Player {
 }
 ```
 
+**How to use:**
+
+In standalone runtime:
+```morphyn
+entity Game {
+  on init {
+    emit player.damage(50)  # Trigger damage event
+    emit player.heal(20)    # Trigger heal event
+  }
+}
+```
+
+In Unity:
+```csharp
+MorphynController.Instance.SendEventToEntity("Player", "damage", 50);
+MorphynController.Instance.SendEventToEntity("Player", "heal", 20);
+```
+
+---
+
 ## Enemy AI
 ```morphyn
 entity Enemy {
@@ -71,14 +100,42 @@ entity Enemy {
 }
 ```
 
+**How it works:**
+- `see_player` event must be triggered externally (e.g., from Unity's OnTriggerEnter)
+- Once in "chase" state, `tick` automatically triggers `attack` every frame
+- `attack` sends damage event to player entity
+
+**Unity example:**
+```csharp
+void OnTriggerEnter(Collider other)
+{
+    if (other.CompareTag("Player"))
+    {
+        MorphynController.Instance.SendEventToEntity("Enemy", "see_player");
+    }
+}
+```
+
+---
+
 ## Inventory System
 ```morphyn
 entity Inventory {
   has items: pool["sword", "shield"]
   has capacity: 10
   
+  on init {
+    emit list_items  # Show initial items
+  }
+  
   on add_item(item) {
-    check items.count < capacity: emit items.add(item)
+    check items.count < capacity: {
+      emit items.add(item)
+      emit log("Added:", item)
+    }
+    check items.count >= capacity: {
+      emit log("Inventory full!")
+    }
   }
   
   on remove_item(index) {
@@ -99,4 +156,16 @@ entity Inventory {
     emit log("  -", item)
   }
 }
+```
+
+**How to use:**
+```csharp
+// Add item
+MorphynController.Instance.SendEventToEntity("Inventory", "add_item", "potion");
+
+// Use item at index 1
+MorphynController.Instance.SendEventToEntity("Inventory", "use_item", 1);
+
+// List all items
+MorphynController.Instance.SendEventToEntity("Inventory", "list_items");
 ```

@@ -1,120 +1,115 @@
 # Unity Integration
 
-## Overview
+## What is Morphyn for Unity?
 
-**Morphyn = JSON + Logic**
+**Config files with built-in logic and instant hot reload.**
 
-Stop using dumb JSON configs. Morphyn is a smart configuration language that runs logic when values change.
+Stop restarting Unity every time you change a game balance value.
 
-## Why Morphyn > JSON
+## The Problem
 
-| JSON | Morphyn |
-|------|---------|
-| Only stores data | Stores data + behavior |
-| Needs external code for validation | Built-in checks |
-| Can't react to changes | Event-driven reactions |
-| Static values | Dynamic calculations |
-| No hot reload | Edit configs in Play mode |
+Traditional Unity workflow:
+1. Change enemy HP in C# script
+2. Stop Play mode
+3. Wait for Unity to reload
+4. Press Play
+5. Test
+6. Repeat 50x per day
 
-## Think of it as:
+**Result: 10+ minutes wasted on context switching.**
 
-- Config files that validate themselves
-- PlayerPrefs with built-in logic
-- ScriptableObjects without C# code
-- Smart data containers
+## The Solution
 
-## JSON vs Morphyn Comparison
+With Morphyn:
+1. Change enemy HP in `.morphyn` file
+2. Save
+3. **Game updates instantly while running**
 
-### The JSON Way (BAD)
+!!! note
+    Unity will still recompile in the background when you save .morphyn files, but your game keeps running and state is preserved.
 
-**player_config.json:**
-```json
-{
-  "hp": 100,
-  "maxHp": 100,
-  "level": 1,
-  "exp": 0
-}
-```
+## Comparison
 
-**PlayerController.cs:**
+### ❌ ScriptableObject
 ```cs
-public class PlayerController : MonoBehaviour
+[CreateAssetMenu]
+public class EnemyData : ScriptableObject
 {
-    private PlayerConfig config;
-    
-    void Start() {
-        string json = File.ReadAllText("player_config.json");
-        config = JsonUtility.FromJson<PlayerConfig>(json);
-    }
-    
-    public void AddExp(int amount) {
-        config.exp += amount;
-        
-        // Manual logic every time
-        if (config.exp >= 100) {
-            config.level++;
-            config.exp = 0;
-            config.maxHp += 20;
-            config.hp = config.maxHp;
-            Debug.Log("LEVEL UP!");
-        }
-    }
-    
-    public void Damage(int amount) {
-        config.hp -= amount;
-        
-        // More manual logic
-        if (config.hp <= 0) {
-            Debug.Log("GAME OVER");
-        }
-    }
+    public int hp = 100;
+    public int damage = 25;
 }
 ```
 
-### The Morphyn Way (GOOD)
+**Change value → Must stop Play mode**
 
-**player.morphyn:**
+---
+
+### ✅ Morphyn
 ```morphyn
-entity Player {
+entity Enemy {
   has hp: 100
-  has maxHp: 100
-  has level: 1
-  has exp: 0
+  has damage: 25
+}
+```
+
+**Change value → Updates while playing**
+
+## When to Use Morphyn
+
+### ✅ Perfect For
+- Game balance (HP, damage, XP curves)
+- Shop systems (prices, stock)
+- Quest data (requirements, rewards)
+- AI parameters (aggro range, patrol speed)
+- Difficulty settings
+
+### ⚠️ Not Recommended For
+- Complex algorithms (use C#)
+- Performance-critical loops (use C#)
+- UI rendering (use Unity UI)
+
+**Rule of thumb:** If you'd use a ScriptableObject, use Morphyn instead.
+
+## Key Features
+
+### Hot Reload
+Edit logic and values in Play mode without restarting.
+```morphyn
+on damage(amount) {
+  hp - amount -> hp
+  check hp <= 0: emit die  # ← Change this while game runs
+}
+```
+
+### Built-in Validation
+No more manual null checks or validation code.
+```morphyn
+on heal(amount) {
+  check amount > 0: hp + amount -> hp  # Auto-validates
+  check hp > max_hp: max_hp -> hp      # Auto-clamps
+}
+```
+
+### Event-Driven Logic
+Reactive behaviors without complex state machines.
+```morphyn
+entity Shop {
+  has gold: 100
   
-  on add_exp(amount) {
-    exp + amount -> exp
-    
-    check exp >= 100: {
-      level + 1 -> level
-      0 -> exp
-      maxHp + 20 -> maxHp
-      maxHp -> hp
-      emit unity("Log", "LEVEL UP! Now level", level)
+  on buy_item(cost) {
+    check gold >= cost: {
+      gold - cost -> gold
+      emit inventory.add("sword")
     }
-  }
-  
-  on damage(amount) {
-    hp - amount -> hp
-    check hp <= 0: emit unity("Log", "GAME OVER")
+    check gold < cost: {
+      emit unity("ShowError", "Not enough gold")
+    }
   }
 }
 ```
 
-**PlayerController.cs:**
-```cs
-public class PlayerController : MonoBehaviour
-{
-    void Update() {
-        if (Input.GetKeyDown(KeyCode.Space)) {
-            MorphynController.Instance.SendEventToEntity("Player", "add_exp", 35);
-        }
-        
-        if (Input.GetKeyDown(KeyCode.D)) {
-            MorphynController.Instance.SendEventToEntity("Player", "damage", 20);
-        }
-    }
-}
-```
+## Next Steps
 
-**Result:** Config file handles ALL logic. No C# boilerplate.
+- [Installation Guide](installation.md)
+- [API Reference](api.md)
+- [Code Examples](examples.md)
