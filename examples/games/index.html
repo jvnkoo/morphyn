@@ -1227,6 +1227,7 @@
 
 <h1 id="game-examples">Game Examples</h1>
 <h2 id="complete-game-example">Complete Game Example</h2>
+<p>This example shows a complete game loop with automatic enemy spawning.
 <div class="language-morphyn highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">import</span> <span class="s2">&quot;player.morphyn&quot;</span><span class="err">;</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="k">import</span> <span class="s2">&quot;enemy.morphyn&quot;</span><span class="err">;</span>
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>
@@ -1262,7 +1263,55 @@
 </span><span id="__span-0-33"><a id="__codelineno-0-33" name="__codelineno-0-33" href="#__codelineno-0-33"></a>    <span class="k">emit</span> <span class="nb">log</span><span class="p">(</span><span class="s2">&quot;Score:&quot;</span><span class="p">,</span> <span class="n">score</span><span class="p">)</span>
 </span><span id="__span-0-34"><a id="__codelineno-0-34" name="__codelineno-0-34" href="#__codelineno-0-34"></a>  <span class="p">}</span>
 </span><span id="__span-0-35"><a id="__codelineno-0-35" name="__codelineno-0-35" href="#__codelineno-0-35"></a><span class="p">}</span>
-</span></code></pre></div>
+</span></code></pre></div></p>
+<p><strong>How it works:</strong></p>
+<ol>
+<li><strong><code>init</code></strong> runs once when game starts</li>
+<li>
+<p>Spawns first enemy</p>
+</li>
+<li>
+<p><strong><code>tick(dt)</code></strong> runs every frame</p>
+</li>
+<li>Updates spawn timer</li>
+<li>Spawns new enemy every 2000ms (2 seconds)</li>
+<li>
+<p>Calls <code>update</code> event on all enemies</p>
+</li>
+<li>
+<p><strong><code>enemy_killed</code></strong> must be triggered externally when enemy dies</p>
+</li>
+<li>In Unity: Call from enemy death script</li>
+<li>In standalone: Enemy can emit <code>game.enemy_killed</code> on death</li>
+</ol>
+<p><strong>Enemy definition (<code>enemy.morphyn</code>):</strong>
+<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="k">entity</span> <span class="nc">Enemy</span> <span class="p">{</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>  <span class="k">has</span> <span class="nv">hp</span><span class="p">:</span> <span class="m">50</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>  <span class="k">on</span> <span class="nf">update</span><span class="p">(</span><span class="n">dt</span><span class="p">)</span> <span class="p">{</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>    <span class="c1"># Enemy AI logic here</span>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>    <span class="k">emit</span> <span class="nb">log</span><span class="p">(</span><span class="s2">&quot;Enemy updating&quot;</span><span class="p">)</span>
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>  <span class="p">}</span>
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>
+</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>  <span class="k">on</span> <span class="nf">damage</span><span class="p">(</span><span class="n">amount</span><span class="p">)</span> <span class="p">{</span>
+</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>    <span class="n">hp</span> <span class="o o-Arithmetic">-</span> <span class="n">amount</span> <span class="o">-&gt;</span> <span class="n">hp</span>
+</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a>    <span class="k">check</span> <span class="n">hp</span> <span class="o o-Comparison">&lt;=</span> <span class="m">0</span><span class="p">:</span> <span class="p">{</span>
+</span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a>      <span class="k">emit</span> <span class="n">game</span><span class="p">.</span><span class="n">enemy_killed</span>  <span class="c1"># Notify game</span>
+</span><span id="__span-1-13"><a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a>      <span class="k">emit</span> <span class="kc">self</span><span class="p">.</span><span class="n">destroy</span>
+</span><span id="__span-1-14"><a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a>    <span class="p">}</span>
+</span><span id="__span-1-15"><a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a>  <span class="p">}</span>
+</span><span id="__span-1-16"><a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a><span class="p">}</span>
+</span></code></pre></div></p>
+<p><strong>Unity integration:</strong>
+<div class="language-csharp highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="k">public</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">EnemyController</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">MonoBehaviour</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="p">{</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">    </span><span class="k">void</span><span class="w"> </span><span class="nf">OnDestroy</span><span class="p">()</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">    </span><span class="p">{</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">        </span><span class="c1">// Notify Morphyn when enemy is destroyed</span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="w">        </span><span class="n">MorphynController</span><span class="p">.</span><span class="n">Instance</span><span class="p">.</span><span class="n">SendEventToEntity</span><span class="p">(</span><span class="s">&quot;Game&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;enemy_killed&quot;</span><span class="p">);</span>
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="p">}</span>
+</span></code></pre></div></p>
 
 
 
