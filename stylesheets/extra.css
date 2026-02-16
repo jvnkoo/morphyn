@@ -1,0 +1,199 @@
+/* Root color overrides */
+:root {
+  --md-primary-fg-color: #7c3aed;
+  --md-primary-fg-color--light: #8b5cf6;
+  --md-primary-fg-color--dark: #6d28d9;
+  --md-accent-fg-color: #a78bfa;
+}
+
+/* Dark mode - truly dark */
+[data-md-color-scheme="slate"] {
+  --md-primary-fg-color: #8b5cf6;
+  --md-primary-fg-color--light: #a78bfa;
+  --md-primary-fg-color--dark: #7c3aed;
+  --md-accent-fg-color: #c084fc;
+  --md-default-bg-color: #0a0a0a;
+  --md-default-fg-color: #e8e8e8;
+  --md-code-bg-color: #1a1a1a;
+  --md-code-fg-color: #f0f0f0;
+  --md-typeset-a-color: #a78bfa;
+}
+
+/* Light mode - clean white */
+[data-md-color-scheme="default"] {
+  --md-primary-fg-color: #7c3aed;
+  --md-primary-fg-color--light: #8b5cf6;
+  --md-primary-fg-color--dark: #6d28d9;
+  --md-accent-fg-color: #8b5cf6;
+  --md-default-bg-color: #ffffff;
+  --md-default-fg-color: #262626;
+  --md-code-bg-color: #f7f7f7;
+  --md-code-fg-color: #262626;
+  --md-typeset-a-color: #7c3aed;
+}
+
+/* Header bar - purple gradient */
+.md-header {
+  background: linear-gradient(135deg, #1a1a1a 0%, #2d1b4e 100%) !important;
+  box-shadow: 0 2px 8px rgba(124, 58, 237, 0.1);
+}
+
+[data-md-color-scheme="default"] .md-header {
+  background: linear-gradient(135deg, #7c3aed 0%, #5b21b6 100%) !important;
+  box-shadow: 0 2px 8px rgba(124, 58, 237, 0.2);
+}
+
+/* Navigation tabs - purple */
+.md-tabs {
+  background: linear-gradient(135deg, #1a1a1a 0%, #2d1b4e 100%) !important;
+}
+
+[data-md-color-scheme="default"] .md-tabs {
+  background: linear-gradient(135deg, #7c3aed 0%, #5b21b6 100%) !important;
+}
+
+/* Logo sizing */
+.md-logo {
+  padding: 0.2rem !important;
+}
+
+.md-logo img,
+.md-logo svg {
+  width: 56px !important;
+  height: 56px !important;
+  max-width: none !important;
+  object-fit: contain;
+}
+
+/* Active tab indicator */
+.md-tabs__link--active {
+  color: #c084fc !important;
+  border-bottom: 2px solid #c084fc !important;
+}
+
+[data-md-color-scheme="default"] .md-tabs__link--active {
+  color: #ffffff !important;
+  border-bottom: 2px solid #ffffff !important;
+}
+
+/* Sidebar navigation - subtle purple */
+.md-nav__link--active {
+  color: #a78bfa !important;
+  font-weight: 600;
+}
+
+/* Search bar */
+.md-search__input {
+  background-color: rgba(139, 92, 246, 0.1) !important;
+  border: 1px solid rgba(139, 92, 246, 0.3);
+}
+
+.md-search__input:focus {
+  border-color: #8b5cf6;
+  box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.2);
+}
+
+/* Code blocks - better contrast */
+.highlight {
+  border-radius: 0.5rem;
+  overflow: hidden;
+  border: 1px solid rgba(139, 92, 246, 0.2);
+}
+
+[data-md-color-scheme="slate"] .highlight {
+  background-color: #151515 !important;
+}
+
+[data-md-color-scheme="default"] .highlight {
+  background-color: #fafafa !important;
+}
+
+/* Inline code */
+.md-typeset code {
+  background-color: rgba(139, 92, 246, 0.1);
+  color: #8b5cf6;
+  padding: 0.15em 0.4em;
+  border-radius: 0.25rem;
+  font-size: 0.85em;
+}
+
+[data-md-color-scheme="slate"] .md-typeset code {
+  background-color: rgba(139, 92, 246, 0.15);
+  color: #c084fc;
+}
+
+/* Tables */
+.md-typeset table:not([class]) {
+  border-radius: 0.5rem;
+  overflow: hidden;
+  border: 1px solid rgba(139, 92, 246, 0.2);
+}
+
+.md-typeset table:not([class]) th {
+  background-color: rgba(124, 58, 237, 0.1);
+  color: #8b5cf6;
+  font-weight: 600;
+}
+
+[data-md-color-scheme="slate"] .md-typeset table:not([class]) th {
+  background-color: rgba(139, 92, 246, 0.15);
+  color: #c084fc;
+}
+
+/* Admonitions */
+.md-typeset .admonition {
+  border-radius: 0.5rem;
+  border-left: 4px solid #8b5cf6;
+}
+
+.md-typeset .note {
+  border-left-color: #8b5cf6;
+}
+
+.md-typeset .note > .admonition-title {
+  background-color: rgba(139, 92, 246, 0.1);
+}
+
+/* Buttons and links */
+.md-typeset a {
+  color: #8b5cf6;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.md-typeset a:hover {
+  color: #a78bfa;
+  text-decoration: underline;
+}
+
+/* Scrollbar - purple */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(139, 92, 246, 0.3);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(139, 92, 246, 0.5);
+}
+
+/* Smooth transitions */
+* {
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+/* Better focus states */
+button:focus,
+input:focus,
+a:focus {
+  outline: 2px solid #8b5cf6;
+  outline-offset: 2px;
+}
