@@ -90,7 +90,7 @@ morphyn hello.morphyn
 > [!TIP]
 > Development for Unity-specific features is active in the [`unity-bridge`](https://github.com/jvnkoo/morphyn/tree/unity-bridge) branch.
 
-See [Unity documentation](https://jvnkoo.github.io/morphyn/unity_integration.html) for details.
+See [Unity documentation](https://jvnkoo.github.io/morphyn/unity/overview/) for details.
 
 ## Contributing
 
