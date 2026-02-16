@@ -1,0 +1,80 @@
+site_name: Morphyn
+site_description: Declarative event-driven language for game logic
+repo_url: https://github.com/jvnkoo/morphyn
+repo_name: morphyn
+
+theme:
+  name: material
+  logo: assets/logo.png
+  palette:
+    # Dark mode (default)
+    - scheme: slate
+      primary: black
+      accent: deep purple
+      toggle:
+        icon: material/weather-night
+        name: Switch to light mode
+    # Light mode
+    - scheme: default
+      primary: black
+      accent: deep purple
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to dark mode
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - navigation.instant
+    - navigation.tracking
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - content.code.annotate
+  font:
+    text: Roboto
+    code: JetBrains Mono
+  icon:
+    repo: fontawesome/brands/github
+
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+      use_pygments: true
+  - pymdownx.superfences
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - admonition
+  - pymdownx.details
+  - tables
+  - attr_list
+  - md_in_html
+  - def_list
+
+extra_css:
+  - stylesheets/extra.css
+
+nav:
+  - Home: index.md
+  - Getting Started:
+      - Quick Start: getting-started/quick-start.md
+      - Installation: getting-started/installation.md
+  - Language Guide:
+      - Syntax Reference: language/syntax.md
+      - Expressions: language/expressions.md
+      - Event System: language/events.md
+      - Pool System: language/pools.md
+      - Import System: language/imports.md
+  - Unity Integration:
+      - Overview: unity/overview.md
+      - Installation: unity/installation.md
+      - API Reference: unity/api.md
+      - Examples: unity/examples.md
+  - Examples:
+      - Basic Examples: examples/basic.md
+      - Game Examples: examples/games.md
+  - Tools:
+      - VS Code Extension: tools/vscode.md

@@ -1,30 +1,33 @@
 name: Documentation
+
 on:
   push:
-    branches: [ main ] 
+    branches: [ main ]
 
 permissions:
-  contents: write 
+  contents: write
 
 jobs:
-  deploy: 
+  deploy:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
         with:
-          submodules: recursive
+          python-version: 3.x
 
-      - name: Install Doxygen
-        run: sudo apt-get update && sudo apt-get install -y doxygen
+      - name: Install MkDocs and dependencies
+        run: |
+          pip install mkdocs-material
+          pip install pymdown-extensions
 
-      - name: Run Doxygen
-        run: doxygen Doxyfile
-
-      - name: List files
-        run: ls -R
+      - name: Build documentation
+        run: mkdocs build
 
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
         with:
-          folder: docs/html 
+          folder: site
           branch: gh-pages

@@ -1,10 +1,3 @@
-/**
- * \file MorphynEvaluator.cs
- * \brief Expression evaluation engine
- * \defgroup evaluator Expression Evaluator
- * @{
- */
-
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -13,116 +6,7 @@ using Morphyn.Parser;
 
 namespace Morphyn.Runtime
 {
-    /**
-     * \class MorphynEvaluator
-     * \brief Evaluates Morphyn expressions
-     * 
-     * \page expressions Expression System
-     * 
-     * \section expr_types Expression Types
-     * 
-     * \subsection literals Literals
-     * 
-     * \par Numbers
-     * \code{.morphyn}
-     * 100           # Integer
-     * 3.14          # Floating point
-     * -42           # Negative
-     * \endcode
-     * 
-     * \par Strings
-     * \code{.morphyn}
-     * "Hello"
-     * "Player Name"
-     * \endcode
-     * 
-     * \par Booleans
-     * \code{.morphyn}
-     * true
-     * false
-     * \endcode
-     * 
-     * \subsection variables Variables
-     * 
-     * \par Entity Fields
-     * \code{.morphyn}
-     * hp
-     * name
-     * alive
-     * \endcode
-     * 
-     * \par Event Parameters
-     * \code{.morphyn}
-     * on damage(amount) {
-     *   hp - amount -> hp  # 'amount' is a parameter
-     * }
-     * \endcode
-     * 
-     * \subsection arithmetic Arithmetic Operators
-     * 
-     * \par Basic Math
-     * \code{.morphyn}
-     * hp + 10       # Addition
-     * hp - 5        # Subtraction
-     * damage * 2    # Multiplication
-     * armor / 3     # Division
-     * level % 5     # Modulo
-     * \endcode
-     * 
-     * \par Complex Expressions
-     * \code{.morphyn}
-     * (hp + shield) * 0.5 -> total_defense
-     * damage * (1 - armor / 100) -> final_damage
-     * \endcode
-     * 
-     * \subsection comparison Comparison Operators
-     * 
-     * \code{.morphyn}
-     * hp > 0           # Greater than
-     * level >= 10      # Greater or equal
-     * hp < max_hp      # Less than
-     * mana <= 0        # Less or equal
-     * state == "idle"  # Equal
-     * hp != 0          # Not equal
-     * \endcode
-     * 
-     * \subsection logic Logic Operators
-     * 
-     * \par AND
-     * \code{.morphyn}
-     * check hp > 0 and mana > 10: emit cast_spell
-     * \endcode
-     * 
-     * \par OR
-     * \code{.morphyn}
-     * check state == "idle" or state == "walk": emit can_interact
-     * \endcode
-     * 
-     * \par NOT
-     * \code{.morphyn}
-     * check not dead: emit move
-     * check not (hp < 10 and mana < 5): emit safe_to_fight
-     * \endcode
-     * 
-     * \subsection pool_access Pool Access
-     * 
-     * \par Get Pool Size
-     * \code{.morphyn}
-     * enemies.count -> num_enemies
-     * \endcode
-     * 
-     * \par Access by Index (1-based)
-     * \code{.morphyn}
-     * enemies.at[1] -> first_enemy
-     * items.at[i] -> current_item
-     * \endcode
-     * 
-     * \par Access Entity Fields
-     * \code{.morphyn}
-     * player.hp -> player_health
-     * enemy.damage -> incoming_damage
-     * \endcode
-     */
+    // Evaluates Morphyn expressions
     public static class MorphynEvaluator
     {
         private const double EPSILON = 1e-9;
@@ -296,4 +180,3 @@ namespace Morphyn.Runtime
             obj is float || obj is double || obj is decimal;
     }
 }
-/** @} */ // end of evaluator group

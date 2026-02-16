@@ -1,11 +1,4 @@
-﻿/**
- * \file Program.cs
- * \brief Morphyn Language Runtime Entry Point
- * \defgroup core Core System
- * @{
- */
-
-using System;
+﻿using System;
 using System.IO;
 using Morphyn.Parser;
 using Morphyn.Runtime;
@@ -15,60 +8,7 @@ namespace Morphyn.Core
     using System.Collections.Generic;
     using System.Linq;
 
-    /**
-     * \class Program
-     * \brief Main entry point for Morphyn language interpreter
-     *
-     * \page getting_started Getting Started with Morphyn
-     *
-     * \section usage Usage
-     *
-     * Run a Morphyn program:
-     * \code{.sh}
-     * morphyn program.morphyn
-     * \endcode
-     *
-     * \section file_extensions Supported File Extensions
-     *
-     * Morphyn recognizes the following file extensions:
-     * - `.mrph`
-     * - `.morph`
-     * - `.morphyn`
-     *
-     * \section features Runtime Features
-     *
-     * \subsection hot_reload Hot Reload
-     *
-     * The runtime automatically watches for file changes and reloads entity logic
-     * without restarting the program or losing state.
-     *
-     * \subsection tick_system Tick System
-     *
-     * Entities with a `tick` event handler receive delta time updates every frame:
-     *
-     * \code{.morphyn}
-     * entity Player {
-     * on tick(dt) {
-     * # dt = milliseconds since last frame
-     * emit log("Frame time:", dt)
-     * }
-     * }
-     * \endcode
-     *
-     * \subsection init_event Init Event
-     *
-     * Entities with an `init` event are automatically initialized on load:
-     *
-     * \code{.morphyn}
-     * entity Player {
-     * has hp: 100
-     *
-     * on init {
-     * emit log("Player spawned with", hp, "HP")
-     * }
-     * }
-     * \endcode
-     */
+    // Main entry point for Morphyn language interpreter
     class Program
     {
         private static readonly string[] ValidExtensions = { ".mrph", ".morph", ".morphyn" };
@@ -263,35 +203,10 @@ namespace Morphyn.Core
             }
         }
 
-        /**
-          * \brief Resolves import statements recursively
-          * \param filePath Path to the file to process
-          * \param visited Set of already processed files (prevents circular imports)
-          * \return Combined content of all imported files
-          *
-          * \page imports Import System
-          *
-          * \section import_syntax Import Syntax
-          *
-          * Import other Morphyn files:
-          *
-          * \code{.morphyn}
-          * import "enemies.morphyn";
-          * import "core/weapons.morphyn";
-          * import "../shared/items.morphyn";
-          *
-          * entity Player {
-          * # Can use entities from imported files
-          * }
-          * \endcode
-          *
-          * \section import_rules Import Rules
-          *
-          * - Imports are resolved relative to the importing file
-          * - Circular imports are automatically prevented
-          * - Import statements must end with semicolon
-          * - Missing import files generate warnings but don't stop execution
-          */
+        // Resolves import statements recursively
+        // filePath: Path to the file to process
+        // visited: Set of already processed files (prevents circular imports)
+        // Returns: Combined content of all imported files
         static string ResolveImports(string filePath, HashSet<string> visited)
         {
             // Get absolute path to ensure uniqueness in 'visited' set
@@ -348,4 +263,3 @@ namespace Morphyn.Core
         }
     }
 }
-/** @} */ // end of core group
