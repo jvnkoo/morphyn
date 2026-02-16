@@ -7,7 +7,7 @@ theme:
   name: material
   logo: assets/logo.png
   palette:
-    # Dark mode (default)
+    # Dark mode
     - scheme: slate
       primary: black
       accent: deep purple
@@ -32,27 +32,25 @@ theme:
     - search.highlight
     - content.code.copy
     - content.code.annotate
-  font:
-    text: Roboto
-    code: JetBrains Mono
-  icon:
-    repo: fontawesome/brands/github
+
+font:
+  text: Roboto
+  code: JetBrains Mono
 
 markdown_extensions:
+  - admonition
+  - attr_list
+  - def_list
+  - md_in_html
+  - tables
   - pymdownx.highlight:
       anchor_linenums: true
       line_spans: __span
       pygments_lang_class: true
-      use_pygments: true
   - pymdownx.superfences
   - pymdownx.inlinehilite
   - pymdownx.snippets
-  - admonition
   - pymdownx.details
-  - tables
-  - attr_list
-  - md_in_html
-  - def_list
 
 extra_css:
   - stylesheets/extra.css

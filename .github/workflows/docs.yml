@@ -16,12 +16,12 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
-          python-version: 3.x
+          python-version: '3.x'
 
-      - name: Install MkDocs and dependencies
+      - name: Install dependencies
         run: |
-          pip install mkdocs-material
-          pip install pymdown-extensions
+          pip install mkdocs-material pymdown-extensions
+          pip install . 
 
       - name: Build documentation
         run: mkdocs build
