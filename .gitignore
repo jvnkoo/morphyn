@@ -125,3 +125,12 @@ src/.vs/config/applicationhost.config
 # JetBrains Rider's auto generated files
 .idea/
 
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+dist/
+build/

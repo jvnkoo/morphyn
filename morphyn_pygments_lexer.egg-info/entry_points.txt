@@ -1,2 +1,0 @@
-[pygments.lexers]
-morphyn = morphyn_lexer:MorphynLexer
