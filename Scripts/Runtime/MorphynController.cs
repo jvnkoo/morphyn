@@ -13,6 +13,20 @@ using Morphyn.Unity;
 /// </summary>
 public class MorphynController : MonoBehaviour
 {
+    public enum SaveMode
+    {
+        None,       // Do not save or load
+        Auto,       // Automatically save on exit and load on startup
+        ManualOnly  // Save/load only when called directly from code
+    }
+
+    [Serializable]
+    public struct MorphynScriptEntry
+    {
+        public TextAsset script;
+        public SaveMode saveMode;
+    }
+
     private static MorphynController _instance;
     public static MorphynController Instance
     {
@@ -28,7 +42,7 @@ public class MorphynController : MonoBehaviour
     
     [Header("Morphyn Scripts")]
     [Tooltip("Add ALL your .morphyn files here")]
-    [SerializeField] private TextAsset[] morphynScripts;
+    [SerializeField] private MorphynScriptEntry[] morphynScripts;
     
     [Header("Settings")]
     [SerializeField] private bool runOnStart = true;
@@ -69,6 +83,7 @@ public class MorphynController : MonoBehaviour
         if (runOnStart)
         {
             LoadAndRun();
+            LoadPersistentStates(); 
             if (enableHotReload) SetupHotReload();
         }
     }
@@ -78,14 +93,14 @@ public class MorphynController : MonoBehaviour
         try
         {
             RegisterUnityCallbacks();
-            
+
             string combinedCode = "";
             HashSet<string> visitedFiles = new HashSet<string>();
 
-            foreach (var script in morphynScripts)
+            foreach (var entry in morphynScripts)
             {
-                if (script != null)
-                {
+                var script = entry.script;
+                if (script == null) continue;
 #if UNITY_EDITOR
                     // In Editor, we can resolve real paths for recursive imports
                     string assetPath = UnityEditor.AssetDatabase.GetAssetPath(script);
@@ -98,12 +113,12 @@ public class MorphynController : MonoBehaviour
                         combinedCode += script.text + "\n";
                     }
 #else
-                    // In Build, we rely on the pre-loaded TextAsset content
-                    combinedCode += script.text + "\n";
+                // In Build, we rely on the pre-loaded TextAsset content
+                combinedCode += script.text + "\n";
 #endif
-                }
             }
-            
+
+
             _context = MorphynParser.ParseFile(combinedCode);
             Debug.Log($"[Morphyn] Loaded {_context.Entities.Count} entities");
             
@@ -133,6 +148,49 @@ public class MorphynController : MonoBehaviour
         {
             Debug.LogError($"[Morphyn Error]: {ex.Message}\n{ex.StackTrace}");
         }
+    }
+
+    private void LoadPersistentStates()
+    {
+        if (_context == null) return;
+
+        foreach (var entry in morphynScripts)
+        {
+            if (entry.saveMode == SaveMode.Auto && entry.script != null)
+            {
+                string entityName = entry.script.name; 
+                if (_context.Entities.ContainsKey(entityName))
+                {
+                    LoadState(entityName);
+                }
+            }
+        }
+    }
+
+    public void SaveStateByPolicy()
+    {
+        if (_context == null) return;
+        
+        foreach (var entry in morphynScripts)
+        {
+            if (entry.saveMode == SaveMode.Auto && entry.script != null)
+            {
+                string entityName = entry.script.name;
+                if (_context.Entities.TryGetValue(entityName, out var entity))
+                {
+                    string path = Path.Combine(Application.persistentDataPath, saveFolder);
+                    if (!Directory.Exists(path)) Directory.CreateDirectory(path);
+                    
+                    string filePath = Path.Combine(path, $"{entityName}.morphyn");
+                    MorphynSerializer.SaveEntity(entity, filePath);
+                }
+            }
+        }
+    }
+
+    void OnApplicationQuit()
+    {
+        if (autoSave) SaveStateByPolicy();
     }
 
     /**
@@ -183,13 +241,13 @@ public class MorphynController : MonoBehaviour
     void SetupHotReload()
     {
 #if UNITY_EDITOR
-        foreach (var script in morphynScripts)
+        foreach (var entry in morphynScripts)
         {
-            if (script == null) continue;
+            if (entry.script == null) continue;
             
             try
             {
-                string scriptPath = UnityEditor.AssetDatabase.GetAssetPath(script);
+                string scriptPath = UnityEditor.AssetDatabase.GetAssetPath(entry.script);
                 if (string.IsNullOrEmpty(scriptPath)) continue;
                 
                 string fullPath = Path.GetFullPath(scriptPath);
@@ -259,9 +317,9 @@ public class MorphynController : MonoBehaviour
             UnityEditor.AssetDatabase.Refresh();
             
             string combinedCode = "";
-            foreach (var script in morphynScripts)
+            foreach (var entry in morphynScripts)
             {
-                if (script != null) combinedCode += script.text + "\n";
+                if (entry.script != null) combinedCode += entry.script.text + "\n";
             }
             
             EntityData newData = MorphynParser.ParseFile(combinedCode);
@@ -390,11 +448,6 @@ public class MorphynController : MonoBehaviour
                 transform.Rotate(0, angle, 0);
             }
         });
-    }
-
-    void OnApplicationQuit()
-    {
-        if (autoSave) SaveState();
     }
 
     void OnDestroy()
