@@ -229,7 +229,7 @@ public class MorphynController : MonoBehaviour
         foreach (var line in lines)
         {
             string trimmed = line.Trim();
-            if (trimmed.StartsWith("import ") && trimmed.EndsWith(";"))
+            if (trimmed.StartsWith("import ") && trimmed.Contains("\""))
             {
                 int firstQuote = trimmed.IndexOf('"');
                 int lastQuote = trimmed.LastIndexOf('"');
@@ -240,12 +240,11 @@ public class MorphynController : MonoBehaviour
                     string fullSubPath = Path.GetFullPath(Path.Combine(currentDir, relativePath));
                     
                     finalContent.Add(ResolveImports(fullSubPath, visited));
+                    continue; // Skip adding the import line itself
                 }
             }
-            else
-            {
-                finalContent.Add(line);
-            }
+            
+            finalContent.Add(line);
         }
 
         return string.Join("\n", finalContent);
