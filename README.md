@@ -3,7 +3,7 @@
 <div align="center">
 <img src="https://github.com/user-attachments/assets/7c061775-2683-4dd6-acf5-01a5835acf60" width="256" height="256" alt="Morphyn Logo" />
 
-### Stop waiting 30 seconds every time you change a number.
+## Stop waiting 30 seconds every time you change a number.
 
 **Edit game balance in real-time. See changes instantly.**
 
@@ -20,10 +20,10 @@
 
 ## The Problem
 
-You're balancing your game. Change enemy HP from `100` to `150`.  
-Stop Play mode → Wait for Unity to reload → Press Play → Test again.
+You're balancing an enemy. You change HP from `100` to `150`.  
+**Stop Play mode** → **Wait for Unity to recompile** → **Press Play** → **Navigate back to the enemy**.
 
-**Repeat 50 times a day = 10+ minutes of pure context switching.**
+Repeat this 50 times a day. You've just lost an hour of your life to a progress bar.
 
 ## The Solution
 ```morphyn
@@ -35,21 +35,18 @@ entity Enemy {
 
 **Save the file. Game updates instantly. While running.**
 
-> [!NOTE]
-> Unity will still recompile in the background when you save .morphyn files, but your game keeps running and state is preserved. No need to stop Play mode.
-
 ---
 
 ## What Is Morphyn?
 
 **Think of it as JSON that can think.**
 
-| Regular JSON | Morphyn |
-|-------------|---------|
-| Stores data only | Stores data + logic |
-| Manual validation in C# | Auto-validates itself |
-| Change = recompile | Change = instant hot reload |
-| Static values | Dynamic reactions |
+| Feature | Regular JSON / SO | **Morphyn** |
+| :--- | :--- | :--- |
+| **Content** | Static Data only | Data + Logic + Events |
+| **Validation** | Manual C# checks | Self-validating (`check` syntax) |
+| **Iteration** | Recompile on change | **Instant Hot Reload** |
+| **State** | Lost on recompile | **Preserved during reload** |
 
 **Example: Level-up system**
 
@@ -299,6 +296,7 @@ A: No, hot reload is **editor-only**. Builds run normally without file watching.
 - [ ] More documentation examples
 - [ ] Performance optimizations
 - [ ] Community feedback integration
+- [ ] Transcending the need for C# altogether (eventually, hopefully)
 
 ---
 
@@ -319,3 +317,6 @@ Free for commercial use. Attribution required per Apache 2.0 terms.
 <img src="https://media1.tenor.com/m/ugRQCY7AKEsAAAAd/texh-texhnolyze.gif" width="1000" height="300" alt="gif">
 
 </div>
+
+> P.S. Morphyn is not a drug, but the development speed is addictive.
+
