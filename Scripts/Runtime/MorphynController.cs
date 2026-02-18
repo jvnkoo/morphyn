@@ -55,10 +55,12 @@ public class MorphynController : MonoBehaviour
     private float _lastTime;
     private List<FileSystemWatcher> _watchers = new();
     private bool _needsReload = false;
+    private string _cachedSavePath;
     
     // Optimization: Pre-cache tick entities and reuse tick args buffer
     private List<Entity> _tickEntities = new();
     private readonly List<object> _tickArgsBuffer = new List<object>(1) { 0.0 };
+    private readonly List<object?> _internalArgsBuffer = new List<object?>(8);
     
     public EntityData Context => _context;
 
@@ -71,6 +73,9 @@ public class MorphynController : MonoBehaviour
             return;
         }
         _instance = this;
+
+        // Cache persistent path to avoid allocations during runtime
+        _cachedSavePath = Path.Combine(Application.persistentDataPath, saveFolder);
     }
 
     void Start()
@@ -97,8 +102,9 @@ public class MorphynController : MonoBehaviour
             string combinedCode = "";
             HashSet<string> visitedFiles = new HashSet<string>();
 
-            foreach (var entry in morphynScripts)
+            for (int i = 0; i < morphynScripts.Length; i++)
             {
+                var entry = morphynScripts[i];
                 var script = entry.script;
                 if (script == null) continue;
 #if UNITY_EDITOR
@@ -154,8 +160,9 @@ public class MorphynController : MonoBehaviour
     {
         if (_context == null) return;
 
-        foreach (var entry in morphynScripts)
+        for (int i = 0; i < morphynScripts.Length; i++)
         {
+            var entry = morphynScripts[i];
             if (entry.saveMode == SaveMode.Auto && entry.script != null)
             {
                 string entityName = entry.script.name; 
@@ -171,17 +178,23 @@ public class MorphynController : MonoBehaviour
     {
         if (_context == null) return;
         
-        foreach (var entry in morphynScripts)
+        bool directoryChecked = false;
+
+        for (int i = 0; i < morphynScripts.Length; i++)
         {
+            var entry = morphynScripts[i];
             if (entry.saveMode == SaveMode.Auto && entry.script != null)
             {
                 string entityName = entry.script.name;
                 if (_context.Entities.TryGetValue(entityName, out var entity))
                 {
-                    string path = Path.Combine(Application.persistentDataPath, saveFolder);
-                    if (!Directory.Exists(path)) Directory.CreateDirectory(path);
+                    if (!directoryChecked)
+                    {
+                        if (!Directory.Exists(_cachedSavePath)) Directory.CreateDirectory(_cachedSavePath);
+                        directoryChecked = true;
+                    }
                     
-                    string filePath = Path.Combine(path, $"{entityName}.morphyn");
+                    string filePath = Path.Combine(_cachedSavePath, $"{entityName}.morphyn");
                     MorphynSerializer.SaveEntity(entity, filePath);
                 }
             }
@@ -241,8 +254,9 @@ public class MorphynController : MonoBehaviour
     void SetupHotReload()
     {
 #if UNITY_EDITOR
-        foreach (var entry in morphynScripts)
+        for (int i = 0; i < morphynScripts.Length; i++)
         {
+            var entry = morphynScripts[i];
             if (entry.script == null) continue;
             
             try
@@ -317,8 +331,9 @@ public class MorphynController : MonoBehaviour
             UnityEditor.AssetDatabase.Refresh();
             
             string combinedCode = "";
-            foreach (var entry in morphynScripts)
+            for (int i = 0; i < morphynScripts.Length; i++)
             {
+                var entry = morphynScripts[i];
                 if (entry.script != null) combinedCode += entry.script.text + "\n";
             }
             
@@ -362,7 +377,7 @@ public class MorphynController : MonoBehaviour
 
     public object? GetField(string entityName, string fieldName)
     {
-        if (_context?.Entities.TryGetValue(entityName, out var entity) == true)
+        if (_context != null && _context.Entities.TryGetValue(entityName, out var entity))
         {
             if (entity.Fields.TryGetValue(fieldName, out var value))
             {
@@ -374,7 +389,7 @@ public class MorphynController : MonoBehaviour
 
     public void SetField(string entityName, string fieldName, object? value)
     {
-        if (_context?.Entities.TryGetValue(entityName, out var entity) == true)
+        if (_context != null && _context.Entities.TryGetValue(entityName, out var entity))
         {
             entity.Fields[fieldName] = value;
         }
@@ -382,7 +397,7 @@ public class MorphynController : MonoBehaviour
 
     public Dictionary<string, object?> GetAllFields(string entityName)
     {
-        if (_context?.Entities.TryGetValue(entityName, out var entity) == true)
+        if (_context != null && _context.Entities.TryGetValue(entityName, out var entity))
         {
             return new Dictionary<string, object?>(entity.Fields);
         }
@@ -391,10 +406,16 @@ public class MorphynController : MonoBehaviour
 
     public void SendEventToEntity(string entityName, string eventName, params object[] args)
     {
-        if (_context?.Entities.TryGetValue(entityName, out var entity) == true)
+        if (_context != null && _context.Entities.TryGetValue(entityName, out var entity))
         {
-            var argsList = new List<object?>(args);
-            MorphynRuntime.Send(entity, eventName, argsList);
+            // Optimization: Reuse buffer to avoid List allocation
+            _internalArgsBuffer.Clear();
+            for (int i = 0; i < args.Length; i++)
+            {
+                _internalArgsBuffer.Add(args[i]);
+            }
+
+            MorphynRuntime.Send(entity, eventName, _internalArgsBuffer);
             MorphynRuntime.RunFullCycle(_context);
         }
     }
@@ -402,14 +423,13 @@ public class MorphynController : MonoBehaviour
     public void SaveState()
     {
         if (_context == null) return;
-        string path = Path.Combine(Application.persistentDataPath, saveFolder);
-        MorphynSerializer.SaveAllEntities(_context, path);
+        MorphynSerializer.SaveAllEntities(_context, _cachedSavePath);
     }
 
     public void LoadState(string entityName)
     {
-        if (_context?.Entities.TryGetValue(entityName, out var entity) != true) return;
-        string path = Path.Combine(Application.persistentDataPath, saveFolder, $"{entityName}.morphyn");
+        if (_context == null || !_context.Entities.TryGetValue(entityName, out var entity)) return;
+        string path = Path.Combine(_cachedSavePath, $"{entityName}.morphyn");
         MorphynSerializer.LoadEntityFields(entity, path);
     }
 
@@ -452,10 +472,10 @@ public class MorphynController : MonoBehaviour
 
     void OnDestroy()
     {
-        foreach (var watcher in _watchers)
+        for (int i = 0; i < _watchers.Count; i++)
         {
-            watcher.EnableRaisingEvents = false;
-            watcher.Dispose();
+            _watchers[i].EnableRaisingEvents = false;
+            _watchers[i].Dispose();
         }
         _watchers.Clear();
         
