@@ -228,8 +228,7 @@ namespace Morphyn.Core
             {
                 var trimmed = line.Trim();
 
-                // Improved import parsing to support subdirectories and relative paths
-                if (trimmed.StartsWith("import ") && trimmed.EndsWith(";"))
+                if (trimmed.StartsWith("import ") && trimmed.Contains("\""))
                 {
                     int firstQuote = trimmed.IndexOf('"');
                     int lastQuote = trimmed.LastIndexOf('"');
@@ -238,7 +237,6 @@ namespace Morphyn.Core
                     {
                         string fileName = trimmed.Substring(firstQuote + 1, lastQuote - firstQuote - 1);
 
-                        // Resolve path relative to the directory of the current file
                         string? currentDir = Path.GetDirectoryName(absolutePath);
                         string subPath = Path.GetFullPath(Path.Combine(currentDir ?? "", fileName));
 
@@ -251,12 +249,12 @@ namespace Morphyn.Core
                             Console.WriteLine(
                                 $"[Warning] Import file not found: {subPath} (imported from {absolutePath})");
                         }
+                        
+                        continue; 
                     }
                 }
-                else
-                {
-                    finalContent.Add(line);
-                }
+                
+                finalContent.Add(line);
             }
 
             return string.Join("\n", finalContent);

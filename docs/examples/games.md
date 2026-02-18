@@ -4,8 +4,8 @@
 
 This example shows a complete game loop with automatic enemy spawning.
 ```morphyn
-import "player.morphyn";
-import "enemy.morphyn";
+import "player.morphyn"
+import "enemy.morphyn"
 
 entity Game {
   has score: 0
