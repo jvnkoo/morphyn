@@ -1,13 +1,11 @@
-# Morphyn - Hot Reload for Game Logic
+# Morphyn — Hot Reload for Game Logic
 
 <div align="center">
-<img src="https://github.com/user-attachments/assets/7c061775-2683-4dd6-acf5-01a5835acf60" width="256" height="256" alt="Morphyn Logo" />
+<img src="https://github.com/user-attachments/assets/c5d54834-7e49-4a55-a0b9-91d12442d12a" width="128" height="128" alt="Morphyn Logo" />
 
-## Stop waiting 30 seconds every time you change a number.
+### Edit game logic while the game is running. No recompile. No restart. No lost state.
 
-**Edit game balance in real-time. See changes instantly.**
-
-[📥 Download](https://github.com/jvnkoo/morphyn/releases/latest) • [📖 Docs](https://jvnkoo.github.io/morphyn) • [💡 Examples](https://jvnkoo.github.io/morphyn/examples/basic/)
+[📥 Download](https://github.com/jvnkoo/morphyn/releases/latest) · [📖 Docs](https://jvnkoo.github.io/morphyn) · [💡 Examples](https://jvnkoo.github.io/morphyn/examples/basic/) · [🐛 Issues](https://github.com/jvnkoo/morphyn/issues)
 
 ![GitHub stars](https://img.shields.io/github/stars/jvnkoo/morphyn?style=social)
 ![License](https://img.shields.io/badge/license-Apache%202.0-blue)
@@ -18,48 +16,21 @@
 
 ---
 
-## The Problem
-
-You're balancing an enemy. You change HP from `100` to `150`.  
-**Stop Play mode** → **Wait for Unity to recompile** → **Press Play** → **Navigate back to the enemy**.
-
-Repeat this 50 times a day. You've just lost an hour of your life to a progress bar.
-
-## The Solution
-```morphyn
-entity Enemy {
-  has hp: 100      // ← Change this to 150
-  has damage: 25   // ← Change this to 999
-}
-```
-
-**Save the file. Game updates instantly. While running.**
-
----
-
-## What Is Morphyn?
-
-**Think of it as JSON that can think.**
-
-| Feature | Regular JSON / SO | **Morphyn** |
-| :--- | :--- | :--- |
-| **Content** | Static Data only | Data + Logic + Events |
-| **Validation** | Manual C# checks | Self-validating (`check` syntax) |
-| **Iteration** | Recompile on change | **Instant Hot Reload** |
-| **State** | Lost on recompile | **Preserved during reload** |
-
-**Example: Level-up system**
+## C# vs Morphyn
 
 <table>
 <tr>
-<td width="50%">
+<th width="50%">❌ Without Morphyn</th>
+<th width="50%">✅ With Morphyn</th>
+</tr>
+<tr>
+<td>
 
-**❌ The C# Way** (50 lines)
 ```csharp
 public class Player : MonoBehaviour {
   public int exp;
   public int level = 1;
-  
+
   public void AddExp(int amount) {
     exp += amount;
     if (exp >= 100) {
@@ -68,22 +39,20 @@ public class Player : MonoBehaviour {
       maxHp += 20;
       hp = maxHp;
       Debug.Log("LEVEL UP!");
-      // ... more boilerplate
     }
   }
 }
 ```
-*Change logic = stop game & recompile*
+Change logic or add new rules → exit Play Mode → recompile → test → repeat
 
 </td>
-<td width="50%">
+<td>
 
-**✅ The Morphyn Way** (10 lines)
 ```morphyn
 entity Player {
   has exp: 0
   has level: 1
-  
+
   on add_exp(amount) {
     exp + amount -> exp
     check exp >= 100: {
@@ -93,23 +62,21 @@ entity Player {
   }
 }
 ```
-*Change logic = instant hot reload*
+Change anything → save → **game updates instantly**
 
 </td>
 </tr>
 </table>
 
+Game state is preserved across reloads. Position, inventory, quest flags — all intact.
+
 ---
 
 ## Quick Start
 
-### Unity Integration
+**1.** Download and import [`Morphyn.unitypackage`](https://github.com/jvnkoo/morphyn/releases/latest)
 
-**1. Download** [`Morphyn.unitypackage`](https://github.com/jvnkoo/morphyn/releases/latest)
-
-**2. Import** into Unity project
-
-**3. Create config** (`player.morphyn`)
+**2.** Create a `.morphyn` file:
 ```morphyn
 entity Player {
   has hp: 100
@@ -117,194 +84,132 @@ entity Player {
 }
 ```
 
-**4. Use in C#**
+**3.** Use in C#:
 ```csharp
 using Morphyn.Unity;
 
-// Read values
 double hp = MorphynController.Instance.GetField("Player", "hp");
-
-// Send events
 MorphynController.Instance.SendEventToEntity("Player", "damage", 50);
 ```
 
-**5. Enable hot reload**
-- Add `MorphynController` component to scene
-- Drag `.morphyn` files into the inspector
-- Check `Enable Hot Reload`
-- Press Play
+**4.** Add `MorphynController` to your scene, drag in the `.morphyn` files, check **Enable Hot Reload**, press Play.
 
-**6. Edit while playing**
-- Change `has hp: 100` to `has hp: 999`
-- Save file
-- **Value updates instantly** ✨
-
-### Standalone Runtime
-
-**Download from [Releases](https://github.com/jvnkoo/morphyn/releases/latest):**
-- Runtime: `morphyn-windows-x64.exe` (Windows) / `morphyn-linux-x64` (Linux/macOS)
-- Install script: `install.ps1` / `install.sh`
-
-**Setup:**
-1. Download both files for your platform
-2. Run install script to add `morphyn` to PATH:
-   - Windows: `.\install.ps1`
-   - Linux/macOS: `./install.sh`
-
-> [!NOTE]
-> The install script only needs to be run once.
-
-**3. Create a file** (`game.morphyn`)
-```morphyn
-entity Game {
-  has score: 0
-  on init {
-    emit log("Game started!")
-  }
-}
-```
-
-**4. Run it**
-```bash
-morphyn game.morphyn
-```
+Full docs at [jvnkoo.github.io/morphyn](https://jvnkoo.github.io/morphyn).
 
 ---
 
-## Why Use Morphyn?
+## What It's Good For
 
-### ⚡ Hot Reload Logic, Not Just Values
-Change entire event handlers without restarting:
-```morphyn
-on damage(amount) {
-  hp - amount -> hp
-  check hp <= 0: emit die  # ← Change condition while game runs
-}
-```
+| Use case | Example |
+|---|---|
+| Game balance | HP, damage, speed, spawn rates |
+| Economy systems | Prices, stock, discounts |
+| Quest logic | Conditions, triggers, rewards |
+| AI behavior | Aggro range, patrol timing |
+| Difficulty scaling | Dynamic stat multipliers |
 
-### 🛡️ Built-in Validation
+**Rule of thumb:** if you'd normally reach for a ScriptableObject, reach for Morphyn instead. Not designed for 3D math, performance-critical loops, or UI rendering.
+
+---
+
+## Built-in Validation
+
 ```morphyn
 on heal(amount) {
-  check amount > 0: hp + amount -> hp  # Auto-validates
-  check hp > max_hp: max_hp -> hp      # Auto-clamps
+  check amount > 0: hp + amount -> hp
+  check hp > max_hp: max_hp -> hp
 }
-```
-No more manual `if` checks in C#.
 
-### 🎯 Made for Game Logic
-```morphyn
-entity Shop {
-  has gold: 100
-  
-  on buy_item(cost) {
-    check gold >= cost: {
-      gold - cost -> gold
-      emit inventory.add("sword")
-    }
-    check gold < cost: emit show_error("Not enough gold")
+on buy_item(cost) {
+  check gold >= cost: {
+    gold - cost -> gold
+    emit inventory.add("sword")
   }
+  check gold < cost: emit show_error("Not enough gold")
 }
 ```
 
----
-
-## Real-World Use Cases
-
-### ✅ Perfect For
-- **Game balance** (HP, damage, spawn rates)
-- **Shop systems** (prices, discounts, stock)
-- **Quest logic** (conditions, rewards)
-- **AI behavior** (aggro ranges, patrol patterns)
-- **Difficulty settings** (dynamic scaling)
-
-### ⚠️ Not Ideal For
-- Complex 3D math (use C#)
-- Performance-critical code (use C#)
-- UI rendering (use Unity's UI system)
-
-**Rule of thumb:** If you'd normally put it in a ScriptableObject, use Morphyn instead.
+No more defensive `if` chains in C#.
 
 ---
 
-## Documentation
+## Morphyn vs Alternatives
 
-📖 **[Full Documentation](https://jvnkoo.github.io/morphyn)**
-
-Quick links:
-- [Language Syntax](https://jvnkoo.github.io/morphyn/language/syntax)
-- [Unity API Reference](https://jvnkoo.github.io/morphyn/unity/api)
-- [Code Examples](https://jvnkoo.github.io/morphyn/examples/basic)
-- [Troubleshooting](https://jvnkoo.github.io/morphyn/unity/api#troubleshooting)
+| | ScriptableObjects | JSON / YAML | **Morphyn** |
+|---|---|---|---|
+| Hot reload | ❌ | ❌ | ✅ |
+| Logic & events | ❌ | ❌ | ✅ |
+| Built-in validation | ❌ | ❌ | ✅ |
+| State preserved on reload | ❌ | ❌ | ✅ |
 
 ---
 
-## Tools & Extensions
+## VS Code Extension
 
-### VS Code Extension
-**[📥 Download from Releases](https://github.com/jvnkoo/morphyn/releases/latest)**
+Syntax highlighting, bracket matching, comment support for `.morphyn` files.
 
-Features:
-- Syntax highlighting
-- Bracket matching
-- Comment support
+[📥 Download `.vsix` from Releases](https://github.com/jvnkoo/morphyn/releases/latest) → Extensions → `...` → Install from VSIX
 
-Manual install:
-1. Download `.vsix` file from releases
-2. Open VS Code
-3. Extensions → `...` → Install from VSIX
+---
+
+## Standalone Runtime
+
+Works with any .NET project, no Unity required.
+
+```bash
+# Linux / macOS
+./install.sh && morphyn game.morphyn
+
+# Windows
+.\install.ps1; morphyn game.morphyn
+```
 
 ---
 
 ## FAQ
 
-**Q: Is this production-ready?**  
-A: Currently in **beta**. Core features are stable, but API may change before v1.0.
+**Is this production-ready?**  
+Beta. Core features are stable, API may change before v1.0.
 
-**Q: What if you abandon the project?**  
-A: Apache 2.0 license. Code is yours forever. Simple architecture makes forking easy.
+**Does hot reload work in builds?**  
+No — editor only. Builds run Morphyn normally without file watching.
 
-**Q: Performance impact?**  
-A: Negligible. Morphyn is used for config/logic, not performance-critical loops.
+**Performance impact?**  
+Negligible. Morphyn handles config and logic, not hot paths.
 
-**Q: Can I use it without Unity?**  
-A: Yes! Standalone runtime works with any .NET project.
+**Learning curve?**  
+If you can read pseudocode, you can write Morphyn. Most people are productive in under 10 minutes.
 
-**Q: How hard is it to learn?**  
-A: If you can read pseudocode, you can read Morphyn. ~10 minute learning curve. (Python is harder)
-
-**Q: Does hot reload work in builds?**  
-A: No, hot reload is **editor-only**. Builds run normally without file watching.
-
----
-
-## Community & Support
-
-- 🐛 [Report Issues](https://github.com/jvnkoo/morphyn/issues)
-- 💡 [Feature Requests](https://github.com/jvnkoo/morphyn/issues) (use "enhancement" label)
-
-**Want to contribute?** PRs are welcome! Check the [issues page](https://github.com/jvnkoo/morphyn/issues) for good first issues.
+**What's the license?**  
+Apache 2.0. Free for commercial use, attribution required.
 
 ---
 
 ## Roadmap
 
 - [x] Core language runtime
-- [x] Unity integration
+- [x] Unity integration  
 - [x] Hot reload system
 - [x] VS Code extension
-- [ ] Asynchronous event handling
+- [ ] Async event handling
 - [ ] More documentation examples
 - [ ] Performance optimizations
-- [ ] Community feedback integration
 - [ ] Transcending the need for C# altogether (eventually, hopefully)
+
+---
+
+## Contributing
+
+- [Report Issues](https://github.com/jvnkoo/morphyn/issues)
+- [Feature Requests](https://github.com/jvnkoo/morphyn/issues) (use "enhancement" label)
+
+PRs are welcome. 
 
 ---
 
 ## License
 
-Apache 2.0 - See [LICENSE](LICENSE) and [NOTICE](NOTICE)
-
-Free for commercial use. Attribution required per Apache 2.0 terms.
+Apache 2.0 — see [LICENSE](LICENSE) and [NOTICE](NOTICE). Free for commercial use.
 
 ---
 
@@ -319,4 +224,3 @@ Free for commercial use. Attribution required per Apache 2.0 terms.
 </div>
 
 > P.S. Morphyn is not a drug, but the development speed is addictive.
-
