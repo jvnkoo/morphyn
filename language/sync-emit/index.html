@@ -780,10 +780,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#sync-events-must-be-pure" class="md-nav__link">
+  <a href="#nested-sync-calls-are-forbidden" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Sync events must be pure
+        Nested sync calls are forbidden
       
     </span>
   </a>
@@ -791,10 +791,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#nested-sync-calls-are-forbidden" class="md-nav__link">
+  <a href="#regular-emit-is-allowed-inside-sync-events" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Nested sync calls are forbidden
+        Regular emit is allowed inside sync events
       
     </span>
   </a>
@@ -1401,10 +1401,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#sync-events-must-be-pure" class="md-nav__link">
+  <a href="#nested-sync-calls-are-forbidden" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Sync events must be pure
+        Nested sync calls are forbidden
       
     </span>
   </a>
@@ -1412,10 +1412,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#nested-sync-calls-are-forbidden" class="md-nav__link">
+  <a href="#regular-emit-is-allowed-inside-sync-events" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Nested sync calls are forbidden
+        Regular emit is allowed inside sync events
       
     </span>
   </a>
@@ -1524,7 +1524,7 @@
 <p>Sync emit is a special form of <code>emit</code> that executes an event <strong>immediately and synchronously</strong>, bypassing the event queue, and assigns the result to a field.</p>
 <div class="language-morphyn highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">emit</span> <span class="nc">Entity</span><span class="p">.</span><span class="n">event</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">field</span>
 </span></code></pre></div>
-<p>This enables user-defined pure functions — events that compute and return a value without side effects.</p>
+<p>This enables user-defined pure functions — events that compute and return a value.</p>
 <hr />
 <h2 id="syntax">Syntax</h2>
 <div class="language-morphyn highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="k">emit</span> <span class="nc">EventName</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">field</span>
@@ -1566,27 +1566,24 @@
 </span></code></pre></div>
 <hr />
 <h2 id="rules">Rules</h2>
-<h3 id="sync-events-must-be-pure">Sync events must be pure</h3>
-<p>Inside a sync event, only assignments (<code>-&gt;</code>) and checks (<code>check</code>) are allowed. Using <code>emit</code> inside a sync event throws a runtime error.</p>
-<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="k">entity</span> <span class="nc">MathLib</span> <span class="p">{</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>  <span class="k">on</span> <span class="nf">clamp</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">min</span><span class="p">,</span> <span class="n">max</span><span class="p">)</span> <span class="p">{</span>
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>    <span class="k">check</span> <span class="n">value</span> <span class="o o-Comparison">&lt;</span> <span class="n">min</span><span class="p">:</span> <span class="n">min</span> <span class="o">-&gt;</span> <span class="n">value</span>
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>    <span class="k">check</span> <span class="n">value</span> <span class="o o-Comparison">&gt;</span> <span class="n">max</span><span class="p">:</span> <span class="n">max</span> <span class="o">-&gt;</span> <span class="n">value</span>
-</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>    <span class="n">value</span> <span class="o">-&gt;</span> <span class="n">result</span>           <span class="c1"># ok</span>
-</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>  <span class="p">}</span>
-</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>
-</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>  <span class="k">on</span> <span class="nf">bad</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="p">{</span>
-</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>    <span class="k">emit</span> <span class="nb">log</span><span class="p">(</span><span class="s2">&quot;hello&quot;</span><span class="p">)</span>         <span class="c1"># runtime error — emit not allowed in sync event</span>
-</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a>  <span class="p">}</span>
-</span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a><span class="p">}</span>
-</span></code></pre></div>
 <h3 id="nested-sync-calls-are-forbidden">Nested sync calls are forbidden</h3>
-<p>Calling <code>emit X() -&gt; field</code> inside another sync event throws a runtime error. This prevents recursion entirely.</p>
-<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="k">entity</span> <span class="nc">Bad</span> <span class="p">{</span>
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>  <span class="k">on</span> <span class="nf">recursive</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="p">{</span>
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>    <span class="k">emit</span> <span class="nc">Bad</span><span class="p">.</span><span class="n">recursive</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">value</span>  <span class="c1"># runtime error — nested sync call</span>
-</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>  <span class="p">}</span>
-</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="p">}</span>
+<p>Using <code>emit X() -&gt; field</code> inside a sync event throws a runtime error. This prevents recursion entirely.</p>
+<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="k">entity</span> <span class="nc">Bad</span> <span class="p">{</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>  <span class="k">on</span> <span class="nf">recursive</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="p">{</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>    <span class="k">emit</span> <span class="nc">Bad</span><span class="p">.</span><span class="n">recursive</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">value</span>  <span class="c1"># runtime error — nested sync call</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>  <span class="p">}</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="p">}</span>
+</span></code></pre></div>
+<h3 id="regular-emit-is-allowed-inside-sync-events">Regular emit is allowed inside sync events</h3>
+<p>Regular <code>emit</code> just queues the event as usual — no recursion risk.</p>
+<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="k">entity</span> <span class="nc">MathLib</span> <span class="p">{</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>  <span class="k">on</span> <span class="nf">clamp</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">min</span><span class="p">,</span> <span class="n">max</span><span class="p">)</span> <span class="p">{</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>    <span class="k">check</span> <span class="n">value</span> <span class="o o-Comparison">&lt;</span> <span class="n">min</span><span class="p">:</span> <span class="n">min</span> <span class="o">-&gt;</span> <span class="n">value</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>    <span class="k">check</span> <span class="n">value</span> <span class="o o-Comparison">&gt;</span> <span class="n">max</span><span class="p">:</span> <span class="n">max</span> <span class="o">-&gt;</span> <span class="n">value</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>    <span class="n">value</span> <span class="o">-&gt;</span> <span class="n">result</span>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>    <span class="k">emit</span> <span class="nb">log</span><span class="p">(</span><span class="s2">&quot;clamped:&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>  <span class="c1"># ok — queued normally</span>
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>  <span class="p">}</span>
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="p">}</span>
 </span></code></pre></div>
 <h3 id="return-value">Return value</h3>
 <p>The return value is the <strong>last value assigned</strong> inside the event body, regardless of which branch executed.</p>
@@ -1618,9 +1615,14 @@
 <td>Last assigned value</td>
 </tr>
 <tr>
-<td><code>emit</code> allowed inside</td>
+<td><code>emit X() -&gt; field</code> allowed inside</td>
 <td>Yes</td>
 <td>No</td>
+</tr>
+<tr>
+<td>Regular <code>emit</code> allowed inside</td>
+<td>Yes</td>
+<td>Yes</td>
 </tr>
 <tr>
 <td>Recursion possible</td>
