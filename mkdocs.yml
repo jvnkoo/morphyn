@@ -64,6 +64,7 @@ nav:
       - Syntax Reference: language/syntax.md
       - Expressions: language/expressions.md
       - Event System: language/events.md
+      - Sync Emit: language/sync-emit.md
       - Pool System: language/pools.md
       - Import System: language/imports.md
   - Unity Integration:

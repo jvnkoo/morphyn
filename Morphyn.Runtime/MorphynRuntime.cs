@@ -15,6 +15,9 @@ namespace Morphyn.Runtime
         private static readonly HashSet<(Entity, string)> _pendingEventSet = new();
         private const int HASH_SET_THRESHOLD = 20; // Use HashSet only when queue grows
 
+        // Prevents nested sync calls to eliminate recursion
+        private static bool _inSyncCall = false;
+
         public static Action<string, object?[]>? UnityCallback { get; set; }
 
         // Send an event to an entity
@@ -38,7 +41,7 @@ namespace Morphyn.Runtime
                     return;
                 _pendingEventSet.Add(key);
             }
-            
+
             _eventQueue.Enqueue(new PendingEvent(target, eventName, args ?? EmptyArgs));
         }
 
@@ -47,7 +50,7 @@ namespace Morphyn.Runtime
             while (_eventQueue.Count > 0)
             {
                 var current = _eventQueue.Dequeue();
-                
+
                 // Clean up HashSet when queue becomes small again
                 if (_eventQueue.Count < HASH_SET_THRESHOLD / 2 && _pendingEventSet.Count > 0)
                 {
@@ -57,10 +60,10 @@ namespace Morphyn.Runtime
                 {
                     _pendingEventSet.Remove((current.Target, current.EventName));
                 }
-                
+
                 ProcessEvent(data, current);
             }
-            
+
             // Final cleanup
             if (_pendingEventSet.Count > 0)
                 _pendingEventSet.Clear();
@@ -80,10 +83,111 @@ namespace Morphyn.Runtime
                 localScope[ev.Parameters[i]] = val;
             }
 
-            foreach (var action in ev.Actions)
+            try
             {
-                if (!ExecuteAction(data, entity, action, localScope))
-                    break;
+                foreach (var action in ev.Actions)
+                {
+                    if (!ExecuteAction(data, entity, action, localScope))
+                        break;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[Runtime Error] Entity '{entity.Name}', event '{pending.EventName}': {ex.Message}");
+            }
+        }
+
+        // Executes an event synchronously and returns the last assigned value.
+        // Nested sync calls are blocked to prevent recursion.
+        public static object? ExecuteSync(Entity callerEntity, Entity targetEntity,
+            string eventName, List<object?> args, EntityData data)
+        {
+            if (_inSyncCall)
+                throw new Exception(
+                    $"[Sync Error] Nested sync calls not allowed. Cannot use 'emit ... -> field' inside a sync event '{eventName}'.");
+
+            if (!targetEntity.EventCache.TryGetValue(eventName, out var ev))
+                throw new Exception($"[Sync Error] Event '{eventName}' not found in '{targetEntity.Name}'.");
+
+            _inSyncCall = true;
+            object? lastAssigned = null;
+
+            try
+            {
+                var localScope = new Dictionary<string, object?>(ev.Parameters.Count);
+                for (int i = 0; i < ev.Parameters.Count; i++)
+                {
+                    localScope[ev.Parameters[i]] = i < args.Count
+                        ? args[i]
+                        : throw new Exception($"[Sync Error] Event '{eventName}' expected {ev.Parameters.Count} arguments.");
+                }
+
+                foreach (var action in ev.Actions)
+                {
+                    if (!ExecuteSyncAction(data, targetEntity, action, localScope, ref lastAssigned))
+                        break;
+                }
+            }
+            finally
+            {
+                _inSyncCall = false;
+            }
+
+            return lastAssigned;
+        }
+
+        // Executes an action inside a sync event.
+        // Only assignments and checks are allowed — emit is forbidden to prevent recursion.
+        private static bool ExecuteSyncAction(EntityData data, Entity entity, MorphynAction action,
+            Dictionary<string, object?> localScope, ref object? lastAssigned)
+        {
+            switch (action)
+            {
+                case SetAction set:
+                {
+                    object? value = EvaluateExpression(entity, set.Expression, localScope, data);
+
+                    if (entity.Fields.ContainsKey(set.TargetField))
+                        entity.Fields[set.TargetField] = value;
+                    else
+                        localScope[set.TargetField] = value;
+
+                    lastAssigned = value;
+                    return true;
+                }
+
+                case CheckAction check:
+                {
+                    object? result = EvaluateExpression(entity, check.Condition, localScope, data);
+                    bool passed = Convert.ToBoolean(result);
+
+                    if (!passed)
+                        return check.InlineAction != null;
+
+                    if (check.InlineAction != null)
+                        return ExecuteSyncAction(data, entity, check.InlineAction, localScope, ref lastAssigned);
+
+                    return true;
+                }
+
+                case BlockAction block:
+                {
+                    foreach (var sub in block.Actions)
+                    {
+                        if (!ExecuteSyncAction(data, entity, sub, localScope, ref lastAssigned))
+                            return false;
+                    }
+                    return true;
+                }
+
+                case EmitAction:
+                case EmitWithReturnAction:
+                    throw new Exception(
+                        "[Sync Error] 'emit' is not allowed inside a sync event. " +
+                        "Sync events must be pure — only assignments and checks are permitted.");
+
+                default:
+                    return true;
             }
         }
 
@@ -118,7 +222,6 @@ namespace Morphyn.Runtime
 
                     return true;
                 }
-
 
                 case SetIndexAction setIdx:
                 {
@@ -157,6 +260,29 @@ namespace Morphyn.Runtime
                             return false;
                     }
                     return true;
+
+                case EmitWithReturnAction emitRet:
+                {
+                    List<object?> resolvedArgs = new List<object?>(emitRet.Arguments.Count);
+                    foreach (var argExpr in emitRet.Arguments)
+                        resolvedArgs.Add(EvaluateExpression(entity, argExpr, localScope, data));
+
+                    Entity? target = string.IsNullOrEmpty(emitRet.TargetEntityName)
+                        ? entity
+                        : (data.Entities.TryGetValue(emitRet.TargetEntityName, out var e) ? e : null);
+
+                    if (target == null)
+                        throw new Exception($"[Sync Error] Entity '{emitRet.TargetEntityName}' not found.");
+
+                    object? syncResult = ExecuteSync(entity, target, emitRet.EventName, resolvedArgs, data);
+
+                    if (entity.Fields.ContainsKey(emitRet.TargetField))
+                        entity.Fields[emitRet.TargetField] = syncResult;
+                    else
+                        localScope[emitRet.TargetField] = syncResult;
+
+                    return true;
+                }
 
                 case EmitAction emit:
                 {
@@ -197,10 +323,10 @@ namespace Morphyn.Runtime
                         if (UnityCallback != null && resolvedArgs.Count > 0)
                         {
                             string callbackName = resolvedArgs[0]?.ToString() ?? "";
-                            object?[] callbackArgs = resolvedArgs.Count > 1 
-                                ? resolvedArgs.GetRange(1, resolvedArgs.Count - 1).ToArray() 
+                            object?[] callbackArgs = resolvedArgs.Count > 1
+                                ? resolvedArgs.GetRange(1, resolvedArgs.Count - 1).ToArray()
                                 : Array.Empty<object?>();
-                            
+
                             UnityCallback(callbackName, callbackArgs);
                         }
                         return true;
@@ -245,13 +371,13 @@ namespace Morphyn.Runtime
                         }
                     }
 
-                    Entity? target = string.IsNullOrEmpty(targetName)
+                    Entity? emitTarget = string.IsNullOrEmpty(targetName)
                         ? entity
                         : (data.Entities.TryGetValue(targetName, out var e) ? e : null);
 
-                    if (target != null)
+                    if (emitTarget != null)
                     {
-                        Send(target, emit.EventName, resolvedArgs);
+                        Send(emitTarget, emit.EventName, resolvedArgs);
                     }
                     else
                     {

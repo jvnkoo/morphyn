@@ -8,6 +8,7 @@ of entity declarations with fields and event handlers.
 ## Comments
 
 Three comment styles are supported:
+
 ```morphyn
 # Single-line comment (shell style)
 // Single-line comment (C++ style)
@@ -15,6 +16,7 @@ Three comment styles are supported:
 ```
 
 ## Entity Declaration
+
 ```morphyn
 entity EntityName {
   # Fields and events
@@ -24,6 +26,7 @@ entity EntityName {
 ## Field Declaration
 
 ### Basic Fields
+
 ```morphyn
 has field_name: value
 has hp: 100
@@ -33,6 +36,7 @@ has exist: null
 ```
 
 ### Pool Fields
+
 ```morphyn
 has items: pool[1, 2, 3]
 has names: pool["Alice", "Bob"]
@@ -42,6 +46,7 @@ has flags: pool[true, false, true]
 ## Event Handlers
 
 ### Without Parameters
+
 ```morphyn
 on event_name {
   # actions
@@ -49,6 +54,7 @@ on event_name {
 ```
 
 ### With Parameters
+
 ```morphyn
 on event_name(param1, param2) {
   # actions
@@ -58,6 +64,7 @@ on event_name(param1, param2) {
 ## Actions
 
 ### Data Flow (Arrow)
+
 ```morphyn
 expression -> target
 hp - 10 -> hp
@@ -66,6 +73,7 @@ damage * 2 -> result
 ```
 
 ### Check (Guard)
+
 ```morphyn
 # Check with an inline action
 check condition: action
@@ -78,6 +86,7 @@ check i < 0
 ```
 
 ### Emit (Event Dispatch)
+
 ```morphyn
 emit event_name
 emit event_name(arg1, arg2)
@@ -86,7 +95,40 @@ emit self.destroy
 emit log("message", value)
 ```
 
+### Sync Emit (Immediate Call with Return Value)
+
+Executes an event synchronously and assigns the result to a field.
+The result is the last value assigned inside the called event.
+
+```morphyn
+emit event_name(args) -> field
+emit Entity.event_name(args) -> field
+```
+
+Sync events must be pure — only assignments and checks are allowed inside them.
+Nested sync calls are forbidden to prevent recursion.
+
+```morphyn
+entity MathLib {
+  on clamp(value, min, max) {
+    check value < min: min -> value
+    check value > max: max -> value
+    value -> result
+  }
+}
+
+entity Player {
+  has hp: 150
+  has max_hp: 100
+
+  on heal(amount) {
+    emit MathLib.clamp(hp + amount, 0, max_hp) -> hp
+  }
+}
+```
+
 ### Block Actions
+
 ```morphyn
 {
   action1
@@ -139,7 +181,7 @@ emit log("message", value)
 | `entity` | Declare entity |
 | `has` | Declare field |
 | `on` | Declare event handler |
-| `emit` | Send event |
+| `emit` | Send event or call sync event |
 | `check` | Conditional guard |
 | `pool` | Collection type |
 | `true` | Boolean true |

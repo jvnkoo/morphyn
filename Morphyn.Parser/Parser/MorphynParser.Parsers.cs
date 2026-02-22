@@ -26,26 +26,28 @@ namespace Morphyn.Parser
                 var str = t.ToStringValue();
                 return str.Substring(1, str.Length - 2);
             });
-        
+
         private static TokenListParser<MorphynToken, MorphynExpression> IndexAccess =>
             (from name in Identifier
                 from dot in Token.EqualTo(MorphynToken.Dot)
-                from member in Identifier 
+                from member in Identifier
                 from index in Expression.Between(
-                    Token.EqualTo(MorphynToken.LeftBracket), 
+                    Token.EqualTo(MorphynToken.LeftBracket),
                     Token.EqualTo(MorphynToken.RightBracket))
-                select (MorphynExpression)new IndexAccessExpression { 
-                    TargetName = name, 
-                    IndexExpr = index 
+                select (MorphynExpression)new IndexAccessExpression
+                {
+                    TargetName = name,
+                    IndexExpr = index
                 }).Try();
 
         private static TokenListParser<MorphynToken, MorphynExpression> PropertyAccess =>
             (from name in Identifier
                 from dot in Token.EqualTo(MorphynToken.Dot)
                 from prop in Identifier
-                select (MorphynExpression)new PoolPropertyExpression { 
-                    TargetName = name, 
-                    Property = prop 
+                select (MorphynExpression)new PoolPropertyExpression
+                {
+                    TargetName = name,
+                    Property = prop
                 }).Try();
 
         // Terms are the lowest level of the expression.
@@ -58,11 +60,11 @@ namespace Morphyn.Parser
                 .Or(Token.EqualTo(MorphynToken.True).Select(_ => (MorphynExpression)new LiteralExpression(true)))
                 .Or(Token.EqualTo(MorphynToken.False).Select(_ => (MorphynExpression)new LiteralExpression(false)))
                 .Or(Token.EqualTo(MorphynToken.Null).Select(_ => (MorphynExpression)new LiteralExpression(null)))
-                .Or(IndexAccess)   
-                .Or(PropertyAccess) 
-                .Or(Identifier.Select(id => (MorphynExpression)new VariableExpression(id))) 
+                .Or(IndexAccess)
+                .Or(PropertyAccess)
+                .Or(Identifier.Select(id => (MorphynExpression)new VariableExpression(id)))
                 .Or(Parse.Ref(() => Expression).Between(Token.EqualTo(MorphynToken.LeftParen), Token.EqualTo(MorphynToken.RightParen)));
-        
+
         private static TokenListParser<MorphynToken, MorphynExpression> Unary =>
             (from minus in Token.EqualTo(MorphynToken.Minus)
                 from term in Term
@@ -74,13 +76,13 @@ namespace Morphyn.Parser
         private static TokenListParser<MorphynToken, MorphynExpression> Factor =>
             Parse.Chain(
                 Token.EqualTo(MorphynToken.Asterisk).Or(Token.EqualTo(MorphynToken.Slash)).Or(Token.EqualTo(MorphynToken.Percent)),
-                Unary, 
+                Unary,
                 (op, left, right) => (MorphynExpression)new BinaryExpression(op.ToStringValue(), left, right));
 
         // Parser precedence for addition and subtraction.
         // These operators have lower precedence than multiplication and division.
         private static TokenListParser<MorphynToken, MorphynExpression> Expression =>
-            Parse.Chain(Token.EqualTo(MorphynToken.Or), AndParser, 
+            Parse.Chain(Token.EqualTo(MorphynToken.Or), AndParser,
                 (op, left, right) => (MorphynExpression)new BinaryLogicExpression(left, "or", right));
 
         /// <summary>
@@ -94,10 +96,11 @@ namespace Morphyn.Parser
                 from dot in Token.EqualTo(MorphynToken.Dot).Optional()
                 from member in Token.EqualTo(MorphynToken.Identifier).Where(t => t.ToStringValue() == "at").Optional()
                 from indexExpr in Expression.Between(Token.EqualTo(MorphynToken.LeftBracket), Token.EqualTo(MorphynToken.RightBracket))
-                select (MorphynAction)new SetIndexAction { 
-                    TargetPoolName = poolName, 
-                    IndexExpr = indexExpr, 
-                    ValueExpr = valExpr 
+                select (MorphynAction)new SetIndexAction
+                {
+                    TargetPoolName = poolName,
+                    IndexExpr = indexExpr,
+                    ValueExpr = valExpr
                 }).Try()
             .Or(from expr in Expression
                 from arrow in Token.EqualTo(MorphynToken.Arrow)
@@ -123,7 +126,6 @@ namespace Morphyn.Parser
             from values in LiteralValue.ManyDelimitedBy(Token.EqualTo(MorphynToken.Comma))
                 .Between(Token.EqualTo(MorphynToken.LeftBracket), Token.EqualTo(MorphynToken.RightBracket))
             select new MorphynPool { Values = values.ToList() };
-
 
         // Parse field declaration: identifier : value
         // Maybe make "has" optional
@@ -174,6 +176,21 @@ namespace Morphyn.Parser
                 Arguments = args.ToList()
             };
 
+        // Parse emit with return: emit eventName(args) -> field
+        private static TokenListParser<MorphynToken, MorphynAction> EmitWithReturnAction =>
+            (from emitKeyword in Token.EqualTo(MorphynToken.Emit)
+                from @ref in EventReference
+                from args in CallArguments.OptionalOrDefault(Array.Empty<MorphynExpression>())
+                from arrow in Token.EqualTo(MorphynToken.Arrow)
+                from target in Identifier
+                select (MorphynAction)new EmitWithReturnAction
+                {
+                    TargetEntityName = @ref.target,
+                    EventName = @ref.eventName,
+                    Arguments = args.ToList(),
+                    TargetField = target
+                }).Try();
+
         private static TokenListParser<MorphynToken, MorphynExpression> ArithExpression =>
             Parse.Chain(
                 Token.EqualTo(MorphynToken.Plus).Or(Token.EqualTo(MorphynToken.Minus)),
@@ -185,23 +202,24 @@ namespace Morphyn.Parser
                 Token.EqualTo(MorphynToken.DoubleEquals).Or(Token.EqualTo(MorphynToken.NotEquals))
                     .Or(Token.EqualTo(MorphynToken.GreaterThan)).Or(Token.EqualTo(MorphynToken.LessThan))
                     .Or(Token.EqualTo(MorphynToken.GreaterThanOrEqual)).Or(Token.EqualTo(MorphynToken.LessThanOrEqual)),
-                ArithExpression, 
+                ArithExpression,
                 (op, left, right) => (MorphynExpression)new BinaryExpression(op.ToStringValue(), left, right));
 
         private static TokenListParser<MorphynToken, MorphynExpression> NotParser =>
             (from op in Token.EqualTo(MorphynToken.Not)
                 from expr in Comparison
                 select (MorphynExpression)new UnaryLogicExpression("not", expr))
-            .Or(Comparison); 
+            .Or(Comparison);
 
         private static TokenListParser<MorphynToken, MorphynExpression> AndParser =>
-            Parse.Chain(Token.EqualTo(MorphynToken.And), NotParser, 
+            Parse.Chain(Token.EqualTo(MorphynToken.And), NotParser,
                 (op, left, right) => (MorphynExpression)new BinaryLogicExpression(left, "and", right));
-        
+
         private static TokenListParser<MorphynToken, MorphynAction> SimpleActionParser =>
-            EmitAction.Try()
+            EmitWithReturnAction.Try() // must be before EmitAction to catch "emit X() -> field"
+                .Or(EmitAction.Try())
                 .Or(FlowAction.Try());
-        
+
         private static TokenListParser<MorphynToken, MorphynAction> CheckAction =>
             (
                 from checkKeyword in Token.EqualTo(MorphynToken.Check)
@@ -224,7 +242,7 @@ namespace Morphyn.Parser
                     InlineAction = null
                 }
             );
-        
+
         private static TokenListParser<MorphynToken, MorphynAction> BlockActionParser =>
             from leftBrace in Token.EqualTo(MorphynToken.LeftBrace)
             from actions in Parse.Ref(() => ActionParser).Many()
