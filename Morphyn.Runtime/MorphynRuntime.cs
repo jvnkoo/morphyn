@@ -137,7 +137,7 @@ namespace Morphyn.Runtime
         }
 
         // Executes an action inside a sync event.
-        // Only assignments and checks are allowed — emit is forbidden to prevent recursion.
+        // Regular emit is allowed (queued for later). Only emit X() -> field is forbidden to prevent recursion.
         private static bool ExecuteSyncAction(EntityData data, Entity entity, MorphynAction action,
             Dictionary<string, object?> localScope, ref object? lastAssigned)
         {
@@ -180,11 +180,104 @@ namespace Morphyn.Runtime
                     return true;
                 }
 
-                case EmitAction:
                 case EmitWithReturnAction:
                     throw new Exception(
-                        "[Sync Error] 'emit' is not allowed inside a sync event. " +
-                        "Sync events must be pure — only assignments and checks are permitted.");
+                        "[Sync Error] Nested sync calls not allowed. Cannot use 'emit ... -> field' inside a sync event.");
+
+                case EmitAction emit:
+                {
+                    List<object?> resolvedArgs = new List<object?>(emit.Arguments.Count);
+                    foreach (var argExpr in emit.Arguments)
+                    {
+                        try
+                        {
+                            resolvedArgs.Add(EvaluateExpression(entity, argExpr, localScope, data));
+                        }
+                        catch (Exception) when (emit.EventName == "each" && argExpr is VariableExpression ve)
+                        {
+                            resolvedArgs.Add(ve.Name);
+                        }
+                    }
+
+                    if (emit.TargetEntityName == "self" && emit.EventName == "destroy")
+                    {
+                        entity.IsDestroyed = true;
+                        return true;
+                    }
+
+                    if (emit.EventName == "log")
+                    {
+                        var logParts = resolvedArgs.Select(arg => arg switch
+                        {
+                            MorphynPool p => "pool[" + string.Join(", ", p.Values) + "]",
+                            null => "null",
+                            _ => arg.ToString()
+                        });
+                        Console.WriteLine(string.Join(" ", logParts));
+                        return true;
+                    }
+
+                    if (emit.EventName == "unity")
+                    {
+                        if (UnityCallback != null && resolvedArgs.Count > 0)
+                        {
+                            string callbackName = resolvedArgs[0]?.ToString() ?? "";
+                            object?[] callbackArgs = resolvedArgs.Count > 1
+                                ? resolvedArgs.GetRange(1, resolvedArgs.Count - 1).ToArray()
+                                : Array.Empty<object?>();
+                            UnityCallback(callbackName, callbackArgs);
+                        }
+                        return true;
+                    }
+
+                    string? targetName = emit.TargetEntityName;
+
+                    if (!string.IsNullOrEmpty(targetName) && targetName.Contains('.'))
+                    {
+                        var parts = targetName.Split('.');
+                        string entityName = parts[0];
+                        string targetPoolName = parts[1];
+
+                        if (data.Entities.TryGetValue(entityName, out var extEntity) &&
+                            extEntity.Fields.TryGetValue(targetPoolName, out var pObj) && pObj is MorphynPool extPool)
+                        {
+                            if (HandlePoolCommand(extPool, emit.EventName, resolvedArgs, data)) return true;
+                        }
+                    }
+
+                    if (!string.IsNullOrEmpty(emit.TargetEntityName))
+                    {
+                        if (entity.Fields.TryGetValue(emit.TargetEntityName, out var poolObj) &&
+                            poolObj is MorphynPool localPool)
+                        {
+                            if (emit.EventName == "each")
+                            {
+                                string subEventName = resolvedArgs[0]?.ToString() ?? "";
+                                List<object?> subArgs = resolvedArgs.Skip(1).ToList();
+                                foreach (var item in localPool.Values)
+                                {
+                                    if (item is Entity subE) Send(subE, subEventName, subArgs);
+                                    else if (item is string eName && data.Entities.TryGetValue(eName, out var extE))
+                                        Send(extE, subEventName, subArgs);
+                                }
+                                return true;
+                            }
+
+                            if (HandlePoolCommand(localPool, emit.EventName, resolvedArgs, data)) return true;
+                        }
+                    }
+
+                    Entity? emitTarget = string.IsNullOrEmpty(targetName)
+                        ? entity
+                        : (data.Entities.TryGetValue(targetName, out var e) ? e : null);
+
+                    if (emitTarget != null)
+                        Send(emitTarget, emit.EventName, resolvedArgs);
+                    else
+                        Console.WriteLine($"[ERROR] Target entity '{targetName}' not found for event '{emit.EventName}'");
+
+                    return true;
+                }
 
                 default:
                     return true;

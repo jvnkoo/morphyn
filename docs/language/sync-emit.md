@@ -8,7 +8,7 @@ Sync emit is a special form of `emit` that executes an event **immediately and s
 emit Entity.event(args) -> field
 ```
 
-This enables user-defined pure functions — events that compute and return a value without side effects.
+This enables user-defined pure functions — events that compute and return a value.
 
 ---
 
@@ -62,32 +62,29 @@ entity Player {
 
 ## Rules
 
-### Sync events must be pure
+### Nested sync calls are forbidden
 
-Inside a sync event, only assignments (`->`) and checks (`check`) are allowed. Using `emit` inside a sync event throws a runtime error.
+Using `emit X() -> field` inside a sync event throws a runtime error. This prevents recursion entirely.
+
+```morphyn
+entity Bad {
+  on recursive(value) {
+    emit Bad.recursive(value) -> value  # runtime error — nested sync call
+  }
+}
+```
+
+### Regular emit is allowed inside sync events
+
+Regular `emit` just queues the event as usual — no recursion risk.
 
 ```morphyn
 entity MathLib {
   on clamp(value, min, max) {
     check value < min: min -> value
     check value > max: max -> value
-    value -> result           # ok
-  }
-
-  on bad(value) {
-    emit log("hello")         # runtime error — emit not allowed in sync event
-  }
-}
-```
-
-### Nested sync calls are forbidden
-
-Calling `emit X() -> field` inside another sync event throws a runtime error. This prevents recursion entirely.
-
-```morphyn
-entity Bad {
-  on recursive(value) {
-    emit Bad.recursive(value) -> value  # runtime error — nested sync call
+    value -> result
+    emit log("clamped:", result)  # ok — queued normally
   }
 }
 ```
@@ -112,7 +109,8 @@ on clamp(value, min, max) {
 |---|---|---|
 | Execution | Queued, deferred | Immediate, synchronous |
 | Return value | None | Last assigned value |
-| `emit` allowed inside | Yes | No |
+| `emit X() -> field` allowed inside | Yes | No |
+| Regular `emit` allowed inside | Yes | Yes |
 | Recursion possible | Yes (indirect) | No |
 | Use case | Events, side effects | Pure computation |
 
