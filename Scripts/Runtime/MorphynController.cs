@@ -218,7 +218,7 @@ public class MorphynController : MonoBehaviour
         {
             Debug.LogWarning($"[Morphyn] Import not found: {absolutePath}");
             return "";
-        }
+        }   
 
         string content = File.ReadAllText(absolutePath);
         string[] lines = content.Split('\n');
@@ -417,6 +417,25 @@ public class MorphynController : MonoBehaviour
             MorphynRuntime.Send(entity, eventName, _internalArgsBuffer);
             MorphynRuntime.RunFullCycle(_context);
         }
+    }
+
+    public object? ExecuteSyncEvent(string entityName, string eventName, params object[] args)
+    {
+        if (_context != null && _context.Entities.TryGetValue(entityName, out var entity))
+        {
+            _internalArgsBuffer.Clear();
+            for (int i = 0; i < args.Length; i++)
+            {
+                _internalArgsBuffer.Add(args[i]);
+            }
+
+            if (entity != null)
+            {
+                object? result = MorphynRuntime.ExecuteSync(null, entity, eventName, _internalArgsBuffer.ToList(), _context);
+                return result;
+            }
+        }
+        return null;
     }
 
     public void SaveState()
