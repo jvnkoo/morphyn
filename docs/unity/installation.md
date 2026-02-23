@@ -52,7 +52,7 @@ public class PlayerController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.L))
         {
             // Trigger event
-            MorphynController.Instance.SendEventToEntity("Player", "level_up");
+            MorphynController.Instance.Emit("Player", "level_up");
         }
     }
 }

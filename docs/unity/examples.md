@@ -42,7 +42,7 @@ public class ShopUI : MonoBehaviour
     
     public void OnSaleButtonClick()
     {
-        MorphynController.Instance.SendEventToEntity("Shop", "apply_sale", 50);
+        MorphynController.Instance.Emit("Shop", "apply_sale", 50);
         UpdatePrices(); // Shows 50
     }
 }
@@ -86,12 +86,12 @@ public class InventoryUI : MonoBehaviour
 {
     public void AddSword()
     {
-        MorphynController.Instance.SendEventToEntity("Inventory", "add_item", "sword");
+        MorphynController.Instance.Emit("Inventory", "add_item", "sword");
     }
     
     public void BuyPotion()
     {
-        MorphynController.Instance.SendEventToEntity("Inventory", "buy_item", "potion", 20);
+        MorphynController.Instance.Emit("Inventory", "buy_item", "potion", 20);
     }
     
     public void ShowItems()
@@ -156,7 +156,7 @@ public class Spawner : MonoBehaviour
     
     public void OnEnemyKilled()
     {
-        MorphynController.Instance.SendEventToEntity("Spawner", "enemy_died");
+        MorphynController.Instance.Emit("Spawner", "enemy_died");
     }
 }
 ```

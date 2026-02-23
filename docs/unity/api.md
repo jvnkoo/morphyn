@@ -27,7 +27,10 @@ double hpValue = System.Convert.ToDouble(hp);
 morphyn.SetField("Player", "hp", 50);
 
 // Trigger event
-morphyn.SendEventToEntity("Player", "damage", 25);
+morphyn.Emit("Player", "damage", 25);
+
+// Trigger event which returns a value
+object? result = morphyn.EmitSync("Player", "damage", 25);
 
 // Save/Load
 morphyn.SaveState();
