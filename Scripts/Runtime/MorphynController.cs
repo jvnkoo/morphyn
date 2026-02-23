@@ -403,7 +403,7 @@ public class MorphynController : MonoBehaviour
         return new Dictionary<string, object?>();
     }
 
-    public void SendEventToEntity(string entityName, string eventName, params object[] args)
+    public void Emit(string entityName, string eventName, params object[] args)
     {
         if (_context != null && _context.Entities.TryGetValue(entityName, out var entity))
         {
@@ -419,7 +419,7 @@ public class MorphynController : MonoBehaviour
         }
     }
 
-    public object? ExecuteSyncEvent(string entityName, string eventName, params object[] args)
+    public object? EmitSync(string entityName, string eventName, params object[] args)
     {
         if (_context != null && _context.Entities.TryGetValue(entityName, out var entity))
         {
