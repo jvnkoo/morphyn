@@ -215,12 +215,6 @@ Apache 2.0 — see [LICENSE](LICENSE) and [NOTICE](NOTICE). Free for commercial 
 
 <div align="center">
 
-**Made by gamedevs, for gamedevs.**
-
-[⭐ Star this repo](https://github.com/jvnkoo/morphyn) if Morphyn saves you time!
-
 <img src="https://media1.tenor.com/m/ugRQCY7AKEsAAAAd/texh-texhnolyze.gif" width="1000" height="300" alt="gif">
 
 </div>
-
-> P.S. Morphyn is not a drug, but the development speed is addictive.
