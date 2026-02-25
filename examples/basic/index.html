@@ -21,7 +21,7 @@
       
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.2">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.3">
     
     
       
@@ -1322,7 +1322,7 @@
 <h1 id="basic-examples">Basic Examples</h1>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>Custom events (like <code>damage</code>, <code>heal</code>) must be triggered either from <code>init</code>/<code>tick</code> events, or externally via C# code using <code>MorphynController.SendEventToEntity()</code>. They don't run automatically.</p>
+<p>Custom events (like <code>damage</code>, <code>heal</code>) must be triggered either from <code>init</code>/<code>tick</code> events, or externally via C# code using <code>MorphynController.Emit()</code>. They don't run automatically.</p>
 </div>
 <h2 id="simple-counter">Simple Counter</h2>
 <div class="language-morphyn highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">entity</span> <span class="nc">Counter</span> <span class="p">{</span>

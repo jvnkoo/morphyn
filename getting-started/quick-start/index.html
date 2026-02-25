@@ -21,7 +21,7 @@
       
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.2">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.3">
     
     
       
@@ -1399,7 +1399,7 @@
 
 <h1 id="quick-start">Quick Start</h1>
 <h2 id="your-first-program">Your First Program</h2>
-<p>Create a file called <code>player.morphyn</code>:
+<p>Create a file called <code>player.morph</code>:
 <div class="language-morphyn highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">entity</span> <span class="nc">Player</span> <span class="p">{</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>  <span class="k">has</span> <span class="nv">hp</span><span class="p">:</span> <span class="m">100</span>
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>  <span class="k">has</span> <span class="nv">name</span><span class="p">:</span> <span class="s2">&quot;Hero&quot;</span>
@@ -1422,7 +1422,7 @@
 </span></code></pre></div></p>
 <h2 id="running-morphyn-programs">Running Morphyn Programs</h2>
 <p>Run your program:
-<div class="language-sh highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>morphyn<span class="w"> </span>player.morphyn
+<div class="language-sh highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>morphyn<span class="w"> </span>player.morph
 </span></code></pre></div></p>
 <p><strong>Output:</strong>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>Player created!
@@ -1468,7 +1468,7 @@
 <h3 id="hot-reload">Hot Reload</h3>
 <p>The runtime automatically watches for file changes and reloads entity logic without restarting.</p>
 <p><strong>Example:</strong>
-1. Run <code>morphyn player.morphyn</code>
+1. Run <code>morphyn player.morph</code>
 2. Edit the file: change <code>emit damage(25)</code> to <code>emit damage(75)</code>
 3. Save
 4. <strong>Logic updates instantly</strong> without restarting</p>

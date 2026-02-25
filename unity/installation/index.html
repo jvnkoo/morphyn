@@ -21,7 +21,7 @@
       
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.2">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.3">
     
     
       
@@ -1381,14 +1381,14 @@
 <li>Download <code>Morphyn.unitypackage</code> from <a href="https://github.com/jvnkoo/morphyn/releases/latest">Releases</a></li>
 <li>Import: <code>Assets &gt; Import Package &gt; Custom Package</code></li>
 <li>Add to scene: <code>GameObject &gt; Create Empty &gt; Add Component &gt; Morphyn Controller</code></li>
-<li>Drag <code>.morphyn</code> files into <code>Morphyn Scripts</code> array</li>
+<li>Drag <code>.morph</code> files into <code>Morphyn Scripts</code> array</li>
 <li>Check <code>Enable Hot Reload</code></li>
 <li>Press Play</li>
 </ol>
 <p>Done.</p>
 <h2 id="quick-start-example">Quick Start Example</h2>
 <h3 id="step-1-create-config-file">Step 1: Create Config File</h3>
-<p>Create <code>player.morphyn</code> in your Assets folder:
+<p>Create <code>player.morph</code> in your Assets folder:
 <div class="language-morphyn highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">entity</span> <span class="nc">Player</span> <span class="p">{</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>  <span class="k">has</span> <span class="nv">hp</span><span class="p">:</span> <span class="m">100</span>
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>  <span class="k">has</span> <span class="nv">damage</span><span class="p">:</span> <span class="m">25</span>
@@ -1430,7 +1430,7 @@
 <h3 id="step-3-test-hot-reload">Step 3: Test Hot Reload</h3>
 <ol>
 <li>Enter Play mode</li>
-<li>Open <code>player.morphyn</code></li>
+<li>Open <code>player.morph</code></li>
 <li>Change <code>has hp: 100</code> to <code>has hp: 999</code></li>
 <li>Save</li>
 <li><strong>HP updates instantly in running game!</strong></li>

@@ -21,7 +21,7 @@
       
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.2">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.3">
     
     
       
@@ -1677,7 +1677,7 @@
 
 <h1 id="unity-api-reference">Unity API Reference</h1>
 <h2 id="morphyncontroller">MorphynController</h2>
-<p>The main component that loads and runs .morphyn files.</p>
+<p>The main component that loads and runs .morph files.</p>
 <h3 id="settings">Settings</h3>
 <table>
 <thead>
@@ -1689,7 +1689,7 @@
 <tbody>
 <tr>
 <td><strong>Morphyn Scripts</strong></td>
-<td>Drag .morphyn files here</td>
+<td>Drag .morph files here</td>
 </tr>
 <tr>
 <td><strong>Run On Start</strong></td>
@@ -1734,7 +1734,7 @@
 </span><span id="__span-0-18"><a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a><span class="n">morphyn</span><span class="p">.</span><span class="n">LoadState</span><span class="p">(</span><span class="s">&quot;Player&quot;</span><span class="p">);</span>
 </span></code></pre></div>
 <h2 id="unity-bridge">Unity Bridge</h2>
-<p>Call Unity functions from .morphyn files.</p>
+<p>Call Unity functions from .morph files.</p>
 <h3 id="setup">Setup</h3>
 <div class="language-cs highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="k">using</span><span class="w"> </span><span class="nn">UnityEngine</span><span class="p">;</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="k">using</span><span class="w"> </span><span class="nn">Morphyn.Unity</span><span class="p">;</span>
@@ -1777,16 +1777,16 @@
 </span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="k">emit</span> <span class="nb">unity</span><span class="p">(</span><span class="s2">&quot;Rotate&quot;</span><span class="p">,</span> <span class="m">45</span><span class="p">)</span>                <span class="c1"># Rotate controller</span>
 </span></code></pre></div></p>
 <h2 id="hot-reload">Hot Reload</h2>
-<p>Edit .morphyn files during Play mode - changes apply instantly.</p>
+<p>Edit .morph files during Play mode - changes apply instantly.</p>
 <p><strong>Enable:</strong> Check <code>Enable Hot Reload</code> on MorphynController</p>
 <p><strong>Example:</strong>
 1. Start Play mode
-2. Open player.morphyn
+2. Open player.morph
 3. Change <code>has damage: 10</code> to <code>has damage: 999</code>
 4. Save file
 5. Damage updates immediately - no restart needed</p>
 <h2 id="saveload">Save/Load</h2>
-<p>Morphyn saves entity state as readable .morphyn files.
+<p>Morphyn saves entity state as readable .morph files.
 <div class="language-cs highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1">// Save all entities</span>
 </span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="n">MorphynController</span><span class="p">.</span><span class="n">Instance</span><span class="p">.</span><span class="n">SaveState</span><span class="p">();</span>
 </span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="c1">// Saved to: Application.persistentDataPath/MorphynData/</span>
