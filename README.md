@@ -76,7 +76,7 @@ Game state is preserved across reloads. Position, inventory, quest flags — all
 
 **1.** Download and import [`Morphyn.unitypackage`](https://github.com/jvnkoo/morphyn/releases/latest)
 
-**2.** Create a `.morphyn` file:
+**2.** Create a `.morph` file:
 ```morphyn
 entity Player {
   has hp: 100
@@ -92,7 +92,7 @@ double hp = MorphynController.Instance.GetField("Player", "hp");
 MorphynController.Instance.SendEventToEntity("Player", "damage", 50);
 ```
 
-**4.** Add `MorphynController` to your scene, drag in the `.morphyn` files, check **Enable Hot Reload**, press Play.
+**4.** Add `MorphynController` to your scene, drag in the `.morph` files, check **Enable Hot Reload**, press Play.
 
 Full docs at [jvnkoo.github.io/morphyn](https://jvnkoo.github.io/morphyn).
 
@@ -146,7 +146,7 @@ No more defensive `if` chains in C#.
 
 ## VS Code Extension
 
-Syntax highlighting, bracket matching, comment support for `.morphyn` files.
+Syntax highlighting, bracket matching, comment support for `.morph` files.
 
 [📥 Download `.vsix` from Releases](https://github.com/jvnkoo/morphyn/releases/latest) → Extensions → `...` → Install from VSIX
 
@@ -158,10 +158,10 @@ Works with any .NET project, no Unity required.
 
 ```bash
 # Linux / macOS
-./install.sh && morphyn game.morphyn
+./install.sh && morphyn game.morph
 
 # Windows
-.\install.ps1; morphyn game.morphyn
+.\install.ps1; morphyn game.morph
 ```
 
 ---
