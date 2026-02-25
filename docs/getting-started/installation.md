@@ -21,10 +21,10 @@
 **Usage:**
 ```bash
 # Create a file
-echo 'entity Game { has score: 0 }' > game.morphyn
+echo 'entity Game { has score: 0 }' > game.morph
 
 # Run it
-morphyn game.morphyn
+morphyn game.morph
 ```
 
 ## Build from Source
@@ -45,8 +45,8 @@ The compiled binary will be in `bin/Debug/net6.0/` or `bin/Release/net6.0/`.
 ## File Extensions
 
 Morphyn recognizes the following file extensions:
-- `.morphyn` (recommended)
-- `.morph`
+- `.morphyn` 
+- `.morph` (recommended)
 - `.mrph`
 
 ## Development Branches

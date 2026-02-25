@@ -21,12 +21,12 @@ Traditional Unity workflow:
 ## The Solution
 
 With Morphyn:
-1. Change enemy HP in `.morphyn` file
+1. Change enemy HP in `.morph` file
 2. Save
 3. **Game updates instantly while running**
 
 !!! note
-    Unity will still recompile in the background when you save .morphyn files, but your game keeps running and state is preserved.
+    Unity will still recompile in the background when you save .morph files, but your game keeps running and state is preserved.
 
 ## Comparison
 

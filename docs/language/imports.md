@@ -4,9 +4,9 @@
 
 Import other Morphyn files:
 ```morphyn
-import "enemies.morphyn"
-import "core/weapons.morphyn"
-import "../shared/items.morphyn"
+import "enemies.morph"
+import "core/weapons.morph"
+import "../shared/items.morph"
 
 entity Player {
   # Can use entities from imported files
@@ -24,10 +24,10 @@ entity Player {
 
 ### Basic Import
 
-**main.morphyn:**
+**main.morph:**
 ```morphyn
-import "player.morphyn"
-import "enemy.morphyn"
+import "player.morph"
+import "enemy.morph"
 
 entity Game {
   on init {
@@ -38,13 +38,13 @@ entity Game {
 
 ### Subdirectory Imports
 ```morphyn
-import "entities/player.morphyn"
-import "entities/enemy.morphyn"
-import "systems/combat.morphyn"
+import "entities/player.morph"
+import "entities/enemy.morph"
+import "systems/combat.morph"
 ```
 
 ### Relative Imports
 ```morphyn
-import "../shared/utils.morphyn"
-import "../../core/base.morphyn"
+import "../shared/utils.morph"
+import "../../core/base.morph"
 ```

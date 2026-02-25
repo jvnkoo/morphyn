@@ -2,13 +2,13 @@
 
 ## MorphynController
 
-The main component that loads and runs .morphyn files.
+The main component that loads and runs .morph files.
 
 ### Settings
 
 | Setting | Description |
 |---------|-------------|
-| **Morphyn Scripts** | Drag .morphyn files here |
+| **Morphyn Scripts** | Drag .morph files here |
 | **Run On Start** | Auto-load on Start() |
 | **Enable Tick** | Send tick(dt) every frame |
 | **Enable Hot Reload** | Edit files during Play mode |
@@ -39,7 +39,7 @@ morphyn.LoadState("Player");
 
 ## Unity Bridge
 
-Call Unity functions from .morphyn files.
+Call Unity functions from .morph files.
 
 ### Setup
 ```cs
@@ -91,20 +91,20 @@ emit unity("Rotate", 45)                # Rotate controller
 
 ## Hot Reload
 
-Edit .morphyn files during Play mode - changes apply instantly.
+Edit .morph files during Play mode - changes apply instantly.
 
 **Enable:** Check `Enable Hot Reload` on MorphynController
 
 **Example:**
 1. Start Play mode
-2. Open player.morphyn
+2. Open player.morph
 3. Change `has damage: 10` to `has damage: 999`
 4. Save file
 5. Damage updates immediately - no restart needed
 
 ## Save/Load
 
-Morphyn saves entity state as readable .morphyn files.
+Morphyn saves entity state as readable .morph files.
 ```cs
 // Save all entities
 MorphynController.Instance.SaveState();

@@ -2,7 +2,7 @@
 
 ## Shop with Discount Logic
 
-**shop.morphyn:**
+**shop.morph:**
 ```morphyn
 entity Shop {
   has swordPrice: 100
@@ -50,7 +50,7 @@ public class ShopUI : MonoBehaviour
 
 ## Inventory with Capacity
 
-**inventory.morphyn:**
+**inventory.morph:**
 ```morphyn
 entity Inventory {
   has items: pool[]
@@ -108,7 +108,7 @@ public class InventoryUI : MonoBehaviour
 
 ## Enemy Spawner with Timer
 
-**spawner.morphyn:**
+**spawner.morph:**
 ```morphyn
 entity Spawner {
   has timer: 0

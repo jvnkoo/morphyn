@@ -5,7 +5,7 @@
 1. Download `Morphyn.unitypackage` from [Releases](https://github.com/jvnkoo/morphyn/releases/latest)
 2. Import: `Assets > Import Package > Custom Package`
 3. Add to scene: `GameObject > Create Empty > Add Component > Morphyn Controller`
-4. Drag `.morphyn` files into `Morphyn Scripts` array
+4. Drag `.morph` files into `Morphyn Scripts` array
 5. Check `Enable Hot Reload`
 6. Press Play
 
@@ -15,7 +15,7 @@ Done.
 
 ### Step 1: Create Config File
 
-Create `player.morphyn` in your Assets folder:
+Create `player.morph` in your Assets folder:
 ```morphyn
 entity Player {
   has hp: 100
@@ -61,7 +61,7 @@ public class PlayerController : MonoBehaviour
 ### Step 3: Test Hot Reload
 
 1. Enter Play mode
-2. Open `player.morphyn`
+2. Open `player.morph`
 3. Change `has hp: 100` to `has hp: 999`
 4. Save
 5. **HP updates instantly in running game!**

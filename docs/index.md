@@ -85,7 +85,7 @@ Change `enemy_damage: 10` → `enemy_damage: 999` and save.
 
 **3. Run**
 ```bash
-morphyn game.morphyn
+morphyn game.morph
 ```
 
 [Installation Guide →](getting-started/installation.md)

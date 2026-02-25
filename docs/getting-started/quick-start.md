@@ -2,7 +2,7 @@
 
 ## Your First Program
 
-Create a file called `player.morphyn`:
+Create a file called `player.morph`:
 ```morphyn
 entity Player {
   has hp: 100
@@ -29,7 +29,7 @@ entity Player {
 
 Run your program:
 ```sh
-morphyn player.morphyn
+morphyn player.morph
 ```
 
 **Output:**
@@ -82,7 +82,7 @@ on damage(amount) {
 The runtime automatically watches for file changes and reloads entity logic without restarting.
 
 **Example:**
-1. Run `morphyn player.morphyn`
+1. Run `morphyn player.morph`
 2. Edit the file: change `emit damage(25)` to `emit damage(75)`
 3. Save
 4. **Logic updates instantly** without restarting

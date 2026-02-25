@@ -178,7 +178,7 @@ entity Player {
 
 ### Shared library via import
 
-**mathlib.morphyn:**
+**mathlib.morph:**
 ```morphyn
 entity MathLib {
   on clamp(value, min, max) {
@@ -189,9 +189,9 @@ entity MathLib {
 }
 ```
 
-**game.morphyn:**
+**game.morph:**
 ```morphyn
-import "mathlib.morphyn"
+import "mathlib.morph"
 
 entity Player {
   has hp: 100

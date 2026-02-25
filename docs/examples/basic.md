@@ -1,7 +1,7 @@
 # Basic Examples
 
 !!! note
-    Custom events (like `damage`, `heal`) must be triggered either from `init`/`tick` events, or externally via C# code using `MorphynController.SendEventToEntity()`. They don't run automatically.
+    Custom events (like `damage`, `heal`) must be triggered either from `init`/`tick` events, or externally via C# code using `MorphynController.Emit()`. They don't run automatically.
 
 ## Simple Counter
 ```morphyn
