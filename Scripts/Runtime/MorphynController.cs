@@ -9,7 +9,7 @@ using Morphyn.Unity;
 
 /// <summary>
 /// Core Morphyn engine - SINGLETON
-/// ONE instance manages ALL .morphyn files in the project
+/// ONE instance manages ALL .morph files in the project
 /// </summary>
 public class MorphynController : MonoBehaviour
 {
@@ -41,7 +41,7 @@ public class MorphynController : MonoBehaviour
     }
     
     [Header("Morphyn Scripts")]
-    [Tooltip("Add ALL your .morphyn files here")]
+    [Tooltip("Add ALL your .morph files here")]
     [SerializeField] private MorphynScriptEntry[] morphynScripts;
     
     [Header("Settings")]
@@ -194,7 +194,7 @@ public class MorphynController : MonoBehaviour
                         directoryChecked = true;
                     }
                     
-                    string filePath = Path.Combine(_cachedSavePath, $"{entityName}.morphyn");
+                    string filePath = Path.Combine(_cachedSavePath, $"{entityName}.morph");
                     MorphynSerializer.SaveEntity(entity, filePath);
                 }
             }
@@ -447,7 +447,7 @@ public class MorphynController : MonoBehaviour
     public void LoadState(string entityName)
     {
         if (_context == null || !_context.Entities.TryGetValue(entityName, out var entity)) return;
-        string path = Path.Combine(_cachedSavePath, $"{entityName}.morphyn");
+        string path = Path.Combine(_cachedSavePath, $"{entityName}.morph");
         MorphynSerializer.LoadEntityFields(entity, path);
     }
 

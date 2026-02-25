@@ -11,12 +11,12 @@ namespace Morphyn.Unity
 {
     /// <summary>
     /// Handles serialization and deserialization of Morphyn entities
-    /// Saves entities as human-readable .morphyn files
+    /// Saves entities as human-readable .morph files
     /// </summary>
     public static class MorphynSerializer
     {
         /// <summary>
-        /// Save a single entity to a .morphyn file
+        /// Save a single entity to a .morph file
         /// Only saves field values, not event handlers
         /// </summary>
         /// <param name="entity">Entity to save</param>
@@ -52,7 +52,7 @@ namespace Morphyn.Unity
             
             foreach (var entity in data.Entities.Values)
             {
-                string filePath = Path.Combine(folderPath, $"{entity.Name}.morphyn");
+                string filePath = Path.Combine(folderPath, $"{entity.Name}.morph");
                 SaveEntity(entity, filePath);
             }
             
@@ -60,11 +60,11 @@ namespace Morphyn.Unity
         }
         
         /// <summary>
-        /// Load entity fields from a .morphyn file
+        /// Load entity fields from a .morph file
         /// Only loads field values, event handlers are not modified
         /// </summary>
         /// <param name="target">Existing entity to update with loaded fields</param>
-        /// <param name="filePath">Path to .morphyn file to load</param>
+        /// <param name="filePath">Path to .morph file to load</param>
         public static void LoadEntityFields(Entity target, string filePath)
         {
             if (!File.Exists(filePath))
@@ -91,7 +91,7 @@ namespace Morphyn.Unity
         }
         
         /// <summary>
-        /// Format a value for .morphyn file output
+        /// Format a value for .morph file output
         /// Handles null, strings, bools, numbers, and pools
         /// </summary>
         private static string FormatValue(object? value)
@@ -108,7 +108,7 @@ namespace Morphyn.Unity
         }
         
         /// <summary>
-        /// Format a MorphynPool for .morphyn file output
+        /// Format a MorphynPool for .morph file output
         /// Example: pool["item1", "item2", 42]
         /// </summary>
         private static string FormatPool(MorphynPool pool)

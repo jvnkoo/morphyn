@@ -5,7 +5,7 @@ using System.IO;
 
 public class MorphynFileCreator
 {
-    private const string extension = ".morphyn";
+    private const string extension = ".morph";
 
     [MenuItem("Assets/Create/Morphyn File", false, 1)]
     public static void CreateFile()
