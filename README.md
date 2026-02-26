@@ -112,7 +112,7 @@ Works with any .NET project, no Unity required.
 - [ ] Async event handling
 - [ ] More documentation examples
 - [ ] Performance optimizations
-- [ ] Self-hosted compiler
+- [ ] Self-hosted interpreter
 
 ---
 

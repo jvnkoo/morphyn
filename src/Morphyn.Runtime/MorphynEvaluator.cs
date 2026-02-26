@@ -169,6 +169,24 @@ namespace Morphyn.Runtime
                 };
             }
 
+            if (leftObj is string || rightObj is string)
+            {
+                string l = leftObj.ToString() ?? "";
+                string r = rightObj.ToString() ?? "";
+
+                return b.Operator switch
+                {
+                    "+" => l + r,
+                    "==" => string.Equals(l, r, StringComparison.Ordinal),
+                    "!=" => !string.Equals(l, r, StringComparison.Ordinal),
+                    ">" => string.Compare(l, r, StringComparison.Ordinal) > 0,
+                    "<" => string.Compare(l, r, StringComparison.Ordinal) < 0,
+                    ">=" => string.Compare(l, r, StringComparison.Ordinal) >= 0,
+                    "<=" => string.Compare(l, r, StringComparison.Ordinal) <= 0,
+                    _ => throw new Exception($"Operator {b.Operator} not supported for strings")
+                };
+            }
+
             return b.Operator switch
             {
                 "==" => Equals(leftObj, rightObj),
