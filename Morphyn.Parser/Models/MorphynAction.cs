@@ -30,6 +30,18 @@ namespace Morphyn.Parser
     }
 
     /// <summary>
+    /// Represents a sync emit that assigns result to a pool index: emit X() -> pool.at[idx]
+    /// </summary>
+    public class EmitWithReturnIndexAction : MorphynAction
+    {
+        public string? TargetEntityName { get; init; }
+        public required string EventName { get; init; }
+        public List<MorphynExpression> Arguments { get; init; } = new();
+        public required string TargetPoolName { get; init; }
+        public required MorphynExpression IndexExpr { get; init; }
+    }
+
+    /// <summary>
     /// Represents an action that checks a condition. 
     /// </summary>
     public class CheckAction : MorphynAction

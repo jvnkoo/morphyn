@@ -105,7 +105,11 @@ namespace Morphyn.Runtime
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static object? GetFromPool(Entity entity, IndexAccessExpression idx, Dictionary<string, object?> localScope, EntityData data)
         {
-            if (!entity.Fields.TryGetValue(idx.TargetName, out var val) || !(val is MorphynPool pool))
+            object? val;
+            if (!entity.Fields.TryGetValue(idx.TargetName, out val))
+                localScope.TryGetValue(idx.TargetName, out val);
+
+            if (val is not MorphynPool pool)
                 throw new Exception($"Target '{idx.TargetName}' is not a pool.");
 
             var evalIndex = EvaluateExpression(entity, idx.IndexExpr, localScope, data);

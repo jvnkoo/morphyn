@@ -26,23 +26,29 @@ namespace Morphyn.Runtime
         // args: Optional arguments to pass to the event handler
         public static void Send(Entity target, string eventName, List<object?>? args = null)
         {
-            // Hybrid approach: use linear search for small queues, HashSet for large ones
             if (_eventQueue.Count < HASH_SET_THRESHOLD)
             {
-                // Linear search is faster for small collections
-                if (_eventQueue.Any(e => e.EventName == eventName && e.Target == target))
+                if (_eventQueue.Any(e => e.EventName == eventName && e.Target == target
+                    && ArgsEqual(e.Args, args)))
                     return;
             }
             else
             {
-                // HashSet is faster for large collections
-                var key = (target, eventName);
-                if (_pendingEventSet.Contains(key))
+                if (_eventQueue.Any(e => e.EventName == eventName && e.Target == target
+                    && ArgsEqual(e.Args, args)))
                     return;
-                _pendingEventSet.Add(key);
             }
 
             _eventQueue.Enqueue(new PendingEvent(target, eventName, args ?? EmptyArgs));
+        }
+
+        private static bool ArgsEqual(List<object?> a, List<object?>? b)
+        {
+            if (b == null) return a.Count == 0;
+            if (a.Count != b.Count) return false;
+            for (int i = 0; i < a.Count; i++)
+                if (!Equals(a[i], b[i])) return false;
+            return true;
         }
 
         public static void RunFullCycle(EntityData data)
@@ -180,6 +186,7 @@ namespace Morphyn.Runtime
                     return true;
                 }
 
+                case EmitWithReturnIndexAction:
                 case EmitWithReturnAction:
                     throw new Exception(
                         "[Sync Error] Nested sync calls not allowed. Cannot use 'emit ... -> field' inside a sync event.");
@@ -353,6 +360,37 @@ namespace Morphyn.Runtime
                             return false;
                     }
                     return true;
+
+                case EmitWithReturnIndexAction emitRetIdx:
+                {
+                    List<object?> resolvedArgs = new List<object?>(emitRetIdx.Arguments.Count);
+                    foreach (var argExpr in emitRetIdx.Arguments)
+                        resolvedArgs.Add(EvaluateExpression(entity, argExpr, localScope, data));
+
+                    Entity? target = string.IsNullOrEmpty(emitRetIdx.TargetEntityName)
+                        ? entity
+                        : (data.Entities.TryGetValue(emitRetIdx.TargetEntityName, out var e) ? e : null);
+
+                    if (target == null)
+                        throw new Exception($"[Sync Error] Entity '{emitRetIdx.TargetEntityName}' not found.");
+
+                    object? syncResult = ExecuteSync(entity, target, emitRetIdx.EventName, resolvedArgs, data);
+
+                    var idxVal = EvaluateExpression(entity, emitRetIdx.IndexExpr, localScope, data);
+                    int poolIndex = Convert.ToInt32(idxVal) - 1;
+
+                    if (entity.Fields.TryGetValue(emitRetIdx.TargetPoolName, out var poolObj) && poolObj is MorphynPool pool)
+                    {
+                        if (poolIndex >= 0 && poolIndex < pool.Values.Count)
+                            pool.Values[poolIndex] = syncResult;
+                        else
+                            throw new Exception($"Index {poolIndex + 1} out of bounds for pool '{emitRetIdx.TargetPoolName}'");
+                    }
+                    else
+                        throw new Exception($"Target '{emitRetIdx.TargetPoolName}' is not a pool or not found.");
+
+                    return true;
+                }
 
                 case EmitWithReturnAction emitRet:
                 {

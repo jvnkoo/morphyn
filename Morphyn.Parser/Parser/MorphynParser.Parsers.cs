@@ -176,6 +176,27 @@ namespace Morphyn.Parser
                 Arguments = args.ToList()
             };
 
+        // Parse emit with return to pool index: emit eventName(args) -> pool.at[idx]
+        private static TokenListParser<MorphynToken, MorphynAction> EmitWithReturnIndexAction =>
+            (from emitKeyword in Token.EqualTo(MorphynToken.Emit)
+                from @ref in EventReference
+                from args in CallArguments.OptionalOrDefault(Array.Empty<MorphynExpression>())
+                from arrow in Token.EqualTo(MorphynToken.Arrow)
+                from poolName in Identifier
+                from dot in Token.EqualTo(MorphynToken.Dot)
+                from at in Identifier
+                from indexExpr in Expression.Between(
+                    Token.EqualTo(MorphynToken.LeftBracket),
+                    Token.EqualTo(MorphynToken.RightBracket))
+                select (MorphynAction)new EmitWithReturnIndexAction
+                {
+                    TargetEntityName = @ref.target,
+                    EventName = @ref.eventName,
+                    Arguments = args.ToList(),
+                    TargetPoolName = poolName,
+                    IndexExpr = indexExpr
+                }).Try();
+
         // Parse emit with return: emit eventName(args) -> field
         private static TokenListParser<MorphynToken, MorphynAction> EmitWithReturnAction =>
             (from emitKeyword in Token.EqualTo(MorphynToken.Emit)
@@ -216,7 +237,8 @@ namespace Morphyn.Parser
                 (op, left, right) => (MorphynExpression)new BinaryLogicExpression(left, "and", right));
 
         private static TokenListParser<MorphynToken, MorphynAction> SimpleActionParser =>
-            EmitWithReturnAction.Try() // must be before EmitAction to catch "emit X() -> field"
+            EmitWithReturnIndexAction.Try() // must be first: emit X() -> pool.at[idx]
+                .Or(EmitWithReturnAction.Try()) // then: emit X() -> field
                 .Or(EmitAction.Try())
                 .Or(FlowAction.Try());
 
