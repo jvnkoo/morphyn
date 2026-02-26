@@ -1,9 +1,9 @@
-# Morphyn — Hot Reload for Game Logic
+# Morphyn 
 
 <div align="center">
 <img src="https://github.com/user-attachments/assets/c5d54834-7e49-4a55-a0b9-91d12442d12a" width="128" height="128" alt="Morphyn Logo" />
 
-### Edit game logic while the game is running. No recompile. No restart. No lost state.
+### [Morphyn](https://jvnkoo.github.io/morphyn) is a scripting language providing a clean, event-driven syntax to manage configs and logic. It’s designed to be lightweight and opinionated, focusing entirely on entity states and reactive events without the overhead of a general-purpose language.
 
 [📥 Download](https://github.com/jvnkoo/morphyn/releases/latest) · [📖 Docs](https://jvnkoo.github.io/morphyn) · [💡 Examples](https://jvnkoo.github.io/morphyn/examples/basic/) · [🐛 Issues](https://github.com/jvnkoo/morphyn/issues)
 
@@ -16,64 +16,22 @@
 
 ---
 
-## C# vs Morphyn
+## Here's a taste:
 
-<table>
-<tr>
-<th width="50%">❌ Without Morphyn</th>
-<th width="50%">✅ With Morphyn</th>
-</tr>
-<tr>
-<td>
+```morphyn
+entity MathUtils {
+    on get_crit_chance(dex) {
+        dex * 0.5 -> chance
+        check chance > 50: 50 -> chance
+        chance -> result
+    }
 
-```csharp
-[CreateAssetMenu]
-public class EnemyData : ScriptableObject {
-    public float hp = 100;
-    public float damage = 15;
-    public float aggroRange = 10f;
-    public float spawnInterval = 2f;
-}
-
-public class Enemy : MonoBehaviour {
-    public EnemyData data;
-    float hp;
-
-    void Start() => hp = data.hp;
-
-    public void TakeDamage(float amount) {
-        hp -= amount;
-        if (hp <= 0) Destroy(gameObject);
+    on calculate_damage(raw_dmg, armor) {
+        raw_dmg * (100 / (100 + armor)) -> final_dmg
+        final_dmg -> result
     }
 }
 ```
-
-Change `spawnInterval` → exit Play Mode → wait → press Play → test → repeat
-
-</td>
-<td>
-
-```morphyn
-entity Enemy {
-  has hp: 100
-  has damage: 15
-  has aggro_range: 10
-  has spawn_interval: 2000
-
-  on take_damage(amount) {
-    hp - amount -> hp
-    check hp <= 0: emit self.destroy
-  }
-}
-```
-
-Change anything → save → **updates while the game runs**
-
-</td>
-</tr>
-</table>
-
-Game state is preserved across reloads. Position, inventory, quest flags — all intact.
 
 ---
 ## Quick Start
@@ -83,22 +41,26 @@ Game state is preserved across reloads. Position, inventory, quest flags — all
 **2.** Create a `.morph` file:
 ```morphyn
 entity Enemy {
-  has hp: 100
-  has damage: 15
+    has hp: 100
+    has alive: true
 
-  on take_damage(amount) {
-    hp - amount -> hp
-    check hp <= 0: emit self.destroy
-  }
+    on take_damage(amount) {
+        hp - amount -> hp
+        emit log("Enemy hit! HP:", hp)
+
+        check hp <= 0: {
+            false -> alive
+            emit log("Enemy defeated")
+        }
+    }
 }
 ```
 
 **3.** Use in C#:
 ```csharp
-using Morphyn.Unity;
-
-double hp = Convert.ToDouble(MorphynController.Instance.GetField("Enemy", "hp"));
 MorphynController.Instance.Emit("Enemy", "take_damage", 25);
+
+bool isAlive = Convert.ToBoolean(MorphynController.Instance.GetField("Enemy", "alive"));
 ```
 
 **4.** Add `MorphynController` to your scene, drag in the `.morph` files, check **Enable Hot Reload**, press Play.
@@ -141,34 +103,6 @@ Works with any .NET project, no Unity required.
 
 ---
 
-## FAQ
-
-**Is this production-ready?**  
-Beta. Core features are stable, API may change before v1.0.
-
-**Does hot reload work in builds?**  
-No — editor only. Builds run Morphyn normally without file watching.
-
-**Performance impact?**  
-Negligible. Morphyn handles config and logic, not hot paths.
-
-**Learning curve?**  
-If you can read pseudocode, you can write Morphyn. Most people are productive in under 10 minutes.
-
-**Can Morphyn code crash the runtime?**  
-No. The event queue architecture makes it structurally impossible:
-- Infinite loops spin in the queue without growing the call stack
-- Event deduplication blocks flood attacks
-- All exceptions are caught per-event — one bad event never kills the runtime
-- Sync recursion is physically blocked by a flag
-
-The only way to kill the process is OOM from unbounded pool growth — and that's the OS, not Morphyn.
-
-**What's the license?**  
-Apache 2.0. Free for commercial use, attribution required.
-
----
-
 ## Roadmap
 
 - [x] Core language runtime
@@ -178,7 +112,7 @@ Apache 2.0. Free for commercial use, attribution required.
 - [ ] Async event handling
 - [ ] More documentation examples
 - [ ] Performance optimizations
-- [ ] Transcending the need for C# altogether (eventually, hopefully)
+- [ ] Self-hosted compiler
 
 ---
 
