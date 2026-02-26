@@ -1,10 +1,10 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Morphyn.Runtime", "Morphyn.Runtime\Morphyn.Runtime.csproj", "{99AD3821-E061-4707-B609-D35057731797}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Morphyn.Runtime", "src/Morphyn.Runtime\Morphyn.Runtime.csproj", "{99AD3821-E061-4707-B609-D35057731797}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Morphyn.Parser", "Morphyn.Parser\Morphyn.Parser.csproj", "{80D7F4E5-B4BC-4E68-893C-E7385C1E01FC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Morphyn.Parser", "src/Morphyn.Parser\Morphyn.Parser.csproj", "{80D7F4E5-B4BC-4E68-893C-E7385C1E01FC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Morphyn.Core", "Morphyn.Core\Morphyn.Core.csproj", "{6DAC5118-EC85-46EB-8653-0EED584C5693}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Morphyn.Core", "src/Morphyn.Core\Morphyn.Core.csproj", "{6DAC5118-EC85-46EB-8653-0EED584C5693}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
