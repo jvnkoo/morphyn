@@ -93,6 +93,7 @@ emit event_name(arg1, arg2)
 emit target.event_name
 emit self.destroy
 emit log("message", value)
+emit input("prompt: ", "fieldName")
 ```
 
 ### Sync Emit (Immediate Call with Return Value)
@@ -103,9 +104,9 @@ The result is the last value assigned inside the called event.
 ```morphyn
 emit event_name(args) -> field
 emit Entity.event_name(args) -> field
+emit Entity.event_name(args) -> pool.at[idx]
 ```
 
-Sync events must be pure — only assignments and checks are allowed inside them.
 Nested sync calls are forbidden to prevent recursion.
 
 ```morphyn
@@ -136,6 +137,26 @@ entity Player {
   action3
 }
 ```
+
+## Built-in Functions
+
+| Function | Description | Example |
+|----------|-------------|---------|
+| `log` | Print to console | `emit log("HP:", hp)` |
+| `input` | Read line from console into field | `emit input("Name: ", "name")` |
+| `unity` | Call Unity callback | `emit unity("PlaySound", "hit")` |
+
+### input
+
+Reads a line from console and writes the result into a field.
+The field name must be passed as a **string literal in quotes**.
+
+```morphyn
+emit input("Enter your name: ", "name")
+emit input("Enter amount: ", "amount")
+```
+
+If the input can be parsed as a number it is stored as a number, otherwise as a string.
 
 ## Operators
 
@@ -181,7 +202,7 @@ entity Player {
 | `entity` | Declare entity |
 | `has` | Declare field |
 | `on` | Declare event handler |
-| `emit` | Send event or call sync event |
+| `emit` | Send event, call sync event, or call built-in function |
 | `check` | Conditional guard |
 | `pool` | Collection type |
 | `true` | Boolean true |

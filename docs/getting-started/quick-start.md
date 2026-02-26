@@ -59,7 +59,7 @@ entity Game {
 
 2. **Triggered externally** (from C# in Unity):
 ```csharp
-MorphynController.Instance.SendEventToEntity("Player", "damage", 50);
+MorphynController.Instance.Emit("Player", "damage", 50);
 ```
 
 3. **Chained from other events:**

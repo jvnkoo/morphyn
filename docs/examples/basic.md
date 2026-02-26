@@ -68,8 +68,8 @@ entity Game {
 
 In Unity:
 ```csharp
-MorphynController.Instance.SendEventToEntity("Player", "damage", 50);
-MorphynController.Instance.SendEventToEntity("Player", "heal", 20);
+MorphynController.Instance.Emit("Player", "damage", 50);
+MorphynController.Instance.Emit("Player", "heal", 20);
 ```
 
 ---
@@ -111,7 +111,7 @@ void OnTriggerEnter(Collider other)
 {
     if (other.CompareTag("Player"))
     {
-        MorphynController.Instance.SendEventToEntity("Enemy", "see_player");
+        MorphynController.Instance.Emit("Enemy", "see_player");
     }
 }
 ```
@@ -161,11 +161,11 @@ entity Inventory {
 **How to use:**
 ```csharp
 // Add item
-MorphynController.Instance.SendEventToEntity("Inventory", "add_item", "potion");
+MorphynController.Instance.Emit("Inventory", "add_item", "potion");
 
 // Use item at index 1
-MorphynController.Instance.SendEventToEntity("Inventory", "use_item", 1);
+MorphynController.Instance.Emit("Inventory", "use_item", 1);
 
 // List all items
-MorphynController.Instance.SendEventToEntity("Inventory", "list_items");
+MorphynController.Instance.Emit("Inventory", "list_items");
 ```

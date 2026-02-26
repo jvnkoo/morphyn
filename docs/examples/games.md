@@ -82,7 +82,7 @@ public class EnemyController : MonoBehaviour
     void OnDestroy()
     {
         // Notify Morphyn when enemy is destroyed
-        MorphynController.Instance.SendEventToEntity("Game", "enemy_killed");
+        MorphynController.Instance.Emit("Game", "enemy_killed");
     }
 }
 ```
