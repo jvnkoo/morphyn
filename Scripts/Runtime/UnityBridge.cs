@@ -18,6 +18,8 @@ namespace Morphyn.Unity
         public static UnityBridge Instance => _instance ??= new UnityBridge();
 
         private readonly Dictionary<string, Action<object?[]>> _unityCallbacks = new();
+
+        private readonly Dictionary<(string entity, string eventName), List<Action<object?[]>>> _morphynListeners = new();
         
         private UnityBridge() { }
 
@@ -57,6 +59,33 @@ namespace Morphyn.Unity
         public void ClearCallbacks()
         {
             _unityCallbacks.Clear();
+        }
+
+        public void AddListener(string entityName, string eventName, Action<object?[]> handler)
+        {
+            var key = (entityName, eventName);
+            if (!_morphynListeners.TryGetValue(key, out var list))
+            {
+                list = new List<Action<object?[]>>();
+                _morphynListeners[key] = list;
+            }
+            if (!list.Contains(handler))
+                list.Add(handler);
+        }
+
+        public void RemoveListener(string entityName, string eventName, Action<object?[]> handler)
+        {
+            var key = (entityName, eventName);
+            if (_morphynListeners.TryGetValue(key, out var list))
+                list.Remove(handler);
+        }
+
+        public void NotifyListeners(string entityName, string eventName, object?[] args)
+        {
+            var key = (entityName, eventName);
+            if (_morphynListeners.TryGetValue(key, out var list))
+                foreach (var handler in list)
+                    handler(args);
         }
     }
 }

@@ -91,6 +91,10 @@ public class MorphynController : MonoBehaviour
             LoadPersistentStates(); 
             if (enableHotReload) SetupHotReload();
         }
+
+        MorphynRuntime.OnEventFired = (entityName, eventName, args) => {
+            UnityBridge.Instance.NotifyListeners(entityName, eventName, args);
+        };
     }
 
     public void LoadAndRun()
@@ -489,6 +493,16 @@ public class MorphynController : MonoBehaviour
         }
 
         MorphynRuntime.Unsubscribe(subscriber, target, targetEvent, handlerEvent);
+    }
+
+    public void On(string entityName, string eventName, Action<object?[]> handler)
+    {
+        UnityBridge.Instance.AddListener(entityName, eventName, handler);
+    }
+
+    public void Off(string entityName, string eventName, Action<object?[]> handler)
+    {
+        UnityBridge.Instance.RemoveListener(entityName, eventName, handler);
     }
 
     public void SaveState()
