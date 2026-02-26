@@ -447,13 +447,41 @@ namespace Morphyn.Runtime
                         });
                         Console.WriteLine(string.Join(" ", logParts));
                         return true;
-                    }
+                        }
 
-                    if (emit.EventName == "unity")
-                    {
-                        if (UnityCallback != null && resolvedArgs.Count > 0)
+                        if (emit.EventName == "input")
                         {
-                            string callbackName = resolvedArgs[0]?.ToString() ?? "";
+                            string prompt = resolvedArgs.Count > 0 ? resolvedArgs[0]?.ToString() ?? "" : "";
+                            Console.Write(prompt);
+                            string? line = Console.ReadLine();
+
+                            string targetField = resolvedArgs.Count > 1 ? resolvedArgs[1]?.ToString() ?? "" : "";
+                            if (!string.IsNullOrEmpty(targetField))
+                            {
+                                if (double.TryParse(line, System.Globalization.NumberStyles.Any,
+                                    System.Globalization.CultureInfo.InvariantCulture, out double num))
+                                {
+                                    if (entity.Fields.ContainsKey(targetField))
+                                        entity.Fields[targetField] = num;
+                                    else
+                                        localScope[targetField] = num;
+                                }
+                                else
+                                {
+                                    if (entity.Fields.ContainsKey(targetField))
+                                        entity.Fields[targetField] = line;
+                                    else
+                                        localScope[targetField] = line;
+                                }
+                            }
+                            return true;
+                        }
+
+                        if (emit.EventName == "unity")
+                        {
+                            if (UnityCallback != null && resolvedArgs.Count > 0)
+                            {
+                                string callbackName = resolvedArgs[0]?.ToString() ?? "";
                             object?[] callbackArgs = resolvedArgs.Count > 1
                                 ? resolvedArgs.GetRange(1, resolvedArgs.Count - 1).ToArray()
                                 : Array.Empty<object?>();
