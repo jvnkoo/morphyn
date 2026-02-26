@@ -212,6 +212,34 @@ namespace Morphyn.Parser
                     TargetField = target
                 }).Try();
 
+        private static TokenListParser<MorphynToken, MorphynAction> WhenAction =>
+            (from whenKeyword in Token.EqualTo(MorphynToken.When)
+                from targetEntity in Identifier
+                from dot in Token.EqualTo(MorphynToken.Dot)
+                from targetEvent in Identifier
+                from colon in Token.EqualTo(MorphynToken.Colon)
+                from handler in Identifier
+                select (MorphynAction)new WhenAction
+                {
+                    TargetEntityName = targetEntity,
+                    TargetEventName = targetEvent,
+                    HandlerEventName = handler
+                }).Try();
+
+        private static TokenListParser<MorphynToken, MorphynAction> UnwhenAction =>
+            (from unwhenKeyword in Token.EqualTo(MorphynToken.Unwhen)
+                from targetEntity in Identifier
+                from dot in Token.EqualTo(MorphynToken.Dot)
+                from targetEvent in Identifier
+                from colon in Token.EqualTo(MorphynToken.Colon)
+                from handler in Identifier
+                select (MorphynAction)new UnwhenAction
+                {
+                    TargetEntityName = targetEntity,
+                    TargetEventName = targetEvent,
+                    HandlerEventName = handler
+                }).Try();
+
         private static TokenListParser<MorphynToken, MorphynExpression> ArithExpression =>
             Parse.Chain(
                 Token.EqualTo(MorphynToken.Plus).Or(Token.EqualTo(MorphynToken.Minus)),
@@ -240,6 +268,8 @@ namespace Morphyn.Parser
             EmitWithReturnIndexAction.Try() // must be first: emit X() -> pool.at[idx]
                 .Or(EmitWithReturnAction.Try()) // then: emit X() -> field
                 .Or(EmitAction.Try())
+                .Or(WhenAction.Try())      
+                .Or(UnwhenAction.Try())  
                 .Or(FlowAction.Try());
 
         private static TokenListParser<MorphynToken, MorphynAction> CheckAction =>

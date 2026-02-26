@@ -21,6 +21,8 @@ namespace Morphyn.Parser
         Has,
         On,
         Emit,
+        When,
+        Unwhen,
         Check,
         Pool,
         
@@ -70,6 +72,8 @@ namespace Morphyn.Parser
             .Match(Span.EqualTo("has"), MorphynToken.Has, requireDelimiters: true)
             .Match(Span.EqualTo("on"), MorphynToken.On, requireDelimiters: true)
             .Match(Span.EqualTo("emit"), MorphynToken.Emit, requireDelimiters: true)
+            .Match(Span.EqualTo("when"), MorphynToken.When, requireDelimiters: true)
+            .Match(Span.EqualTo("unwhen"), MorphynToken.Unwhen, requireDelimiters: true)
             .Match(Span.EqualTo("check"), MorphynToken.Check, requireDelimiters: true)
             .Match(Span.EqualTo("pool"), MorphynToken.Pool, requireDelimiters: true)
             .Match(Span.EqualTo("or"), MorphynToken.Or, requireDelimiters: true)

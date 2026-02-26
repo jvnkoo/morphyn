@@ -15,6 +15,9 @@ namespace Morphyn.Runtime
         private static readonly HashSet<(Entity, string)> _pendingEventSet = new();
         private const int HASH_SET_THRESHOLD = 20; // Use HashSet only when queue grows
 
+        private static readonly Dictionary<(string, string), List<(Entity subscriber, string handler)>>
+            _subscriptions = new();
+
         // Prevents nested sync calls to eliminate recursion
         private static bool _inSyncCall = false;
 
@@ -40,6 +43,16 @@ namespace Morphyn.Runtime
             }
 
             _eventQueue.Enqueue(new PendingEvent(target, eventName, args ?? EmptyArgs));
+
+            var key = (target.Name, eventName);
+            if (_subscriptions.TryGetValue(key, out var subscribers))
+            {
+                foreach (var (subscriber, handler) in subscribers)
+                {
+                    if (!subscriber.IsDestroyed)
+                        Send(subscriber, handler, args);
+                }
+            }
         }
 
         private static bool ArgsEqual(List<object?> a, List<object?>? b)
@@ -142,8 +155,35 @@ namespace Morphyn.Runtime
             return lastAssigned;
         }
 
-        // Executes an action inside a sync event.
-        // Regular emit is allowed (queued for later). Only emit X() -> field is forbidden to prevent recursion.
+        public static void Subscribe(Entity subscriber, Entity target,
+            string targetEvent, string handlerEvent)
+        {
+            if (subscriber == target)
+            {
+                Console.WriteLine(
+                    $"[Subscription Error] Entity '{subscriber.Name}' cannot subscribe to its own events.");
+                return;
+            }
+
+            var key = (target.Name, targetEvent);
+            if (!_subscriptions.TryGetValue(key, out var list))
+            {
+                list = new List<(Entity, string)>();
+                _subscriptions[key] = list;
+            }
+
+            if (!list.Any(s => s.subscriber == subscriber && s.handler == handlerEvent))
+                list.Add((subscriber, handlerEvent));
+        }
+
+        public static void Unsubscribe(Entity subscriber, Entity target,
+            string targetEvent, string handlerEvent)
+        {
+            var key = (target.Name, targetEvent);
+            if (_subscriptions.TryGetValue(key, out var list))
+                list.RemoveAll(s => s.subscriber == subscriber && s.handler == handlerEvent);
+        }
+
         private static bool HandleBuiltinEmit(EntityData data, Entity entity, EmitAction emit,
             List<object?> resolvedArgs, Dictionary<string, object?> localScope)
         {
@@ -256,6 +296,8 @@ namespace Morphyn.Runtime
             return true;
         }
 
+        // Executes an action inside a sync event.
+        // Regular emit is allowed (queued for later). Only emit X() -> field is forbidden to prevent recursion.
         private static bool ExecuteSyncAction(EntityData data, Entity entity, MorphynAction action,
             Dictionary<string, object?> localScope, ref object? lastAssigned)
         {
@@ -347,6 +389,28 @@ namespace Morphyn.Runtime
 
                     if (HandleBuiltinEmit(data, entity, emit, resolvedArgs, localScope)) return true;
                     HandleEmitRouting(data, entity, emit, resolvedArgs);
+                    return true;
+                }
+
+                case WhenAction whenAct:
+                {
+                    if (!data.Entities.TryGetValue(whenAct.TargetEntityName, out var targetEntity))
+                    {
+                        Console.WriteLine($"[Subscription Error] Entity '{whenAct.TargetEntityName}' not found.");
+                        return true;
+                    }
+                    Subscribe(entity, targetEntity, whenAct.TargetEventName, whenAct.HandlerEventName);
+                    return true;
+                }
+
+                case UnwhenAction unwhenAct:
+                {
+                    if (!data.Entities.TryGetValue(unwhenAct.TargetEntityName, out var targetEntity))
+                    {
+                        Console.WriteLine($"[Subscription Error] Entity '{unwhenAct.TargetEntityName}' not found.");
+                        return true;
+                    }
+                    Unsubscribe(entity, targetEntity, unwhenAct.TargetEventName, unwhenAct.HandlerEventName);
                     return true;
                 }
 
@@ -497,6 +561,28 @@ namespace Morphyn.Runtime
 
                     if (HandleBuiltinEmit(data, entity, emit, resolvedArgs, localScope)) return true;
                     HandleEmitRouting(data, entity, emit, resolvedArgs);
+                    return true;
+                }
+
+                case WhenAction whenAct:
+                {
+                    if (!data.Entities.TryGetValue(whenAct.TargetEntityName, out var targetEntity))
+                    {
+                        Console.WriteLine($"[Subscription Error] Entity '{whenAct.TargetEntityName}' not found.");
+                        return true;
+                    }
+                    Subscribe(entity, targetEntity, whenAct.TargetEventName, whenAct.HandlerEventName);
+                    return true;
+                }
+
+                case UnwhenAction unwhenAct:
+                {
+                    if (!data.Entities.TryGetValue(unwhenAct.TargetEntityName, out var targetEntity))
+                    {
+                        Console.WriteLine($"[Subscription Error] Entity '{unwhenAct.TargetEntityName}' not found.");
+                        return true;
+                    }
+                    Unsubscribe(entity, targetEntity, unwhenAct.TargetEventName, unwhenAct.HandlerEventName);
                     return true;
                 }
 
