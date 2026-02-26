@@ -27,42 +27,47 @@
 <td>
 
 ```csharp
-public class Player : MonoBehaviour {
-  public int exp;
-  public int level = 1;
+[CreateAssetMenu]
+public class EnemyData : ScriptableObject {
+    public float hp = 100;
+    public float damage = 15;
+    public float aggroRange = 10f;
+    public float spawnInterval = 2f;
+}
 
-  public void AddExp(int amount) {
-    exp += amount;
-    if (exp >= 100) {
-      level++;
-      exp = 0;
-      maxHp += 20;
-      hp = maxHp;
-      Debug.Log("LEVEL UP!");
+public class Enemy : MonoBehaviour {
+    public EnemyData data;
+    float hp;
+
+    void Start() => hp = data.hp;
+
+    public void TakeDamage(float amount) {
+        hp -= amount;
+        if (hp <= 0) Destroy(gameObject);
     }
-  }
 }
 ```
-Change logic or add new rules → exit Play Mode → recompile → test → repeat
+
+Change `spawnInterval` → exit Play Mode → wait → press Play → test → repeat
 
 </td>
 <td>
 
 ```morphyn
-entity Player {
-  has exp: 0
-  has level: 1
+entity Enemy {
+  has hp: 100
+  has damage: 15
+  has aggro_range: 10
+  has spawn_interval: 2000
 
-  on add_exp(amount) {
-    exp + amount -> exp
-    check exp >= 100: {
-      level + 1 -> level
-      0 -> exp
-    }
+  on take_damage(amount) {
+    hp - amount -> hp
+    check hp <= 0: emit self.destroy
   }
 }
 ```
-Change anything → save → **game updates instantly**
+
+Change anything → save → **updates while the game runs**
 
 </td>
 </tr>
@@ -71,16 +76,20 @@ Change anything → save → **game updates instantly**
 Game state is preserved across reloads. Position, inventory, quest flags — all intact.
 
 ---
-
 ## Quick Start
 
 **1.** Download and import [`Morphyn.unitypackage`](https://github.com/jvnkoo/morphyn/releases/latest)
 
 **2.** Create a `.morph` file:
 ```morphyn
-entity Player {
+entity Enemy {
   has hp: 100
-  has damage: 25
+  has damage: 15
+
+  on take_damage(amount) {
+    hp - amount -> hp
+    check hp <= 0: emit self.destroy
+  }
 }
 ```
 
@@ -88,8 +97,8 @@ entity Player {
 ```csharp
 using Morphyn.Unity;
 
-double hp = MorphynController.Instance.GetField("Player", "hp");
-MorphynController.Instance.SendEventToEntity("Player", "damage", 50);
+double hp = Convert.ToDouble(MorphynController.Instance.GetField("Enemy", "hp"));
+MorphynController.Instance.Emit("Enemy", "take_damage", 25);
 ```
 
 **4.** Add `MorphynController` to your scene, drag in the `.morph` files, check **Enable Hot Reload**, press Play.
@@ -98,49 +107,15 @@ Full docs at [jvnkoo.github.io/morphyn](https://jvnkoo.github.io/morphyn).
 
 ---
 
-## What It's Good For
+## Why not Lua?
 
-| Use case | Example |
-|---|---|
-| Game balance | HP, damage, speed, spawn rates |
-| Economy systems | Prices, stock, discounts |
-| Quest logic | Conditions, triggers, rewards |
-| AI behavior | Aggro range, patrol timing |
-| Difficulty scaling | Dynamic stat multipliers |
+The Unity bridges are a mess. MoonSharp hasn't been updated in years.
+XLua is maintained but built for a different ecosystem entirely.
+Getting either to work with hot reload and state preservation is a project in itself.
 
-**Rule of thumb:** if you'd normally reach for a ScriptableObject, reach for Morphyn instead. Not designed for 3D math, performance-critical loops, or UI rendering.
-
----
-
-## Built-in Validation
-
-```morphyn
-on heal(amount) {
-  check amount > 0: hp + amount -> hp
-  check hp > max_hp: max_hp -> hp
-}
-
-on buy_item(cost) {
-  check gold >= cost: {
-    gold - cost -> gold
-    emit inventory.add("sword")
-  }
-  check gold < cost: emit show_error("Not enough gold")
-}
-```
-
-No more defensive `if` chains in C#.
-
----
-
-## Morphyn vs Alternatives
-
-| | ScriptableObjects | JSON / YAML | **Morphyn** |
-|---|---|---|---|
-| Hot reload | ❌ | ❌ | ✅ |
-| Logic & events | ❌ | ❌ | ✅ |
-| Built-in validation | ❌ | ❌ | ✅ |
-| State preserved on reload | ❌ | ❌ | ✅ |
+Morphyn exists because setting up Lua in Unity shouldn't take days.
+Simpler, opinionated, built specifically for game config and logic.
+You lose the standard library. You gain something that works on the first try.
 
 ---
 
@@ -179,6 +154,15 @@ Negligible. Morphyn handles config and logic, not hot paths.
 
 **Learning curve?**  
 If you can read pseudocode, you can write Morphyn. Most people are productive in under 10 minutes.
+
+**Can Morphyn code crash the runtime?**  
+No. The event queue architecture makes it structurally impossible:
+- Infinite loops spin in the queue without growing the call stack
+- Event deduplication blocks flood attacks
+- All exceptions are caught per-event — one bad event never kills the runtime
+- Sync recursion is physically blocked by a flag
+
+The only way to kill the process is OOM from unbounded pool growth — and that's the OS, not Morphyn.
 
 **What's the license?**  
 Apache 2.0. Free for commercial use, attribution required.
