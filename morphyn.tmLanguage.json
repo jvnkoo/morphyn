@@ -24,11 +24,11 @@
     },
     {
       "name": "keyword.control.morphyn",
-      "match": "\\b(entity|on|has|check|import|emit)\\b"
+      "match": "\\b(entity|on|has|check|import|emit|when|unwhen)\\b"
     },
     {
       "name": "constant.language.morphyn",
-      "match": "\\b(true|false|self|pool)\\b"
+      "match": "\\b(true|false|self|pool|null)\\b"
     },
     {
       "name": "keyword.operator.flow.morphyn",
@@ -60,7 +60,7 @@
     },
     {
       "name": "support.function.builtin.morphyn",
-      "match": "\\b(log|count|add|remove_at|at|each)\\b"
+      "match": "\\b(log|count|add|remove_at|at|each|push|pop|shift|swap|insert|remove|clear)\\b"
     }
   ]
 }

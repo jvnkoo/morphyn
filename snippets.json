@@ -30,5 +30,17 @@
     "body": [
       "${1:value} + ${2:delta} -> ${1:value}"
     ]
+  },
+  "Subscribe": {
+    "prefix": "when",
+    "body": [
+      "when ${1:Entity}.${2:event} : ${3:handler}"
+    ]
+  },
+  "Unsubscribe": {
+    "prefix": "unwhen",
+    "body": [
+      "unwhen ${1:Entity}.${2:event} : ${3:handler}"
+    ]
   }
 }
