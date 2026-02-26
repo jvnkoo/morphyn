@@ -144,6 +144,118 @@ namespace Morphyn.Runtime
 
         // Executes an action inside a sync event.
         // Regular emit is allowed (queued for later). Only emit X() -> field is forbidden to prevent recursion.
+        private static bool HandleBuiltinEmit(EntityData data, Entity entity, EmitAction emit,
+            List<object?> resolvedArgs, Dictionary<string, object?> localScope)
+        {
+            if (emit.TargetEntityName == "self" && emit.EventName == "destroy")
+            {
+                entity.IsDestroyed = true;
+                return true;
+            }
+
+            if (emit.EventName == "log")
+            {
+                var logParts = resolvedArgs.Select(arg => arg switch
+                {
+                    MorphynPool p => "pool[" + string.Join(", ", p.Values) + "]",
+                    null => "null",
+                    _ => arg.ToString()
+                });
+                Console.WriteLine(string.Join(" ", logParts));
+                return true;
+            }
+
+            if (emit.EventName == "input")
+            {
+                string prompt = resolvedArgs.Count > 0 ? resolvedArgs[0]?.ToString() ?? "" : "";
+                Console.Write(prompt);
+                string? line = Console.ReadLine();
+
+                string targetField = resolvedArgs.Count > 1 ? resolvedArgs[1]?.ToString() ?? "" : "";
+                if (!string.IsNullOrEmpty(targetField))
+                {
+                    if (double.TryParse(line, System.Globalization.NumberStyles.Any,
+                        System.Globalization.CultureInfo.InvariantCulture, out double num))
+                    {
+                        if (entity.Fields.ContainsKey(targetField)) entity.Fields[targetField] = num;
+                        else localScope[targetField] = num;
+                    }
+                    else
+                    {
+                        if (entity.Fields.ContainsKey(targetField)) entity.Fields[targetField] = line;
+                        else localScope[targetField] = line;
+                    }
+                }
+                return true;
+            }
+
+            if (emit.EventName == "unity")
+            {
+                if (UnityCallback != null && resolvedArgs.Count > 0)
+                {
+                    string callbackName = resolvedArgs[0]?.ToString() ?? "";
+                    object?[] callbackArgs = resolvedArgs.Count > 1
+                        ? resolvedArgs.GetRange(1, resolvedArgs.Count - 1).ToArray()
+                        : Array.Empty<object?>();
+                    UnityCallback(callbackName, callbackArgs);
+                }
+                return true;
+            }
+
+            return false;
+        }
+
+        private static bool HandleEmitRouting(EntityData data, Entity entity, EmitAction emit,
+            List<object?> resolvedArgs)
+        {
+            string? targetName = emit.TargetEntityName;
+
+            if (!string.IsNullOrEmpty(targetName) && targetName.Contains('.'))
+            {
+                var parts = targetName.Split('.');
+                string entityName = parts[0];
+                string targetPoolName = parts[1];
+
+                if (data.Entities.TryGetValue(entityName, out var extEntity) &&
+                    extEntity.Fields.TryGetValue(targetPoolName, out var pObj) && pObj is MorphynPool extPool)
+                {
+                    if (HandlePoolCommand(extPool, emit.EventName, resolvedArgs, data)) return true;
+                }
+            }
+
+            if (!string.IsNullOrEmpty(targetName))
+            {
+                if (entity.Fields.TryGetValue(targetName, out var poolObj) && poolObj is MorphynPool localPool)
+                {
+                    if (emit.EventName == "each")
+                    {
+                        string subEventName = resolvedArgs[0]?.ToString() ?? "";
+                        List<object?> subArgs = resolvedArgs.Skip(1).ToList();
+                        foreach (var item in localPool.Values)
+                        {
+                            if (item is Entity subE) Send(subE, subEventName, subArgs);
+                            else if (item is string eName && data.Entities.TryGetValue(eName, out var extE))
+                                Send(extE, subEventName, subArgs);
+                        }
+                        return true;
+                    }
+
+                    if (HandlePoolCommand(localPool, emit.EventName, resolvedArgs, data)) return true;
+                }
+            }
+
+            Entity? emitTarget = string.IsNullOrEmpty(targetName)
+                ? entity
+                : (data.Entities.TryGetValue(targetName, out var e) ? e : null);
+
+            if (emitTarget != null)
+                Send(emitTarget, emit.EventName, resolvedArgs);
+            else
+                Console.WriteLine($"[ERROR] Target entity '{targetName}' not found for event '{emit.EventName}'");
+
+            return true;
+        }
+
         private static bool ExecuteSyncAction(EntityData data, Entity entity, MorphynAction action,
             Dictionary<string, object?> localScope, ref object? lastAssigned)
         {
@@ -173,6 +285,33 @@ namespace Morphyn.Runtime
                     if (check.InlineAction != null)
                         return ExecuteSyncAction(data, entity, check.InlineAction, localScope, ref lastAssigned);
 
+                    return true;
+                }
+
+                case SetIndexAction setIdx:
+                {
+                    object? newValue = EvaluateExpression(entity, setIdx.ValueExpr, localScope, data);
+                    var indexResult = EvaluateExpression(entity, setIdx.IndexExpr, localScope, data);
+
+                    if (indexResult == null)
+                        throw new Exception($"Index expression evaluated to null for pool '{setIdx.TargetPoolName}'");
+
+                    int index = Convert.ToInt32(indexResult) - 1;
+
+                    if (entity.Fields.TryGetValue(setIdx.TargetPoolName, out var fieldObj) &&
+                        fieldObj is MorphynPool pool)
+                    {
+                        if (index >= 0 && index < pool.Values.Count)
+                            pool.Values[index] = newValue;
+                        else
+                            throw new Exception($"Index {index + 1} out of bounds for pool '{setIdx.TargetPoolName}'");
+                    }
+                    else
+                    {
+                        throw new Exception($"Target '{setIdx.TargetPoolName}' is not a pool or not found.");
+                    }
+
+                    lastAssigned = newValue;
                     return true;
                 }
 
@@ -206,83 +345,8 @@ namespace Morphyn.Runtime
                         }
                     }
 
-                    if (emit.TargetEntityName == "self" && emit.EventName == "destroy")
-                    {
-                        entity.IsDestroyed = true;
-                        return true;
-                    }
-
-                    if (emit.EventName == "log")
-                    {
-                        var logParts = resolvedArgs.Select(arg => arg switch
-                        {
-                            MorphynPool p => "pool[" + string.Join(", ", p.Values) + "]",
-                            null => "null",
-                            _ => arg.ToString()
-                        });
-                        Console.WriteLine(string.Join(" ", logParts));
-                        return true;
-                    }
-
-                    if (emit.EventName == "unity")
-                    {
-                        if (UnityCallback != null && resolvedArgs.Count > 0)
-                        {
-                            string callbackName = resolvedArgs[0]?.ToString() ?? "";
-                            object?[] callbackArgs = resolvedArgs.Count > 1
-                                ? resolvedArgs.GetRange(1, resolvedArgs.Count - 1).ToArray()
-                                : Array.Empty<object?>();
-                            UnityCallback(callbackName, callbackArgs);
-                        }
-                        return true;
-                    }
-
-                    string? targetName = emit.TargetEntityName;
-
-                    if (!string.IsNullOrEmpty(targetName) && targetName.Contains('.'))
-                    {
-                        var parts = targetName.Split('.');
-                        string entityName = parts[0];
-                        string targetPoolName = parts[1];
-
-                        if (data.Entities.TryGetValue(entityName, out var extEntity) &&
-                            extEntity.Fields.TryGetValue(targetPoolName, out var pObj) && pObj is MorphynPool extPool)
-                        {
-                            if (HandlePoolCommand(extPool, emit.EventName, resolvedArgs, data)) return true;
-                        }
-                    }
-
-                    if (!string.IsNullOrEmpty(emit.TargetEntityName))
-                    {
-                        if (entity.Fields.TryGetValue(emit.TargetEntityName, out var poolObj) &&
-                            poolObj is MorphynPool localPool)
-                        {
-                            if (emit.EventName == "each")
-                            {
-                                string subEventName = resolvedArgs[0]?.ToString() ?? "";
-                                List<object?> subArgs = resolvedArgs.Skip(1).ToList();
-                                foreach (var item in localPool.Values)
-                                {
-                                    if (item is Entity subE) Send(subE, subEventName, subArgs);
-                                    else if (item is string eName && data.Entities.TryGetValue(eName, out var extE))
-                                        Send(extE, subEventName, subArgs);
-                                }
-                                return true;
-                            }
-
-                            if (HandlePoolCommand(localPool, emit.EventName, resolvedArgs, data)) return true;
-                        }
-                    }
-
-                    Entity? emitTarget = string.IsNullOrEmpty(targetName)
-                        ? entity
-                        : (data.Entities.TryGetValue(targetName, out var e) ? e : null);
-
-                    if (emitTarget != null)
-                        Send(emitTarget, emit.EventName, resolvedArgs);
-                    else
-                        Console.WriteLine($"[ERROR] Target entity '{targetName}' not found for event '{emit.EventName}'");
-
+                    if (HandleBuiltinEmit(data, entity, emit, resolvedArgs, localScope)) return true;
+                    HandleEmitRouting(data, entity, emit, resolvedArgs);
                     return true;
                 }
 
@@ -431,119 +495,8 @@ namespace Morphyn.Runtime
                         }
                     }
 
-                    if (emit.TargetEntityName == "self" && emit.EventName == "destroy")
-                    {
-                        entity.IsDestroyed = true;
-                        return true;
-                    }
-
-                    if (emit.EventName == "log")
-                    {
-                        var logParts = resolvedArgs.Select(arg => arg switch
-                        {
-                            MorphynPool p => "pool[" + string.Join(", ", p.Values) + "]",
-                            null => "null",
-                            _ => arg.ToString()
-                        });
-                        Console.WriteLine(string.Join(" ", logParts));
-                        return true;
-                        }
-
-                        if (emit.EventName == "input")
-                        {
-                            string prompt = resolvedArgs.Count > 0 ? resolvedArgs[0]?.ToString() ?? "" : "";
-                            Console.Write(prompt);
-                            string? line = Console.ReadLine();
-
-                            string targetField = resolvedArgs.Count > 1 ? resolvedArgs[1]?.ToString() ?? "" : "";
-                            if (!string.IsNullOrEmpty(targetField))
-                            {
-                                if (double.TryParse(line, System.Globalization.NumberStyles.Any,
-                                    System.Globalization.CultureInfo.InvariantCulture, out double num))
-                                {
-                                    if (entity.Fields.ContainsKey(targetField))
-                                        entity.Fields[targetField] = num;
-                                    else
-                                        localScope[targetField] = num;
-                                }
-                                else
-                                {
-                                    if (entity.Fields.ContainsKey(targetField))
-                                        entity.Fields[targetField] = line;
-                                    else
-                                        localScope[targetField] = line;
-                                }
-                            }
-                            return true;
-                        }
-
-                        if (emit.EventName == "unity")
-                        {
-                            if (UnityCallback != null && resolvedArgs.Count > 0)
-                            {
-                                string callbackName = resolvedArgs[0]?.ToString() ?? "";
-                            object?[] callbackArgs = resolvedArgs.Count > 1
-                                ? resolvedArgs.GetRange(1, resolvedArgs.Count - 1).ToArray()
-                                : Array.Empty<object?>();
-
-                            UnityCallback(callbackName, callbackArgs);
-                        }
-                        return true;
-                    }
-
-                    string? targetName = emit.TargetEntityName;
-                    string poolName = emit.EventName;
-
-                    if (!string.IsNullOrEmpty(targetName) && targetName.Contains('.'))
-                    {
-                        var parts = targetName.Split('.');
-                        string entityName = parts[0];
-                        string targetPoolName = parts[1];
-
-                        if (data.Entities.TryGetValue(entityName, out var extEntity) &&
-                            extEntity.Fields.TryGetValue(targetPoolName, out var pObj) && pObj is MorphynPool extPool)
-                        {
-                            if (HandlePoolCommand(extPool, emit.EventName, resolvedArgs, data)) return true;
-                        }
-                    }
-
-                    if (!string.IsNullOrEmpty(emit.TargetEntityName))
-                    {
-                        if (entity.Fields.TryGetValue(emit.TargetEntityName, out var poolObj) &&
-                            poolObj is MorphynPool localPool)
-                        {
-                            if (emit.EventName == "each")
-                            {
-                                string subEventName = resolvedArgs[0]?.ToString() ?? "";
-                                List<object?> subArgs = resolvedArgs.Skip(1).ToList();
-                                foreach (var item in localPool.Values)
-                                {
-                                    if (item is Entity subE) Send(subE, subEventName, subArgs);
-                                    else if (item is string eName && data.Entities.TryGetValue(eName, out var extE))
-                                        Send(extE, subEventName, subArgs);
-                                }
-
-                                return true;
-                            }
-
-                            if (HandlePoolCommand(localPool, emit.EventName, resolvedArgs, data)) return true;
-                        }
-                    }
-
-                    Entity? emitTarget = string.IsNullOrEmpty(targetName)
-                        ? entity
-                        : (data.Entities.TryGetValue(targetName, out var e) ? e : null);
-
-                    if (emitTarget != null)
-                    {
-                        Send(emitTarget, emit.EventName, resolvedArgs);
-                    }
-                    else
-                    {
-                        Console.WriteLine(
-                            $"[ERROR] Target entity '{targetName}' not found for event '{emit.EventName}'");
-                    }
-
+                    if (HandleBuiltinEmit(data, entity, emit, resolvedArgs, localScope)) return true;
+                    HandleEmitRouting(data, entity, emit, resolvedArgs);
                     return true;
                 }
 
@@ -630,6 +583,9 @@ namespace Morphyn.Runtime
                     }
                 }
             }
+
+            foreach (var list in _subscriptions.Values)
+                list.RemoveAll(s => s.subscriber.IsDestroyed);
         }
     }
 }
