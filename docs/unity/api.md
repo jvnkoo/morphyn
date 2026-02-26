@@ -26,9 +26,72 @@ object? result = morphyn.EmitSync("Player", "damage", 25);
 morphyn.Subscribe("Logger", "Player", "death", "onPlayerDeath");
 // Unsubscribe
 morphyn.Unsubscribe("Logger", "Player", "death", "onPlayerDeath");
+// Subscribe C# method to a Morphyn event
+morphyn.On("Player", "death", args => Debug.Log("Player died!"));
+// Unsubscribe C# method
+morphyn.Off("Player", "death", myHandler);
 // Save/Load
 morphyn.SaveState();
 morphyn.LoadState("Player");
+```
+
+## C# Listeners
+Subscribe any C# method directly to a Morphyn entity event using `On` and `Off`.
+
+### On
+```cs
+MorphynController.Instance.On(entityName, eventName, handler);
+```
+
+The handler receives the same arguments the event was fired with as `object?[]`.
+
+**Example:**
+```cs
+void Start()
+{
+    MorphynController.Instance.On("Player", "death", OnPlayerDeath);
+    MorphynController.Instance.On("Player", "levelUp", args => {
+        double level = Convert.ToDouble(args[0]);
+        levelUpScreen.Show((int)level);
+    });
+}
+
+void OnPlayerDeath(object?[] args)
+{
+    deathScreen.SetActive(true);
+    respawnButton.interactable = true;
+}
+
+void OnDestroy()
+{
+    // Always unsubscribe to avoid memory leaks
+    MorphynController.Instance.Off("Player", "death", OnPlayerDeath);
+}
+```
+
+### Off
+```cs
+MorphynController.Instance.Off(entityName, eventName, handler);
+```
+
+!!! note
+    Always call `Off` in `OnDestroy` to avoid memory leaks and calls on destroyed objects.
+
+### Difference from Subscribe
+| | `On` / `Off` | `Subscribe` / `Unsubscribe` |
+|---|---|---|
+| Subscriber | C# `Action<object?[]>` | Morphyn entity event |
+| Use case | Unity UI, audio, effects | Morphyn-to-Morphyn logic |
+| Handler | Any C# lambda or method | Morphyn event name |
+
+```cs
+// C# reacts to Morphyn event
+morphyn.On("Enemy", "death", args => {
+    Instantiate(explosionPrefab, transform.position, Quaternion.identity);
+});
+
+// Morphyn entity reacts to Morphyn event
+morphyn.Subscribe("Logger", "Enemy", "death", "onEnemyDeath");
 ```
 
 ## Event Subscriptions from C#
@@ -226,5 +289,14 @@ void Start()
 {
     // MorphynController.Start() runs LoadAndRun() automatically if runOnStart is true
     MorphynController.Instance.Subscribe("Logger", "Player", "death", "onPlayerDeath");
+}
+```
+
+### C# listener called after object destroyed
+```cs
+// Always unsubscribe in OnDestroy
+void OnDestroy()
+{
+    MorphynController.Instance.Off("Player", "death", myHandler);
 }
 ```
