@@ -834,6 +834,34 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#built-in-functions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Built-in Functions
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Built-in Functions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#input" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        input
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#operators" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1650,6 +1678,34 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#built-in-functions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Built-in Functions
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Built-in Functions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#input" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        input
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#operators" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1803,15 +1859,16 @@ of entity declarations with fields and event handlers.</p>
 </span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="k">emit</span> <span class="n">target</span><span class="p">.</span><span class="n">event_name</span>
 </span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="k">emit</span> <span class="kc">self</span><span class="p">.</span><span class="n">destroy</span>
 </span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="k">emit</span> <span class="nb">log</span><span class="p">(</span><span class="s2">&quot;message&quot;</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+</span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a><span class="k">emit</span> <span class="n">input</span><span class="p">(</span><span class="s2">&quot;prompt: &quot;</span><span class="p">,</span> <span class="s2">&quot;fieldName&quot;</span><span class="p">)</span>
 </span></code></pre></div>
 <h3 id="sync-emit-immediate-call-with-return-value">Sync Emit (Immediate Call with Return Value)</h3>
 <p>Executes an event synchronously and assigns the result to a field.
 The result is the last value assigned inside the called event.</p>
 <div class="language-morphyn highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="k">emit</span> <span class="n">event_name</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">field</span>
 </span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="k">emit</span> <span class="nc">Entity</span><span class="p">.</span><span class="n">event_name</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">field</span>
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="k">emit</span> <span class="nc">Entity</span><span class="p">.</span><span class="n">event_name</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">pool</span><span class="p">.</span><span class="nb">at</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
 </span></code></pre></div>
-<p>Sync events must be pure — only assignments and checks are allowed inside them.
-Nested sync calls are forbidden to prevent recursion.</p>
+<p>Nested sync calls are forbidden to prevent recursion.</p>
 <div class="language-morphyn highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="k">entity</span> <span class="nc">MathLib</span> <span class="p">{</span>
 </span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>  <span class="k">on</span> <span class="nf">clamp</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">min</span><span class="p">,</span> <span class="n">max</span><span class="p">)</span> <span class="p">{</span>
 </span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>    <span class="k">check</span> <span class="n">value</span> <span class="o o-Comparison">&lt;</span> <span class="n">min</span><span class="p">:</span> <span class="n">min</span> <span class="o">-&gt;</span> <span class="n">value</span>
@@ -1836,6 +1893,40 @@ Nested sync calls are forbidden to prevent recursion.</p>
 </span><span id="__span-11-4"><a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a>  <span class="n">action3</span>
 </span><span id="__span-11-5"><a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a><span class="p">}</span>
 </span></code></pre></div>
+<h2 id="built-in-functions">Built-in Functions</h2>
+<table>
+<thead>
+<tr>
+<th>Function</th>
+<th>Description</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>log</code></td>
+<td>Print to console</td>
+<td><code>emit log("HP:", hp)</code></td>
+</tr>
+<tr>
+<td><code>input</code></td>
+<td>Read line from console into field</td>
+<td><code>emit input("Name: ", "name")</code></td>
+</tr>
+<tr>
+<td><code>unity</code></td>
+<td>Call Unity callback</td>
+<td><code>emit unity("PlaySound", "hit")</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="input">input</h3>
+<p>Reads a line from console and writes the result into a field.
+The field name must be passed as a <strong>string literal in quotes</strong>.</p>
+<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="k">emit</span> <span class="n">input</span><span class="p">(</span><span class="s2">&quot;Enter your name: &quot;</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">)</span>
+</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="k">emit</span> <span class="n">input</span><span class="p">(</span><span class="s2">&quot;Enter amount: &quot;</span><span class="p">,</span> <span class="s2">&quot;amount&quot;</span><span class="p">)</span>
+</span></code></pre></div>
+<p>If the input can be parsed as a number it is stored as a number, otherwise as a string.</p>
 <h2 id="operators">Operators</h2>
 <h3 id="arithmetic">Arithmetic</h3>
 <table>
@@ -1983,7 +2074,7 @@ Nested sync calls are forbidden to prevent recursion.</p>
 </tr>
 <tr>
 <td><code>emit</code></td>
-<td>Send event or call sync event</td>
+<td>Send event, call sync event, or call built-in function</td>
 </tr>
 <tr>
 <td><code>check</code></td>
