@@ -23,6 +23,8 @@ namespace Morphyn.Runtime
 
         public static Action<string, object?[]>? UnityCallback { get; set; }
 
+        public static Action<string, string, object?[]>? OnEventFired { get; set; }
+
         // Send an event to an entity
         // target: The entity that will receive the event
         // eventName: Name of the event to send
@@ -43,6 +45,8 @@ namespace Morphyn.Runtime
             }
 
             _eventQueue.Enqueue(new PendingEvent(target, eventName, args ?? EmptyArgs));
+
+            OnEventFired?.Invoke(target.Name, eventName, args?.ToArray() ?? Array.Empty<object?>());
 
             var key = (target.Name, eventName);
             if (_subscriptions.TryGetValue(key, out var subscribers))
