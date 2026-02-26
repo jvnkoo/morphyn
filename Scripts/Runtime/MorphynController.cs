@@ -438,6 +438,59 @@ public class MorphynController : MonoBehaviour
         return null;
     }
 
+    /// <summary>
+    /// Subscribe a Morphyn entity to another entity's event.
+    /// When targetEntity fires targetEvent, subscriberEntity will receive handlerEvent.
+    /// </summary>
+    /// <param name="subscriberEntityName">The entity that will react</param>
+    /// <param name="targetEntityName">The entity to listen to</param>
+    /// <param name="targetEvent">The event to listen for</param>
+    /// <param name="handlerEvent">The event to fire on the subscriber</param>
+    public void Subscribe(string subscriberEntityName, string targetEntityName, string targetEvent, string handlerEvent)
+    {
+        if (_context == null) return;
+
+        if (!_context.Entities.TryGetValue(subscriberEntityName, out var subscriber))
+        {
+            Debug.LogWarning($"[Morphyn] Subscribe failed: entity '{subscriberEntityName}' not found.");
+            return;
+        }
+
+        if (!_context.Entities.TryGetValue(targetEntityName, out var target))
+        {
+            Debug.LogWarning($"[Morphyn] Subscribe failed: entity '{targetEntityName}' not found.");
+            return;
+        }
+
+        MorphynRuntime.Subscribe(subscriber, target, targetEvent, handlerEvent);
+    }
+
+    /// <summary>
+    /// Unsubscribe a Morphyn entity from another entity's event.
+    /// </summary>
+    /// <param name="subscriberEntityName">The entity to unsubscribe</param>
+    /// <param name="targetEntityName">The entity being listened to</param>
+    /// <param name="targetEvent">The event being listened for</param>
+    /// <param name="handlerEvent">The handler event to remove</param>
+    public void Unsubscribe(string subscriberEntityName, string targetEntityName, string targetEvent, string handlerEvent)
+    {
+        if (_context == null) return;
+
+        if (!_context.Entities.TryGetValue(subscriberEntityName, out var subscriber))
+        {
+            Debug.LogWarning($"[Morphyn] Unsubscribe failed: entity '{subscriberEntityName}' not found.");
+            return;
+        }
+
+        if (!_context.Entities.TryGetValue(targetEntityName, out var target))
+        {
+            Debug.LogWarning($"[Morphyn] Unsubscribe failed: entity '{targetEntityName}' not found.");
+            return;
+        }
+
+        MorphynRuntime.Unsubscribe(subscriber, target, targetEvent, handlerEvent);
+    }
+
     public void SaveState()
     {
         if (_context == null) return;
