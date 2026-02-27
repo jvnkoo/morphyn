@@ -4,63 +4,48 @@ using System.Collections.Generic;
 namespace Morphyn.Unity
 {
     /// <summary>
-    /// Bridge between Morphyn runtime and Unity
+    /// Bridge between Morphyn runtime and Unity.
     /// Singleton that manages callbacks from Morphyn to Unity
-    /// Allows Morphyn scripts to invoke Unity methods via "emit unity(...)"
+    /// and C# listeners for Morphyn entity events.
     /// </summary>
     public class UnityBridge
     {
         private static UnityBridge? _instance;
-        
-        /// <summary>
-        /// Singleton instance of UnityBridge
-        /// </summary>
+
+        /// <summary>Singleton instance of UnityBridge.</summary>
         public static UnityBridge Instance => _instance ??= new UnityBridge();
 
+        // emit unity("Name", args...) callbacks
         private readonly Dictionary<string, Action<object?[]>> _unityCallbacks = new();
 
+        // On/Off C# listeners for Morphyn entity events
         private readonly Dictionary<(string entity, string eventName), List<Action<object?[]>>> _morphynListeners = new();
-        
+
         private UnityBridge() { }
 
         /// <summary>
-        /// Register a Unity callback that can be called from Morphyn scripts
-        /// Example: RegisterCallback("PlaySound", args => AudioSource.PlayOneShot(...))
+        /// Register a Unity callback invokable from Morphyn via emit unity("Name", ...).
         /// </summary>
-        /// <param name="name">Callback name to use in Morphyn (e.g., "PlaySound")</param>
-        /// <param name="callback">Action to execute when callback is invoked</param>
         public void RegisterCallback(string name, Action<object?[]> callback)
         {
             _unityCallbacks[name] = callback;
         }
 
         /// <summary>
-        /// Invoke a registered Unity callback from Morphyn runtime
-        /// Called automatically when Morphyn executes "emit unity(name, ...)"
+        /// Invoke a registered Unity callback. Called automatically by MorphynRuntime.
         /// </summary>
-        /// <param name="name">Name of the callback to invoke</param>
-        /// <param name="args">Arguments to pass to the callback</param>
         public void InvokeUnityCallback(string name, params object?[] args)
         {
             if (_unityCallbacks.TryGetValue(name, out var callback))
-            {
                 callback(args);
-            }
             else
-            {
                 UnityEngine.Debug.LogWarning($"[Morphyn] Unity callback '{name}' not found");
-            }
         }
 
         /// <summary>
-        /// Clear all registered callbacks
-        /// Useful when reloading scene or cleaning up
+        /// Subscribe a C# handler to a Morphyn entity event.
+        /// Handler receives the same args the event was fired with.
         /// </summary>
-        public void ClearCallbacks()
-        {
-            _unityCallbacks.Clear();
-        }
-
         public void AddListener(string entityName, string eventName, Action<object?[]> handler)
         {
             var key = (entityName, eventName);
@@ -73,6 +58,9 @@ namespace Morphyn.Unity
                 list.Add(handler);
         }
 
+        /// <summary>
+        /// Unsubscribe a C# handler from a Morphyn entity event.
+        /// </summary>
         public void RemoveListener(string entityName, string eventName, Action<object?[]> handler)
         {
             var key = (entityName, eventName);
@@ -80,12 +68,29 @@ namespace Morphyn.Unity
                 list.Remove(handler);
         }
 
+        /// <summary>
+        /// Notify all C# listeners for a given entity event. Called by MorphynRuntime via OnEventFired.
+        /// </summary>
         public void NotifyListeners(string entityName, string eventName, object?[] args)
         {
             var key = (entityName, eventName);
             if (_morphynListeners.TryGetValue(key, out var list))
-                foreach (var handler in list)
+            {
+                // iterate over a copy — handler may call RemoveListener during iteration
+                var copy = list.ToArray();
+                foreach (var handler in copy)
                     handler(args);
+            }
+        }
+
+        /// <summary>
+        /// Clear all registered callbacks and listeners.
+        /// Call on scene unload or MorphynController.OnDestroy.
+        /// </summary>
+        public void ClearCallbacks()
+        {
+            _unityCallbacks.Clear();
+            _morphynListeners.Clear();
         }
     }
 }
