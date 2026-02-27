@@ -61,6 +61,7 @@ public class MorphynController : MonoBehaviour
     private List<Entity> _tickEntities = new();
     private readonly List<object> _tickArgsBuffer = new List<object>(1) { 0.0 };
     private readonly List<object?> _internalArgsBuffer = new List<object?>(8);
+    private readonly List<object?> _syncArgsBuffer = new List<object?>(4);
     
     public EntityData Context => _context;
 
@@ -304,7 +305,7 @@ public class MorphynController : MonoBehaviour
             if (enableTick)
             {
                 float currentTime = Time.time;
-                float dt = (currentTime - _lastTime) * 1000f;
+                double dt = (currentTime - _lastTime) * 1000f;
                 _lastTime = currentTime;
                 
                 // Optimization: Use pre-cached tick entities and buffer
@@ -423,21 +424,14 @@ public class MorphynController : MonoBehaviour
         }
     }
 
-    public object? EmitSync(string entityName, string eventName, params object[] args)
+    public object? EmitSync(string entityName, string eventName, object? arg0 = null)
     {
         if (_context != null && _context.Entities.TryGetValue(entityName, out var entity))
         {
-            _internalArgsBuffer.Clear();
-            for (int i = 0; i < args.Length; i++)
-            {
-                _internalArgsBuffer.Add(args[i]);
-            }
+            _syncArgsBuffer.Clear();
+            if (arg0 != null) _syncArgsBuffer.Add(arg0);
 
-            if (entity != null)
-            {
-                object? result = MorphynRuntime.ExecuteSync(null, entity, eventName, _internalArgsBuffer.ToList(), _context);
-                return result;
-            }
+            return MorphynRuntime.ExecuteSync(null, entity, eventName, _syncArgsBuffer, _context);
         }
         return null;
     }
