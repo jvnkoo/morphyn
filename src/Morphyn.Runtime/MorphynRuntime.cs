@@ -252,8 +252,8 @@ namespace Morphyn.Runtime
         private static bool HandleEmitRouting(EntityData data, Entity entity, EmitAction emit,
             List<object?> resolvedArgs)
         {
-            string? targetName = emit.TargetEntityName;
-
+            string? targetName = emit.TargetEntityName == "self" ? null : emit.TargetEntityName;
+            
             if (!string.IsNullOrEmpty(targetName) && targetName.Contains('.'))
             {
                 var parts = targetName.Split('.');
