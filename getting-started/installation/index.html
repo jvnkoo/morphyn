@@ -307,11 +307,11 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../examples/basic/" class="md-tabs__link">
+        <a href="../../learn/learn/" class="md-tabs__link">
           
   
   
-  Examples
+  Learn in Y minutes
 
         </a>
       </li>
@@ -1006,14 +1006,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../../unity/examples/" class="md-nav__link">
+      <a href="../../learn/learn-unity/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    Examples
+    Learn unity in Y minutes
   
 
     
@@ -1066,7 +1066,7 @@
   <span class="md-ellipsis">
     
   
-    Examples
+    Learn in Y minutes
   
 
     
@@ -1082,7 +1082,7 @@
             <span class="md-nav__icon md-icon"></span>
             
   
-    Examples
+    Learn in Y minutes
   
 
           </label>
@@ -1095,42 +1095,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../../examples/basic/" class="md-nav__link">
+      <a href="../../learn/learn/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    Basic Examples
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../examples/games/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Game Examples
+    Learn morphyn in Y minutes
   
 
     
@@ -1360,11 +1332,8 @@
 <p>The install script only needs to be run once.</p>
 </div>
 <p><strong>Usage:</strong>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># Create a file</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="nb">echo</span><span class="w"> </span><span class="s1">&#39;entity Game { has score: 0 }&#39;</span><span class="w"> </span>&gt;<span class="w"> </span>game.morph
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="c1"># Run it</span>
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>morphyn<span class="w"> </span>game.morph
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># Run file</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>morphyn<span class="w"> </span>main.morph
 </span></code></pre></div></p>
 <h2 id="build-from-source">Build from Source</h2>
 <p>Clone the repository:
@@ -1372,9 +1341,9 @@
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="nb">cd</span><span class="w"> </span>morphyn
 </span></code></pre></div></p>
 <p>Build the project:
-<div class="language-sh highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>dotnet<span class="w"> </span>build
+<div class="language-sh highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>dotnet<span class="w"> </span>build<span class="w"> </span>--framework<span class="w"> </span>net10.0<span class="w"> </span>
 </span></code></pre></div></p>
-<p>The compiled binary will be in <code>bin/Debug/net6.0/</code> or <code>bin/Release/net6.0/</code>.</p>
+<p>The compiled binary will be in <code>bin/Debug/net10.0/</code> or <code>bin/Release/net10.0/</code>.</p>
 <h2 id="file-extensions">File Extensions</h2>
 <p>Morphyn recognizes the following file extensions:
 - <code>.morphyn</code> 

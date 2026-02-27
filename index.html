@@ -305,11 +305,11 @@
     
     
       <li class="md-tabs__item">
-        <a href="examples/basic/" class="md-tabs__link">
+        <a href="learn/learn/" class="md-tabs__link">
           
   
   
-  Examples
+  Learn in Y minutes
 
         </a>
       </li>
@@ -448,22 +448,55 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#what-is-morphyn" class="md-nav__link">
+  <a href="#morphyn-is-a-scripting-language-providing-a-clean-event-driven-syntax-to-manage-configs-and-logic-lightweight-and-opinionated-focused-entirely-on-entity-states-and-reactive-events-without-the-overhead-of-a-general-purpose-language" class="md-nav__link">
     <span class="md-ellipsis">
       
-        What is Morphyn?
+        Morphyn is a scripting language providing a clean, event-driven syntax to manage configs and logic. Lightweight and opinionated — focused entirely on entity states and reactive events, without the overhead of a general-purpose language.
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="What is Morphyn?">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#heres-a-taste" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Here's a taste:
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#entity-player-has-hp-100-has-level-1-on-damageamount-hp-amount-hp-check-hp-0-emit-die-on-level_up-level-1-level-hp-20-hp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        entity Player { has hp: 100 has level: 1 on damage(amount) { hp - amount -&gt; hp check hp &lt;= 0: emit die } on level_up { level + 1 -&gt; level hp + 20 -&gt; hp } }
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#quick-start" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Quick Start
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Quick Start">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#the-problem" class="md-nav__link">
+  <a href="#unity" class="md-nav__link">
     <span class="md-ellipsis">
       
-        The Problem
+        Unity
       
     </span>
   </a>
@@ -471,10 +504,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#the-solution" class="md-nav__link">
+  <a href="#standalone" class="md-nav__link">
     <span class="md-ellipsis">
       
-        The Solution
+        Standalone
       
     </span>
   </a>
@@ -487,102 +520,13 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#quick-example" class="md-nav__link">
+  <a href="#why-not-lua" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Quick Example
+        Why not Lua?
       
     </span>
   </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#getting-started" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Getting Started
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Getting Started">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#for-unity-developers" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        For Unity Developers
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#for-standalone-use" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        For Standalone Use
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#why-use-morphyn" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Why Use Morphyn?
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Why Use Morphyn?">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#hot-reload-everything" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        ⚡ Hot Reload Everything
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#built-in-validation" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        🛡️ Built-in Validation
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#made-for-game-logic" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        🎯 Made for Game Logic
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -595,55 +539,27 @@
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Core Concepts">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#entities" class="md-nav__link">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#vs-code-extension" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Entities
+        VS Code Extension
       
     </span>
   </a>
   
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#events" class="md-nav__link">
+      
+        <li class="md-nav__item">
+  <a href="#roadmap" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Events
+        Roadmap
       
     </span>
   </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#data-flow" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Data Flow
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#checks" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Checks
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -652,6 +568,28 @@
     <span class="md-ellipsis">
       
         Learn More
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#contributing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Contributing
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#license" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        License
       
     </span>
   </a>
@@ -1157,14 +1095,14 @@
   
   
     <li class="md-nav__item">
-      <a href="unity/examples/" class="md-nav__link">
+      <a href="learn/learn-unity/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    Examples
+    Learn unity in Y minutes
   
 
     
@@ -1217,7 +1155,7 @@
   <span class="md-ellipsis">
     
   
-    Examples
+    Learn in Y minutes
   
 
     
@@ -1233,7 +1171,7 @@
             <span class="md-nav__icon md-icon"></span>
             
   
-    Examples
+    Learn in Y minutes
   
 
           </label>
@@ -1246,42 +1184,14 @@
   
   
     <li class="md-nav__item">
-      <a href="examples/basic/" class="md-nav__link">
+      <a href="learn/learn/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    Basic Examples
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="examples/games/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Game Examples
+    Learn morphyn in Y minutes
   
 
     
@@ -1418,22 +1328,55 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#what-is-morphyn" class="md-nav__link">
+  <a href="#morphyn-is-a-scripting-language-providing-a-clean-event-driven-syntax-to-manage-configs-and-logic-lightweight-and-opinionated-focused-entirely-on-entity-states-and-reactive-events-without-the-overhead-of-a-general-purpose-language" class="md-nav__link">
     <span class="md-ellipsis">
       
-        What is Morphyn?
+        Morphyn is a scripting language providing a clean, event-driven syntax to manage configs and logic. Lightweight and opinionated — focused entirely on entity states and reactive events, without the overhead of a general-purpose language.
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="What is Morphyn?">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#heres-a-taste" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Here's a taste:
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#entity-player-has-hp-100-has-level-1-on-damageamount-hp-amount-hp-check-hp-0-emit-die-on-level_up-level-1-level-hp-20-hp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        entity Player { has hp: 100 has level: 1 on damage(amount) { hp - amount -&gt; hp check hp &lt;= 0: emit die } on level_up { level + 1 -&gt; level hp + 20 -&gt; hp } }
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#quick-start" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Quick Start
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Quick Start">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#the-problem" class="md-nav__link">
+  <a href="#unity" class="md-nav__link">
     <span class="md-ellipsis">
       
-        The Problem
+        Unity
       
     </span>
   </a>
@@ -1441,10 +1384,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#the-solution" class="md-nav__link">
+  <a href="#standalone" class="md-nav__link">
     <span class="md-ellipsis">
       
-        The Solution
+        Standalone
       
     </span>
   </a>
@@ -1457,102 +1400,13 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#quick-example" class="md-nav__link">
+  <a href="#why-not-lua" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Quick Example
+        Why not Lua?
       
     </span>
   </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#getting-started" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Getting Started
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Getting Started">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#for-unity-developers" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        For Unity Developers
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#for-standalone-use" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        For Standalone Use
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#why-use-morphyn" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Why Use Morphyn?
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Why Use Morphyn?">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#hot-reload-everything" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        ⚡ Hot Reload Everything
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#built-in-validation" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        🛡️ Built-in Validation
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#made-for-game-logic" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        🎯 Made for Game Logic
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -1565,55 +1419,27 @@
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Core Concepts">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#entities" class="md-nav__link">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#vs-code-extension" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Entities
+        VS Code Extension
       
     </span>
   </a>
   
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#events" class="md-nav__link">
+      
+        <li class="md-nav__item">
+  <a href="#roadmap" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Events
+        Roadmap
       
     </span>
   </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#data-flow" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Data Flow
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#checks" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Checks
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -1622,6 +1448,28 @@
     <span class="md-ellipsis">
       
         Learn More
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#contributing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Contributing
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#license" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        License
       
     </span>
   </a>
@@ -1649,136 +1497,135 @@
 
 
 <h1 id="morphyn-documentation">Morphyn Documentation</h1>
-<h2 id="what-is-morphyn">What is Morphyn?</h2>
-<p><strong>Config files with built-in logic and instant hot reload.</strong></p>
-<h3 id="the-problem">The Problem</h3>
-<p>You're balancing your game. You change enemy damage from <code>10</code> to <code>15</code>.<br />
-You stop Play mode. Wait for Unity to reload. Press Play. Test. Too weak.<br />
-Change to <code>20</code>. Stop. Wait. Play. Test again.</p>
-<p><strong>Repeat 50 times a day = 10+ minutes wasted.</strong></p>
-<h3 id="the-solution">The Solution</h3>
-<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">entity</span> <span class="nc">Enemy</span> <span class="p">{</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>  <span class="k">has</span> <span class="nv">damage</span><span class="p">:</span> <span class="m">10</span>  <span class="c1"># ← Change this to 999</span>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="p">}</span>
-</span></code></pre></div>
-<p>Save. <strong>Game updates instantly. While running.</strong></p>
+<h3 id="morphyn-is-a-scripting-language-providing-a-clean-event-driven-syntax-to-manage-configs-and-logic-lightweight-and-opinionated-focused-entirely-on-entity-states-and-reactive-events-without-the-overhead-of-a-general-purpose-language"><a href="https://jvnkoo.github.io/morphyn">Morphyn</a> is a scripting language providing a clean, event-driven syntax to manage configs and logic. Lightweight and opinionated — focused entirely on entity states and reactive events, without the overhead of a general-purpose language.</h3>
 <hr />
-<h2 id="quick-example">Quick Example</h2>
-<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="k">entity</span> <span class="nc">Player</span> <span class="p">{</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>  <span class="k">has</span> <span class="nv">hp</span><span class="p">:</span> <span class="m">100</span>
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>  <span class="k">has</span> <span class="nv">level</span><span class="p">:</span> <span class="m">1</span>
+<h2 id="heres-a-taste">Here's a taste:</h2>
+<h2 id="entity-player-has-hp-100-has-level-1-on-damageamount-hp-amount-hp-check-hp-0-emit-die-on-level_up-level-1-level-hp-20-hp"><div class="language-morphyn highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">entity</span> <span class="nc">Player</span> <span class="p">{</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>  <span class="k">has</span> <span class="nv">hp</span><span class="p">:</span> <span class="m">100</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>  <span class="k">has</span> <span class="nv">level</span><span class="p">:</span> <span class="m">1</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>  <span class="k">on</span> <span class="nf">damage</span><span class="p">(</span><span class="n">amount</span><span class="p">)</span> <span class="p">{</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    <span class="n">hp</span> <span class="o o-Arithmetic">-</span> <span class="n">amount</span> <span class="o">-&gt;</span> <span class="n">hp</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    <span class="k">check</span> <span class="n">hp</span> <span class="o o-Comparison">&lt;=</span> <span class="m">0</span><span class="p">:</span> <span class="k">emit</span> <span class="n">die</span>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>  <span class="p">}</span>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>  <span class="k">on</span> <span class="nf">level_up</span> <span class="p">{</span>
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>    <span class="n">level</span> <span class="o o-Arithmetic">+</span> <span class="m">1</span> <span class="o">-&gt;</span> <span class="n">level</span>
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>    <span class="n">hp</span> <span class="o o-Arithmetic">+</span> <span class="m">20</span> <span class="o">-&gt;</span> <span class="n">hp</span>
+</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>  <span class="p">}</span>
+</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a><span class="p">}</span>
+</span></code></pre></div></h2>
+<h2 id="quick-start">Quick Start</h2>
+<h3 id="unity">Unity</h3>
+<p><strong>1.</strong> Download and import <a href="https://github.com/jvnkoo/morphyn/releases/latest"><code>Morphyn.unitypackage</code></a></p>
+<p><strong>2.</strong> Create a <code>.morph</code> file:
+<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="k">entity</span> <span class="nc">Enemy</span> <span class="p">{</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>    <span class="k">has</span> <span class="nv">hp</span><span class="p">:</span> <span class="m">100</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>    <span class="k">has</span> <span class="nv">alive</span><span class="p">:</span> <span class="kc">true</span>
 </span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>  <span class="k">on</span> <span class="nf">damage</span><span class="p">(</span><span class="n">amount</span><span class="p">)</span> <span class="p">{</span>
-</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>    <span class="n">hp</span> <span class="o o-Arithmetic">-</span> <span class="n">amount</span> <span class="o">-&gt;</span> <span class="n">hp</span>
-</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>    <span class="k">check</span> <span class="n">hp</span> <span class="o o-Comparison">&lt;=</span> <span class="m">0</span><span class="p">:</span> <span class="k">emit</span> <span class="n">die</span>
-</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>  <span class="p">}</span>
-</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>
-</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>  <span class="k">on</span> <span class="nf">level_up</span> <span class="p">{</span>
-</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a>    <span class="n">level</span> <span class="o o-Arithmetic">+</span> <span class="m">1</span> <span class="o">-&gt;</span> <span class="n">level</span>
-</span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a>    <span class="n">hp</span> <span class="o o-Arithmetic">+</span> <span class="m">20</span> <span class="o">-&gt;</span> <span class="n">hp</span>
-</span><span id="__span-1-13"><a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a>  <span class="p">}</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>    <span class="k">on</span> <span class="nf">take_damage</span><span class="p">(</span><span class="n">amount</span><span class="p">)</span> <span class="p">{</span>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>        <span class="n">hp</span> <span class="o o-Arithmetic">-</span> <span class="n">amount</span> <span class="o">-&gt;</span> <span class="n">hp</span>
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>        <span class="k">emit</span> <span class="nb">log</span><span class="p">(</span><span class="s2">&quot;Enemy hit! HP:&quot;</span><span class="p">,</span> <span class="n">hp</span><span class="p">)</span>
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>
+</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>        <span class="k">check</span> <span class="n">hp</span> <span class="o o-Comparison">&lt;=</span> <span class="m">0</span><span class="p">:</span> <span class="p">{</span>
+</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>            <span class="kc">false</span> <span class="o">-&gt;</span> <span class="n">alive</span>
+</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a>            <span class="k">emit</span> <span class="nb">log</span><span class="p">(</span><span class="s2">&quot;Enemy defeated&quot;</span><span class="p">)</span>
+</span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a>        <span class="p">}</span>
+</span><span id="__span-1-13"><a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a>    <span class="p">}</span>
 </span><span id="__span-1-14"><a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a><span class="p">}</span>
-</span></code></pre></div>
-<p><strong>That's it.</strong> No classes, no inheritance, no boilerplate.</p>
-<hr />
-<h2 id="getting-started">Getting Started</h2>
-<h3 id="for-unity-developers">For Unity Developers</h3>
-<p><strong>1. Install</strong><br />
-Download <a href="https://github.com/jvnkoo/morphyn/releases/latest"><code>Morphyn.unitypackage</code></a></p>
-<p><strong>2. Create config</strong>
-<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="k">entity</span> <span class="nc">GameSettings</span> <span class="p">{</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>  <span class="k">has</span> <span class="nv">difficulty</span><span class="p">:</span> <span class="s2">&quot;normal&quot;</span>
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>  <span class="k">has</span> <span class="nv">enemy_damage</span><span class="p">:</span> <span class="m">10</span>
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="p">}</span>
 </span></code></pre></div></p>
-<p><strong>3. Use in C#</strong>
-<div class="language-csharp highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="kt">double</span><span class="w"> </span><span class="n">damage</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">System</span><span class="p">.</span><span class="n">Convert</span><span class="p">.</span><span class="n">ToDouble</span><span class="p">(</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">    </span><span class="n">MorphynController</span><span class="p">.</span><span class="n">Instance</span><span class="p">.</span><span class="n">GetField</span><span class="p">(</span><span class="s">&quot;GameSettings&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;enemy_damage&quot;</span><span class="p">)</span>
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="p">);</span>
+<p><strong>3.</strong> Use in C#:
+<div class="language-csharp highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="n">MorphynController</span><span class="p">.</span><span class="n">Instance</span><span class="p">.</span><span class="n">Emit</span><span class="p">(</span><span class="s">&quot;Enemy&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;take_damage&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">25</span><span class="p">);</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="kt">bool</span><span class="w"> </span><span class="n">isAlive</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Convert</span><span class="p">.</span><span class="n">ToBoolean</span><span class="p">(</span><span class="n">MorphynController</span><span class="p">.</span><span class="n">Instance</span><span class="p">.</span><span class="n">GetField</span><span class="p">(</span><span class="s">&quot;Enemy&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;alive&quot;</span><span class="p">));</span>
 </span></code></pre></div></p>
-<p><strong>4. Edit while playing</strong><br />
-Change <code>enemy_damage: 10</code> → <code>enemy_damage: 999</code> and save.<br />
-<strong>Value updates instantly.</strong></p>
+<p><strong>4.</strong> Add <code>MorphynController</code> to your scene, drag in the <code>.morph</code> files, check <strong>Enable Hot Reload</strong>, press Play.</p>
 <p><a href="unity/overview/">Full Unity Guide →</a></p>
-<h3 id="for-standalone-use">For Standalone Use</h3>
-<p><strong>1. Download</strong> runtime from <a href="https://github.com/jvnkoo/morphyn/releases/latest">Releases</a></p>
-<p><strong>2. Install</strong> (adds <code>morphyn</code> command to PATH)
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>./install.sh<span class="w">  </span><span class="c1"># Linux/macOS</span>
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>.<span class="se">\i</span>nstall.ps1<span class="w">  </span><span class="c1"># Windows</span>
-</span></code></pre></div></p>
-<p><strong>3. Run</strong>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>morphyn<span class="w"> </span>game.morph
-</span></code></pre></div></p>
+<h3 id="standalone">Standalone</h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># Linux / macOS</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>./install.sh<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>morphyn<span class="w"> </span>game.morph
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="c1"># Windows</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>.<span class="se">\i</span>nstall.ps1<span class="p">;</span><span class="w"> </span>morphyn<span class="w"> </span>game.morph
+</span></code></pre></div>
 <p><a href="getting-started/installation/">Installation Guide →</a></p>
 <hr />
-<h2 id="why-use-morphyn">Why Use Morphyn?</h2>
-<h3 id="hot-reload-everything">⚡ Hot Reload Everything</h3>
-<p>Not just values — <strong>logic too</strong>.
-<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="k">on</span> <span class="nf">damage</span><span class="p">(</span><span class="n">amount</span><span class="p">)</span> <span class="p">{</span>
-</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>  <span class="n">hp</span> <span class="o o-Arithmetic">-</span> <span class="n">amount</span> <span class="o">-&gt;</span> <span class="n">hp</span>
-</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>  <span class="k">check</span> <span class="n">hp</span> <span class="o o-Comparison">&lt;=</span> <span class="m">0</span><span class="p">:</span> <span class="k">emit</span> <span class="n">die</span>  <span class="c1"># ← Change condition while game runs</span>
-</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="p">}</span>
-</span></code></pre></div></p>
-<h3 id="built-in-validation">🛡️ Built-in Validation</h3>
-<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="k">on</span> <span class="nf">heal</span><span class="p">(</span><span class="n">amount</span><span class="p">)</span> <span class="p">{</span>
-</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>  <span class="k">check</span> <span class="n">amount</span> <span class="o o-Comparison">&gt;</span> <span class="m">0</span><span class="p">:</span> <span class="n">hp</span> <span class="o o-Arithmetic">+</span> <span class="n">amount</span> <span class="o">-&gt;</span> <span class="n">hp</span>  <span class="c1"># Auto-validates</span>
-</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>  <span class="k">check</span> <span class="n">hp</span> <span class="o o-Comparison">&gt;</span> <span class="n">max_hp</span><span class="p">:</span> <span class="n">max_hp</span> <span class="o">-&gt;</span> <span class="n">hp</span>      <span class="c1"># Auto-clamps</span>
-</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="p">}</span>
-</span></code></pre></div>
-<h3 id="made-for-game-logic">🎯 Made for Game Logic</h3>
-<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="k">entity</span> <span class="nc">Shop</span> <span class="p">{</span>
-</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>  <span class="k">has</span> <span class="nv">gold</span><span class="p">:</span> <span class="m">100</span>
-</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>
-</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>  <span class="k">on</span> <span class="nf">buy</span><span class="p">(</span><span class="n">cost</span><span class="p">)</span> <span class="p">{</span>
-</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a>    <span class="k">check</span> <span class="n">gold</span> <span class="o o-Comparison">&gt;=</span> <span class="n">cost</span><span class="p">:</span> <span class="p">{</span>
-</span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a>      <span class="n">gold</span> <span class="o o-Arithmetic">-</span> <span class="n">cost</span> <span class="o">-&gt;</span> <span class="n">gold</span>
-</span><span id="__span-8-7"><a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a>      <span class="k">emit</span> <span class="n">add_item</span><span class="p">(</span><span class="s2">&quot;sword&quot;</span><span class="p">)</span>
-</span><span id="__span-8-8"><a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a>    <span class="p">}</span>
-</span><span id="__span-8-9"><a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a>  <span class="p">}</span>
-</span><span id="__span-8-10"><a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a><span class="p">}</span>
-</span></code></pre></div>
+<h2 id="why-not-lua">Why not Lua?</h2>
+<p>The Unity bridges are a mess. MoonSharp hasn't been updated in years. XLua is maintained but built for a different ecosystem entirely. Getting either to work with hot reload and state preservation is a project in itself.</p>
+<p>Morphyn exists because setting up Lua in Unity shouldn't take days. Simpler, opinionated, built specifically for game config and logic. You lose the standard library. You gain something that works on the first try.</p>
 <hr />
 <h2 id="core-concepts">Core Concepts</h2>
-<h3 id="entities">Entities</h3>
-<p>Entities are like objects with state and behavior.
-<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="k">entity</span> <span class="nc">Player</span> <span class="p">{</span>
-</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>  <span class="k">has</span> <span class="nv">hp</span><span class="p">:</span> <span class="m">100</span>        <span class="c1"># State</span>
-</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>  <span class="k">on</span> <span class="nf">damage</span><span class="p">(</span><span class="n">amount</span><span class="p">)</span> <span class="p">{</span> <span class="c1"># Behavior</span>
-</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>    <span class="n">hp</span> <span class="o o-Arithmetic">-</span> <span class="n">amount</span> <span class="o">-&gt;</span> <span class="n">hp</span>
-</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>  <span class="p">}</span>
-</span><span id="__span-9-6"><a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a><span class="p">}</span>
+<p><strong>Entities</strong> hold state and define reactions:
+<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="k">entity</span> <span class="nc">Shop</span> <span class="p">{</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>  <span class="k">has</span> <span class="nv">gold</span><span class="p">:</span> <span class="m">100</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>  <span class="k">on</span> <span class="nf">buy</span><span class="p">(</span><span class="n">cost</span><span class="p">)</span> <span class="p">{</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>    <span class="k">check</span> <span class="n">gold</span> <span class="o o-Comparison">&gt;=</span> <span class="n">cost</span><span class="p">:</span> <span class="p">{</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>      <span class="n">gold</span> <span class="o o-Arithmetic">-</span> <span class="n">cost</span> <span class="o">-&gt;</span> <span class="n">gold</span>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>      <span class="k">emit</span> <span class="n">add_item</span><span class="p">(</span><span class="s2">&quot;sword&quot;</span><span class="p">)</span>
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>    <span class="p">}</span>
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>  <span class="p">}</span>
+</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="p">}</span>
 </span></code></pre></div></p>
-<h3 id="events">Events</h3>
-<p>Events trigger entity reactions.
-<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="k">emit</span> <span class="n">player</span><span class="p">.</span><span class="n">damage</span><span class="p">(</span><span class="m">25</span><span class="p">)</span>  <span class="c1"># Send event to player</span>
-</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="k">emit</span> <span class="n">heal</span><span class="p">(</span><span class="m">10</span><span class="p">)</span>           <span class="c1"># Send to self</span>
+<p><strong>Events</strong> are how entities communicate:
+<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="k">emit</span> <span class="nc">Player</span><span class="p">.</span><span class="n">damage</span><span class="p">(</span><span class="m">25</span><span class="p">)</span>   <span class="c1"># Send to entity</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="k">emit</span> <span class="kc">self</span><span class="p">.</span><span class="n">heal</span><span class="p">(</span><span class="m">10</span><span class="p">)</span>       <span class="c1"># Send to self explicitly</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="k">emit</span> <span class="n">heal</span><span class="p">(</span><span class="m">10</span><span class="p">)</span>            <span class="c1"># Same as above, implicit</span>
 </span></code></pre></div></p>
-<h3 id="data-flow">Data Flow</h3>
-<p>Use <code>-&gt;</code> to update values.
-<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="n">hp</span> <span class="o o-Arithmetic">-</span> <span class="m">10</span> <span class="o">-&gt;</span> <span class="n">hp</span>          <span class="c1"># Subtract 10 from hp</span>
-</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="n">max_hp</span> <span class="o">-&gt;</span> <span class="n">hp</span>           <span class="c1"># Set hp to max_hp</span>
+<p><strong>Subscriptions</strong> let entities react to each other:
+<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="k">entity</span> <span class="nc">Logger</span> <span class="p">{</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>  <span class="k">on</span> <span class="nf">init</span> <span class="p">{</span>
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>    <span class="n">when</span> <span class="nc">Player</span><span class="p">.</span><span class="n">die</span> <span class="p">:</span> <span class="n">onPlayerDied</span>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>  <span class="p">}</span>
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>  <span class="k">on</span> <span class="nf">onPlayerDied</span> <span class="p">{</span>
+</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>    <span class="k">emit</span> <span class="nb">log</span><span class="p">(</span><span class="s2">&quot;Player died&quot;</span><span class="p">)</span>
+</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a>  <span class="p">}</span>
+</span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a><span class="p">}</span>
 </span></code></pre></div></p>
-<h3 id="checks">Checks</h3>
-<p>Guards that stop execution if condition fails.
-<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="k">check</span> <span class="n">hp</span> <span class="o o-Comparison">&gt;</span> <span class="m">0</span><span class="p">:</span> <span class="k">emit</span> <span class="n">alive</span>       <span class="c1"># Only if hp &gt; 0</span>
-</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="k">check</span> <span class="n">gold</span> <span class="o o-Comparison">&gt;=</span> <span class="n">cost</span><span class="p">:</span> <span class="k">emit</span> <span class="n">buy</span>   <span class="c1"># Only if enough gold</span>
+<p><strong>Data flow</strong> with <code>-&gt;</code>:
+<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="n">hp</span> <span class="o o-Arithmetic">-</span> <span class="m">10</span> <span class="o">-&gt;</span> <span class="n">hp</span>       <span class="c1"># Subtract</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="n">max_hp</span> <span class="o">-&gt;</span> <span class="n">hp</span>        <span class="c1"># Set</span>
+</span></code></pre></div></p>
+<p><strong>Check</strong> stop execution if condition fails(only if there is no block to execute):
+<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="k">check</span> <span class="kc">false</span>
 </span></code></pre></div></p>
 <hr />
+<h2 id="vs-code-extension">VS Code Extension</h2>
+<p>Syntax highlighting, bracket matching, comment support for <code>.morph</code> files.</p>
+<p><a href="https://github.com/jvnkoo/morphyn/releases/latest">📥 Download <code>.vsix</code> from Releases</a> → Extensions → <code>...</code> → Install from VSIX</p>
+<hr />
+<h2 id="roadmap">Roadmap</h2>
+<ul>
+<li>[x] Core language runtime</li>
+<li>[x] Unity integration</li>
+<li>[x] Hot reload system</li>
+<li>[x] VS Code extension</li>
+<li>[x] Event subscription system (<code>when</code> / <code>unwhen</code>)</li>
+<li>[x] C# listener API (<code>On</code> / <code>Off</code>)</li>
+<li>[ ] Async event handling</li>
+<li>[ ] More documentation examples</li>
+<li>[ ] Performance optimizations</li>
+<li>[ ] Self-hosted interpreter</li>
+</ul>
+<hr />
 <h2 id="learn-more">Learn More</h2>
-<p><strong>Getting Started:</strong>
-- <a href="getting-started/quick-start/">Quick Start</a>
-- <a href="getting-started/installation/">Installation</a></p>
-<p><strong>Language:</strong>
-- <a href="language/syntax/">Syntax Reference</a>
-- <a href="language/events/">Event System</a>
-- <a href="language/expressions/">Expression System</a></p>
-<p><strong>Unity:</strong>
-- <a href="unity/overview/">Unity Integration</a>
-- <a href="unity/api/">Unity API</a>
-- <a href="unity/examples/">Unity Examples</a></p>
-<p><strong>Examples:</strong>
-- <a href="examples/basic/">Basic Examples</a>
-- <a href="examples/game.md">Game Examples</a></p>
+<p><strong>Getting Started:</strong> <a href="getting-started/quick-start/">Quick Start</a> · <a href="getting-started/installation/">Installation</a></p>
+<p><strong>Language:</strong> <a href="language/syntax/">Syntax Reference</a> · <a href="language/events/">Event System</a> · <a href="language/expressions/">Expression System</a></p>
+<p><strong>Unity:</strong> <a href="unity/overview/">Overview</a> · <a href="unity/api/">API Reference</a></p>
+<p><strong>Learn in Y minutes:</strong> <a href="learn/learn/">Morphyn</a> · <a href="learn/learn-unity/">Unity bridge</a></p>
+<hr />
+<h2 id="contributing">Contributing</h2>
+<ul>
+<li><a href="https://github.com/jvnkoo/morphyn/issues">Report Issues</a></li>
+<li><a href="https://github.com/jvnkoo/morphyn/issues">Feature Requests</a> (use "enhancement" label)</li>
+</ul>
+<p>PRs are welcome.</p>
+<hr />
+<h2 id="license">License</h2>
+<p>Apache 2.0 — see <a href="LICENSE">LICENSE</a> and <a href="NOTICE">NOTICE</a>. Free for commercial use.</p>
+<hr />
+<div align="center">
+<img src="https://media1.tenor.com/m/ugRQCY7AKEsAAAAd/texh-texhnolyze.gif" width="1000" height="300" alt="gif">
+</div>
 
 
 

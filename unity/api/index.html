@@ -14,7 +14,7 @@
         <link rel="prev" href="../installation/">
       
       
-        <link rel="next" href="../examples/">
+        <link rel="next" href="../../learn/learn-unity/">
       
       
         
@@ -307,11 +307,11 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../examples/basic/" class="md-tabs__link">
+        <a href="../../learn/learn/" class="md-tabs__link">
           
   
   
-  Examples
+  Learn in Y minutes
 
         </a>
       </li>
@@ -958,6 +958,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#api-methods" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        API Methods
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1295,14 +1306,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../examples/" class="md-nav__link">
+      <a href="../../learn/learn-unity/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    Examples
+    Learn unity in Y minutes
   
 
     
@@ -1355,7 +1366,7 @@
   <span class="md-ellipsis">
     
   
-    Examples
+    Learn in Y minutes
   
 
     
@@ -1371,7 +1382,7 @@
             <span class="md-nav__icon md-icon"></span>
             
   
-    Examples
+    Learn in Y minutes
   
 
           </label>
@@ -1384,42 +1395,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../../examples/basic/" class="md-nav__link">
+      <a href="../../learn/learn/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    Basic Examples
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../examples/games/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Game Examples
+    Learn morphyn in Y minutes
   
 
     
@@ -1572,6 +1555,17 @@
     <span class="md-ellipsis">
       
         Settings
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#api-methods" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        API Methods
       
     </span>
   </a>
@@ -1955,12 +1949,10 @@
 <td><strong>Save Folder</strong></td>
 <td>Where to save state</td>
 </tr>
-<tr>
-<td>### API Methods</td>
-<td></td>
-</tr>
-<tr>
-<td><div class="language-cs highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">MorphynController</span><span class="w"> </span><span class="n">morphyn</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">MorphynController</span><span class="p">.</span><span class="n">Instance</span><span class="p">;</span>
+</tbody>
+</table>
+<h3 id="api-methods">API Methods</h3>
+<div class="language-cs highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">MorphynController</span><span class="w"> </span><span class="n">morphyn</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">MorphynController</span><span class="p">.</span><span class="n">Instance</span><span class="p">;</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="c1">// Get value</span>
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="kt">object</span><span class="w"> </span><span class="n">hp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">morphyn</span><span class="p">.</span><span class="n">GetField</span><span class="p">(</span><span class="s">&quot;Player&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;hp&quot;</span><span class="p">);</span>
 </span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="kt">double</span><span class="w"> </span><span class="n">hpValue</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">System</span><span class="p">.</span><span class="n">Convert</span><span class="p">.</span><span class="n">ToDouble</span><span class="p">(</span><span class="n">hp</span><span class="p">);</span>
@@ -1981,11 +1973,7 @@
 </span><span id="__span-0-19"><a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a><span class="c1">// Save/Load</span>
 </span><span id="__span-0-20"><a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a><span class="n">morphyn</span><span class="p">.</span><span class="n">SaveState</span><span class="p">();</span>
 </span><span id="__span-0-21"><a id="__codelineno-0-21" name="__codelineno-0-21" href="#__codelineno-0-21"></a><span class="n">morphyn</span><span class="p">.</span><span class="n">LoadState</span><span class="p">(</span><span class="s">&quot;Player&quot;</span><span class="p">);</span>
-</span></code></pre></div></td>
-<td></td>
-</tr>
-</tbody>
-</table>
+</span></code></pre></div>
 <h2 id="c-listeners">C# Listeners</h2>
 <p>Subscribe any C# method directly to a Morphyn entity event using <code>On</code> and <code>Off</code>.</p>
 <h3 id="on">On</h3>

@@ -307,11 +307,11 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../examples/basic/" class="md-tabs__link">
+        <a href="../../learn/learn/" class="md-tabs__link">
           
   
   
-  Examples
+  Learn in Y minutes
 
         </a>
       </li>
@@ -1156,14 +1156,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../../unity/examples/" class="md-nav__link">
+      <a href="../../learn/learn-unity/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    Examples
+    Learn unity in Y minutes
   
 
     
@@ -1216,7 +1216,7 @@
   <span class="md-ellipsis">
     
   
-    Examples
+    Learn in Y minutes
   
 
     
@@ -1232,7 +1232,7 @@
             <span class="md-nav__icon md-icon"></span>
             
   
-    Examples
+    Learn in Y minutes
   
 
           </label>
@@ -1245,42 +1245,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../../examples/basic/" class="md-nav__link">
+      <a href="../../learn/learn/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    Basic Examples
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../examples/games/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Game Examples
+    Learn morphyn in Y minutes
   
 
     
@@ -1711,7 +1683,7 @@ The result is the last value assigned inside the called event.
 </span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="k">emit</span> <span class="nc">Entity</span><span class="p">.</span><span class="n">event_name</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">field</span>
 </span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="k">emit</span> <span class="nc">Entity</span><span class="p">.</span><span class="n">event_name</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">pool</span><span class="p">.</span><span class="nb">at</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
 </span></code></pre></div>
-Nested sync calls are forbidden to prevent recursion.
+Sync calls can be chained — direct recursion (an event calling itself) is forbidden.
 <div class="language-morphyn highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="k">entity</span> <span class="nc">MathLib</span> <span class="p">{</span>
 </span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>  <span class="k">on</span> <span class="nf">clamp</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">min</span><span class="p">,</span> <span class="n">max</span><span class="p">)</span> <span class="p">{</span>
 </span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>    <span class="k">check</span> <span class="n">value</span> <span class="o o-Comparison">&lt;</span> <span class="n">min</span><span class="p">:</span> <span class="n">min</span> <span class="o">-&gt;</span> <span class="n">value</span>

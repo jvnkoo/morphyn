@@ -307,11 +307,11 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../examples/basic/" class="md-tabs__link">
+        <a href="../../learn/learn/" class="md-tabs__link">
           
   
   
-  Examples
+  Learn in Y minutes
 
         </a>
       </li>
@@ -1206,14 +1206,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../../unity/examples/" class="md-nav__link">
+      <a href="../../learn/learn-unity/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    Examples
+    Learn unity in Y minutes
   
 
     
@@ -1266,7 +1266,7 @@
   <span class="md-ellipsis">
     
   
-    Examples
+    Learn in Y minutes
   
 
     
@@ -1282,7 +1282,7 @@
             <span class="md-nav__icon md-icon"></span>
             
   
-    Examples
+    Learn in Y minutes
   
 
           </label>
@@ -1295,42 +1295,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../../examples/basic/" class="md-nav__link">
+      <a href="../../learn/learn/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    Basic Examples
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../examples/games/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Game Examples
+    Learn morphyn in Y minutes
   
 
     
@@ -1787,8 +1759,13 @@ in order, and each event can trigger additional events.</p>
 </span></code></pre></div></p>
 <h2 id="sending-events">Sending Events</h2>
 <h3 id="send-to-self">Send to Self</h3>
-<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="k">emit</span> <span class="n">event_name</span>
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="k">emit</span> <span class="n">heal</span><span class="p">(</span><span class="m">10</span><span class="p">)</span>
+<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="k">emit</span> <span class="n">event_name</span> 
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="c1"># or</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="k">emit</span> <span class="kc">self</span><span class="p">.</span><span class="n">event_name</span>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="k">emit</span> <span class="n">heal</span><span class="p">(</span><span class="m">10</span><span class="p">)</span>
 </span></code></pre></div>
 <h3 id="send-to-target">Send to Target</h3>
 <div class="language-morphyn highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="k">emit</span> <span class="n">target</span><span class="p">.</span><span class="n">event_name</span>
@@ -1871,13 +1848,15 @@ in order, and each event can trigger additional events.</p>
 </span></code></pre></div></p>
 <h3 id="rules">Rules</h3>
 <ul>
-<li><strong>Self-subscription is forbidden.</strong> An entity cannot subscribe to its own events:
-<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="k">entity</span> <span class="nc">Player</span> <span class="p">{</span>
+<li><strong>An entity cannot subscribe to its own instance's events.</strong> A specific entity instance cannot listen to events it fires itself — the subscriber and the target must be different instances:
+<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="k">entity</span> <span class="nc">Logger</span> <span class="p">{</span>
 </span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>  <span class="k">on</span> <span class="nf">init</span> <span class="p">{</span>
-</span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a>    <span class="n">when</span> <span class="nc">Player</span><span class="p">.</span><span class="n">death</span> <span class="p">:</span> <span class="n">onDeath</span>  <span class="c1"># runtime error — cannot subscribe to self</span>
-</span><span id="__span-12-4"><a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a>  <span class="p">}</span>
-</span><span id="__span-12-5"><a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a><span class="p">}</span>
-</span></code></pre></div></li>
+</span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a>    <span class="n">when</span> <span class="nc">Logger</span><span class="p">.</span><span class="n">something</span> <span class="p">:</span> <span class="n">onSomething</span>  <span class="c1"># runtime error — same instance subscribing to itself</span>
+</span><span id="__span-12-4"><a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a>    <span class="n">when</span> <span class="nc">Player</span><span class="p">.</span><span class="n">death</span> <span class="p">:</span> <span class="n">onPlayerDeath</span>    <span class="c1"># ok — different entity</span>
+</span><span id="__span-12-5"><a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a>  <span class="p">}</span>
+</span><span id="__span-12-6"><a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a><span class="p">}</span>
+</span></code></pre></div>
+Two different clones of the same entity type (e.g. spawned via <code>pool.add</code>) are separate instances and can subscribe to each other normally.</li>
 <li><strong>Duplicate subscriptions are ignored.</strong> Subscribing the same handler to the same event twice has no effect.</li>
 <li><strong>Dead entities are cleaned up automatically.</strong> If a subscriber is destroyed, its subscriptions are removed during garbage collection.</li>
 <li><strong><code>when</code> and <code>unwhen</code> can be used anywhere</strong> — inside <code>on init</code>, <code>on tick</code>, or any other event handler.</li>
