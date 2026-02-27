@@ -32,9 +32,9 @@ null
 
 #### Entity Fields
 ```morphyn
-hp
-name
-alive
+has hp: 50
+has name: noname
+has alive: true
 ```
 
 #### Event Parameters

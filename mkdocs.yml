@@ -71,9 +71,8 @@ nav:
       - Overview: unity/overview.md
       - Installation: unity/installation.md
       - API Reference: unity/api.md
-      - Examples: unity/examples.md
-  - Examples:
-      - Basic Examples: examples/basic.md
-      - Game Examples: examples/games.md
+      - Learn unity in Y minutes: learn/learn-unity.md
+  - Learn in Y minutes:
+      - Learn morphyn in Y minutes: learn/learn.md
   - Tools:
       - VS Code Extension: tools/vscode.md

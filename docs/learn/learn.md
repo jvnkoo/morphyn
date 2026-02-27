@@ -1,0 +1,270 @@
+# Learn Morphyn in Y Minutes
+
+```morphyn
+# This is a comment
+// This too
+/* And this */
+
+# ── ENTITIES ──────────────────────────────────────────────────────────────────
+# Everything in Morphyn lives inside an entity.
+# An entity has fields (state) and events (behavior).
+
+entity Player {
+  # ── FIELDS ────────────────────────────────────────────────────────────────
+  has hp: 100          # number
+  has name: "Hero"     # string
+  has alive: true      # boolean
+  has nothing: null    # null
+
+  # Pool — ordered collection
+  has items: pool[]
+  has flags: pool[true, false, true]
+  has scores: pool[10, 20, 30]
+
+  # ── BUILT-IN EVENTS ───────────────────────────────────────────────────────
+  # init runs once when entity is created
+  on init {
+    emit log("Player created:", name)
+  }
+
+  # tick(dt) runs every frame — dt is milliseconds since last frame
+  on tick(dt) {
+    # use dt to make frame-independent timers
+  }
+
+  # ── CUSTOM EVENTS ─────────────────────────────────────────────────────────
+  on jump {
+    emit log("jumped!")
+  }
+
+  on heal(amount) {
+    hp + amount -> hp         # data flow: expression -> target
+    check hp > max_hp: {
+      max_hp -> hp
+    }
+  }
+
+  # ── DATA FLOW ─────────────────────────────────────────────────────────────
+  on examples {
+    100 -> hp                 # set
+    hp - 10 -> hp             # subtract
+    hp * 2 -> doubled         # store in local var
+    (hp + 50) * 0.5 -> avg    # expression
+
+    # assign to pool slot (1-based index)
+    99 -> scores.at[1]
+  }
+
+  # ── CHECK (GUARD) ─────────────────────────────────────────────────────────
+  on check_examples {
+    # inline action — only runs if condition is true
+    check hp > 0: emit log("alive")
+
+    # block action
+    check hp <= 0: {
+      false -> alive
+      emit self.destroy
+    }
+
+    # guard — stops event execution if condition is false
+    check alive
+    emit log("this only runs if alive was true")
+
+    # logic operators
+    check hp > 0 and alive: emit log("healthy")
+    check hp <= 0 or not alive: emit log("dead")
+  }
+
+  # ── EMIT ──────────────────────────────────────────────────────────────────
+  on emit_examples {
+    emit jump                       # send to self (implicit)
+    emit self.jump                  # send to self (explicit)
+    emit Enemy.take_damage(25)      # send to another entity
+    emit log("value:", hp)          # built-in: print to console
+    emit input("Name: ", "name")    # built-in: read console input into field
+    emit unity("PlaySound", "hit")  # built-in: call Unity callback
+    emit self.destroy               # built-in: mark for garbage collection
+  }
+
+  # ── SYNC EMIT (returns a value) ───────────────────────────────────────────
+  # Executes immediately, bypassing the event queue.
+  # Returns the last assigned value inside the called event.
+  on take_damage(amount) {
+    emit MathLib.clamp(hp - amount, 0, max_hp) -> hp
+    # chains are allowed: MathLib.clamp can call other sync events
+    # direct recursion is forbidden: clamp cannot call itself
+    check hp <= 0: emit self.die
+  }
+
+  # sync result can also go into a pool slot
+  on sync_to_pool {
+    emit MathLib.abs(scores.at[1]) -> scores.at[1]
+  }
+
+  # ── ARITHMETIC ────────────────────────────────────────────────────────────
+  on math {
+    hp + 10 -> hp
+    hp - 5 -> hp
+    hp * 2 -> hp
+    hp / 4 -> hp
+    hp % 3 -> hp    # modulo
+  }
+
+  # ── STRINGS ───────────────────────────────────────────────────────────────
+  on strings {
+    "Hello" + " " + "World" -> greeting
+    check name == "Hero": emit log("is hero")
+    check name != "Villain": emit log("not villain")
+    # also: > < >= <= for lexicographic comparison
+  }
+
+  # ── BLOCK ─────────────────────────────────────────────────────────────────
+  on block_example {
+    {
+      hp + 10 -> hp
+      emit log("healed")
+    }
+  }
+}
+
+# ── POOLS ─────────────────────────────────────────────────────────────────────
+entity PoolExamples {
+  has items: pool["sword", "shield", "potion"]
+  has enemies: pool[]
+
+  on init {
+    # read
+    items.count -> size            # number of elements
+    items.at[1] -> first           # get by index (1-based)
+
+    # write
+    "axe" -> items.at[2]           # set by index
+
+    # commands
+    emit items.add("bow")          # add to end (or spawn entity by name)
+    emit items.push("key")         # add to front
+    emit items.insert(2, "ring")   # insert at index
+    emit items.remove("sword")     # remove by value
+    emit items.remove_at(3)        # remove by index
+    emit items.pop                 # remove last
+    emit items.shift               # remove first
+    emit items.swap(1, 2)          # swap two indices
+    emit items.clear               # remove all
+
+    # call event on every element
+    emit enemies.each("take_damage", 10)
+
+    # spawn entity instances into pool
+    emit enemies.add("Enemy")      # clones Enemy entity, fires its init
+  }
+}
+
+# ── SYNC LIBRARY PATTERN ──────────────────────────────────────────────────────
+entity MathLib {
+  on clamp(value, min, max) {
+    check value < min: min -> value
+    check value > max: max -> value
+    value -> result               # last assigned = return value
+  }
+
+  on abs(value) {
+    check value < 0: value * -1 -> value
+    value -> result
+  }
+
+  on lerp(a, b, t) {
+    a + (b - a) * t -> result
+  }
+
+  on normalize(value, min, max) {
+    (value - min) / (max - min) -> result
+  }
+}
+
+# ── SUBSCRIPTIONS ─────────────────────────────────────────────────────────────
+# when: subscribe to another entity's event
+# unwhen: unsubscribe
+# when fires handlerEvent on subscriber with the same args as the original event
+
+entity Logger {
+  on init {
+    when Player.die : onPlayerDied       # subscribe
+    when Enemy.die  : onEnemyDied
+  }
+
+  on onPlayerDied {
+    emit log("Player died")
+    unwhen Player.die : onPlayerDied     # unsubscribe after first death
+  }
+
+  on onEnemyDied {
+    emit log("Enemy died")
+  }
+}
+
+# Rules:
+# - cannot subscribe to your own instance's events
+# - duplicate subscriptions are ignored
+# - destroyed entities are cleaned up automatically
+# - when/unwhen can be used in any event, not just init
+
+# ── IMPORTS ───────────────────────────────────────────────────────────────────
+# import "mathlib.morph"
+# import "entities/enemy.morph"
+# import "../shared/utils.morph"
+# Circular imports are prevented automatically.
+
+# ── ENTITY LIFECYCLE ──────────────────────────────────────────────────────────
+entity Enemy {
+  has hp: 50
+  has alive: true
+
+  on init {
+    emit log("Enemy spawned")
+  }
+
+  on take_damage(amount) {
+    hp - amount -> hp
+    check hp <= 0: {
+      false -> alive
+      emit self.die
+    }
+  }
+
+  on die {
+    emit log("Enemy died")
+    emit self.destroy               # marks entity for garbage collection
+                                    # removed from pools on next GarbageCollect
+  }
+}
+
+# ── FULL EXAMPLE ──────────────────────────────────────────────────────────────
+entity Game {
+  has score: 0
+  has enemies: pool[]
+  has timer: 0
+
+  on init {
+    emit enemies.add("Enemy")
+    emit enemies.add("Enemy")
+    emit log("Game started with", enemies.count, "enemies")
+  }
+
+  on tick(dt) {
+    timer + dt -> timer
+    check timer >= 2000: {
+      emit enemies.add("Enemy")
+      0 -> timer
+    }
+  }
+
+  on player_attack(damage) {
+    emit enemies.each("take_damage", damage)
+  }
+
+  on enemy_died {
+    score + 100 -> score
+    emit log("Score:", score)
+  }
+}
+```

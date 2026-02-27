@@ -49,7 +49,12 @@ entity Player {
 ## Sending Events
 ### Send to Self
 ```morphyn
-emit event_name
+emit event_name 
+
+# or
+
+emit self.event_name
+
 emit heal(10)
 ```
 ### Send to Target
@@ -57,10 +62,7 @@ emit heal(10)
 emit target.event_name
 emit player.damage(5)
 ```
-### Send to Self with destroy
-```morphyn
-emit self.destroy
-```
+
 ## Event Subscriptions
 Entities can subscribe to events of other entities using `when` and unsubscribe using `unwhen`.
 
@@ -146,14 +148,16 @@ on onDamage {
 ```
 
 ### Rules
-- **Self-subscription is forbidden.** An entity cannot subscribe to its own events:
+- **An entity cannot subscribe to its own instance's events.** A specific entity instance cannot listen to events it fires itself — the subscriber and the target must be different instances:
 ```morphyn
-entity Player {
+entity Logger {
   on init {
-    when Player.death : onDeath  # runtime error — cannot subscribe to self
+    when Logger.something : onSomething  # runtime error — same instance subscribing to itself
+    when Player.death : onPlayerDeath    # ok — different entity
   }
 }
 ```
+Two different clones of the same entity type (e.g. spawned via `pool.add`) are separate instances and can subscribe to each other normally.
 - **Duplicate subscriptions are ignored.** Subscribing the same handler to the same event twice has no effect.
 - **Dead entities are cleaned up automatically.** If a subscriber is destroyed, its subscriptions are removed during garbage collection.
 - **`when` and `unwhen` can be used anywhere** — inside `on init`, `on tick`, or any other event handler.

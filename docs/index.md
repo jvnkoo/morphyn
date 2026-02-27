@@ -1,121 +1,92 @@
 # Morphyn Documentation
 
-## What is Morphyn?
-
-**Config files with built-in logic and instant hot reload.**
-
-### The Problem
-
-You're balancing your game. You change enemy damage from `10` to `15`.  
-You stop Play mode. Wait for Unity to reload. Press Play. Test. Too weak.  
-Change to `20`. Stop. Wait. Play. Test again.
-
-**Repeat 50 times a day = 10+ minutes wasted.**
-
-### The Solution
-```morphyn
-entity Enemy {
-  has damage: 10  # ← Change this to 999
-}
-```
-
-Save. **Game updates instantly. While running.**
+### [Morphyn](https://jvnkoo.github.io/morphyn) is a scripting language providing a clean, event-driven syntax to manage configs and logic. Lightweight and opinionated — focused entirely on entity states and reactive events, without the overhead of a general-purpose language.
 
 ---
 
-## Quick Example
+## Here's a taste:
+
 ```morphyn
 entity Player {
   has hp: 100
   has level: 1
-  
+
   on damage(amount) {
     hp - amount -> hp
     check hp <= 0: emit die
   }
-  
+
   on level_up {
     level + 1 -> level
     hp + 20 -> hp
   }
 }
 ```
-
-**That's it.** No classes, no inheritance, no boilerplate.
-
 ---
 
-## Getting Started
+## Quick Start
 
-### For Unity Developers
+### Unity
 
-**1. Install**  
-Download [`Morphyn.unitypackage`](https://github.com/jvnkoo/morphyn/releases/latest)
+**1.** Download and import [`Morphyn.unitypackage`](https://github.com/jvnkoo/morphyn/releases/latest)
 
-**2. Create config**
+**2.** Create a `.morph` file:
 ```morphyn
-entity GameSettings {
-  has difficulty: "normal"
-  has enemy_damage: 10
+entity Enemy {
+    has hp: 100
+    has alive: true
+
+    on take_damage(amount) {
+        hp - amount -> hp
+        emit log("Enemy hit! HP:", hp)
+
+        check hp <= 0: {
+            false -> alive
+            emit log("Enemy defeated")
+        }
+    }
 }
 ```
 
-**3. Use in C#**
+**3.** Use in C#:
 ```csharp
-double damage = System.Convert.ToDouble(
-    MorphynController.Instance.GetField("GameSettings", "enemy_damage")
-);
+MorphynController.Instance.Emit("Enemy", "take_damage", 25);
+
+bool isAlive = Convert.ToBoolean(MorphynController.Instance.GetField("Enemy", "alive"));
 ```
 
-**4. Edit while playing**  
-Change `enemy_damage: 10` → `enemy_damage: 999` and save.  
-**Value updates instantly.**
+**4.** Add `MorphynController` to your scene, drag in the `.morph` files, check **Enable Hot Reload**, press Play.
 
 [Full Unity Guide →](unity/overview.md)
 
-### For Standalone Use
+### Standalone
 
-**1. Download** runtime from [Releases](https://github.com/jvnkoo/morphyn/releases/latest)
-
-**2. Install** (adds `morphyn` command to PATH)
 ```bash
-./install.sh  # Linux/macOS
-.\install.ps1  # Windows
-```
+# Linux / macOS
+./install.sh && morphyn game.morph
 
-**3. Run**
-```bash
-morphyn game.morph
+# Windows
+.\install.ps1; morphyn game.morph
 ```
 
 [Installation Guide →](getting-started/installation.md)
 
 ---
 
-## Why Use Morphyn?
+## Why not Lua?
 
-### ⚡ Hot Reload Everything
-Not just values — **logic too**.
-```morphyn
-on damage(amount) {
-  hp - amount -> hp
-  check hp <= 0: emit die  # ← Change condition while game runs
-}
-```
+The Unity bridges are a mess. MoonSharp hasn't been updated in years. XLua is maintained but built for a different ecosystem entirely. Getting either to work with hot reload and state preservation is a project in itself.
 
-### 🛡️ Built-in Validation
-```morphyn
-on heal(amount) {
-  check amount > 0: hp + amount -> hp  # Auto-validates
-  check hp > max_hp: max_hp -> hp      # Auto-clamps
-}
-```
+Morphyn exists because setting up Lua in Unity shouldn't take days. Simpler, opinionated, built specifically for game config and logic. You lose the standard library. You gain something that works on the first try.
 
-### 🎯 Made for Game Logic
+---
+
+## Core Concepts
+
+**Entities** hold state and define reactions:
 ```morphyn
 entity Shop {
   has gold: 100
-  
   on buy(cost) {
     check gold >= cost: {
       gold - cost -> gold
@@ -125,60 +96,88 @@ entity Shop {
 }
 ```
 
----
-
-## Core Concepts
-
-### Entities
-Entities are like objects with state and behavior.
+**Events** are how entities communicate:
 ```morphyn
-entity Player {
-  has hp: 100        # State
-  on damage(amount) { # Behavior
-    hp - amount -> hp
+emit Player.damage(25)   # Send to entity
+emit self.heal(10)       # Send to self explicitly
+emit heal(10)            # Same as above, implicit
+```
+
+**Subscriptions** let entities react to each other:
+```morphyn
+entity Logger {
+  on init {
+    when Player.die : onPlayerDied
+  }
+  on onPlayerDied {
+    emit log("Player died")
   }
 }
 ```
 
-### Events
-Events trigger entity reactions.
+**Data flow** with `->`:
 ```morphyn
-emit player.damage(25)  # Send event to player
-emit heal(10)           # Send to self
+hp - 10 -> hp       # Subtract
+max_hp -> hp        # Set
 ```
 
-### Data Flow
-Use `->` to update values.
+**Check** stop execution if condition fails(only if there is no block to execute):
 ```morphyn
-hp - 10 -> hp          # Subtract 10 from hp
-max_hp -> hp           # Set hp to max_hp
+check false
 ```
 
-### Checks
-Guards that stop execution if condition fails.
-```morphyn
-check hp > 0: emit alive       # Only if hp > 0
-check gold >= cost: emit buy   # Only if enough gold
-```
+---
+
+## VS Code Extension
+
+Syntax highlighting, bracket matching, comment support for `.morph` files.
+
+[📥 Download `.vsix` from Releases](https://github.com/jvnkoo/morphyn/releases/latest) → Extensions → `...` → Install from VSIX
+
+---
+
+## Roadmap
+
+- [x] Core language runtime
+- [x] Unity integration
+- [x] Hot reload system
+- [x] VS Code extension
+- [x] Event subscription system (`when` / `unwhen`)
+- [x] C# listener API (`On` / `Off`)
+- [ ] Async event handling
+- [ ] More documentation examples
+- [ ] Performance optimizations
+- [ ] Self-hosted interpreter
 
 ---
 
 ## Learn More
 
-**Getting Started:**
-- [Quick Start](getting-started/quick-start.md)
-- [Installation](getting-started/installation.md)
+**Getting Started:** [Quick Start](getting-started/quick-start.md) · [Installation](getting-started/installation.md)
 
-**Language:**
-- [Syntax Reference](language/syntax.md)
-- [Event System](language/events.md)
-- [Expression System](language/expressions.md)
+**Language:** [Syntax Reference](language/syntax.md) · [Event System](language/events.md) · [Expression System](language/expressions.md)
 
-**Unity:**
-- [Unity Integration](unity/overview.md)
-- [Unity API](unity/api.md)
-- [Unity Examples](unity/examples.md)
+**Unity:** [Overview](unity/overview.md) · [API Reference](unity/api.md)
 
-**Examples:**
-- [Basic Examples](examples/basic.md)
-- [Game Examples](examples/game.md)
+**Learn in Y minutes:** [Morphyn](learn/learn.md) · [Unity bridge](learn/learn-unity.md)
+
+---
+
+## Contributing
+
+- [Report Issues](https://github.com/jvnkoo/morphyn/issues)
+- [Feature Requests](https://github.com/jvnkoo/morphyn/issues) (use "enhancement" label)
+
+PRs are welcome.
+
+---
+
+## License
+
+Apache 2.0 — see [LICENSE](LICENSE) and [NOTICE](NOTICE). Free for commercial use.
+
+---
+
+<div align="center">
+<img src="https://media1.tenor.com/m/ugRQCY7AKEsAAAAd/texh-texhnolyze.gif" width="1000" height="300" alt="gif">
+</div>

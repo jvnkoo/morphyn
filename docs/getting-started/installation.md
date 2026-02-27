@@ -1,7 +1,7 @@
 # Installation
 
 ## Requirements
-- .NET 6.0 or higher
+- .NET 10.0 or higher
 
 ## Standalone Runtime
 
@@ -20,11 +20,8 @@
 
 **Usage:**
 ```bash
-# Create a file
-echo 'entity Game { has score: 0 }' > game.morph
-
-# Run it
-morphyn game.morph
+# Run file
+morphyn main.morph
 ```
 
 ## Build from Source
@@ -37,10 +34,10 @@ cd morphyn
 
 Build the project:
 ```sh
-dotnet build
+dotnet build --framework net10.0 
 ```
 
-The compiled binary will be in `bin/Debug/net6.0/` or `bin/Release/net6.0/`.
+The compiled binary will be in `bin/Debug/net10.0/` or `bin/Release/net10.0/`.
 
 ## File Extensions
 

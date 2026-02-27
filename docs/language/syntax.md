@@ -78,7 +78,7 @@ emit event_name(args) -> field
 emit Entity.event_name(args) -> field
 emit Entity.event_name(args) -> pool.at[idx]
 ```
-Nested sync calls are forbidden to prevent recursion.
+Sync calls can be chained — direct recursion (an event calling itself) is forbidden.
 ```morphyn
 entity MathLib {
   on clamp(value, min, max) {
@@ -125,16 +125,22 @@ entity Logger {
 | `log` | Print to console | `emit log("HP:", hp)` |
 | `input` | Read line from console into field | `emit input("Name: ", "name")` |
 | `unity` | Call Unity callback | `emit unity("PlaySound", "hit")` |
+
 ### input
 Reads a line from console and writes the result into a field.
 The field name must be passed as a **string literal in quotes**.
+
 ```morphyn
 emit input("Enter your name: ", "name")
 emit input("Enter amount: ", "amount")
 ```
+
 If the input can be parsed as a number it is stored as a number, otherwise as a string.
+
 ## Operators
+
 ### Arithmetic
+
 | Operator | Description | Example |
 |----------|-------------|---------|
 | `+` | Addition | `hp + 10` |
@@ -142,7 +148,9 @@ If the input can be parsed as a number it is stored as a number, otherwise as a 
 | `*` | Multiplication | `damage * 2` |
 | `/` | Division | `armor / 3` |
 | `%` | Modulo | `level % 5` |
+
 ### Comparison
+
 | Operator | Description | Example |
 |----------|-------------|---------|
 | `==` | Equal | `hp == 100` |
@@ -151,17 +159,23 @@ If the input can be parsed as a number it is stored as a number, otherwise as a 
 | `<` | Less than | `hp < max` |
 | `>=` | Greater or equal | `level >= 10` |
 | `<=` | Less or equal | `mana <= 0` |
+
 ### Logic
+
 | Operator | Description | Example |
 |----------|-------------|---------|
 | `and` | Logical AND | `hp > 0 and alive` |
 | `or` | Logical OR | `idle or walk` |
 | `not` | Logical NOT | `not dead` |
+
 ### Flow
+
 | Operator | Description | Example |
 |----------|-------------|---------|
 | `->` | Data flow | `value -> field` |
+
 ## Keywords
+
 | Keyword | Purpose |
 |---------|---------|
 | `entity` | Declare entity |

@@ -10,6 +10,7 @@ The main component that loads and runs .morph files.
 | **Enable Hot Reload** | Edit files during Play mode |
 | **Auto Save** | Save on quit |
 | **Save Folder** | Where to save state |
+
 ### API Methods
 ```cs
 MorphynController morphyn = MorphynController.Instance;
