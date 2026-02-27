@@ -25,14 +25,14 @@ jobs:
       # 1. Build for Windows
       - name: Build Windows
         run: |
-          dotnet publish Morphyn.Core -c Release -r win-x64 -f net10.0 --self-contained true -p:PublishSingleFile=true -p:PublishTrimmed=false -o ./dist/win
+          dotnet publish src/Morphyn.Core/Morphyn.Core.csproj -c Release -r win-x64 -f net10.0 --self-contained true -p:PublishSingleFile=true -p:PublishTrimmed=false -o ./dist/win
           mv ./dist/win/Morphyn.Core.exe ./dist/win/morphyn-windows-x64.exe
           cp install.ps1 ./dist/win/ 2>/dev/null || echo "install.ps1 not found, skipping"
 
       # 2. Build for Linux
       - name: Build Linux
         run: |
-          dotnet publish Morphyn.Core -c Release -r linux-x64 -f net10.0 --self-contained true -p:PublishSingleFile=true -p:PublishTrimmed=false -o ./dist/linux
+          dotnet publish src/Morphyn.Core/Morphyn.Core.csproj -c Release -r linux-x64 -f net10.0 --self-contained true -p:PublishSingleFile=true -p:PublishTrimmed=false -o ./dist/linux
           mv ./dist/linux/Morphyn.Core ./dist/linux/morphyn-linux-x64
           cp install.sh ./dist/linux/ 2>/dev/null || echo "install.sh not found, skipping"
 
