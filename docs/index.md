@@ -1,11 +1,11 @@
 # Morphyn Documentation
 
-### [Morphyn](https://jvnkoo.github.io/morphyn) is a scripting language providing a clean, event-driven syntax to manage configs and logic. Lightweight and opinionated — focused entirely on entity states and reactive events, without the overhead of a general-purpose language.
+## About
+ [Morphyn](https://jvnkoo.github.io/morphyn) is a scripting language providing a clean, event-driven syntax to manage configs and logic. Lightweight and opinionated — focused entirely on entity states and reactive events, without the overhead of a general-purpose language.
 
 ---
 
 ## Here's a taste:
-
 ```morphyn
 entity Player {
   has hp: 100
