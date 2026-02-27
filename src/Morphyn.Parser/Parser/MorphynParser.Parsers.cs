@@ -112,14 +112,17 @@ namespace Morphyn.Parser
         /// The expression is evaluated and the result is assigned to the field indicated by the identifier.
         /// </summary>
         private static TokenListParser<MorphynToken, object> LiteralValue =>
-            Token.EqualTo(MorphynToken.Double)
-                .Select(t => (object)double.Parse(t.ToStringValue(), CultureInfo.InvariantCulture))
-                .Or(Token.EqualTo(MorphynToken.Number).Select(t =>
-                    (object)double.Parse(t.ToStringValue(), CultureInfo.InvariantCulture)))
-                .Or(Token.EqualTo(MorphynToken.String).Select(t => (object)t.ToStringValue().Trim('"')))
-                .Or(Token.EqualTo(MorphynToken.True).Select(_ => (object)true))
-                .Or(Token.EqualTo(MorphynToken.False).Select(_ => (object)false))
-                .Or(Token.EqualTo(MorphynToken.Null).Select(_ => (object)null));
+            (from minus in Token.EqualTo(MorphynToken.Minus)
+             from num in Token.EqualTo(MorphynToken.Double).Or(Token.EqualTo(MorphynToken.Number))
+             select (object)(-double.Parse(num.ToStringValue(), CultureInfo.InvariantCulture))).Try()
+            .Or(Token.EqualTo(MorphynToken.Double)
+                .Select(t => (object)double.Parse(t.ToStringValue(), CultureInfo.InvariantCulture)))
+            .Or(Token.EqualTo(MorphynToken.Number).Select(t =>
+                (object)double.Parse(t.ToStringValue(), CultureInfo.InvariantCulture)))
+            .Or(Token.EqualTo(MorphynToken.String).Select(t => (object)t.ToStringValue().Trim('"')))
+            .Or(Token.EqualTo(MorphynToken.True).Select(_ => (object)true))
+            .Or(Token.EqualTo(MorphynToken.False).Select(_ => (object)false))
+            .Or(Token.EqualTo(MorphynToken.Null).Select(_ => (object)null));
 
         private static TokenListParser<MorphynToken, MorphynPool> PoolValues =>
             from poolKeyword in Token.EqualTo(MorphynToken.Pool)
