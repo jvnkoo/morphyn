@@ -853,6 +853,95 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Built-in Functions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#input" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        input
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#operators" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Operators
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Operators">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#arithmetic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Arithmetic
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#comparison" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Comparison
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#logic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Logic
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#flow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Flow
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#keywords" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Keywords
+      
+    </span>
+  </a>
+  
 </li>
       
     </ul>
@@ -1591,6 +1680,95 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Built-in Functions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#input" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        input
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#operators" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Operators
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Operators">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#arithmetic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Arithmetic
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#comparison" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Comparison
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#logic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Logic
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#flow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Flow
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#keywords" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Keywords
+      
+    </span>
+  </a>
+  
 </li>
       
     </ul>
@@ -1745,53 +1923,26 @@ Sync calls can be chained — direct recursion (an event calling itself) is forb
 <td>Call Unity callback</td>
 <td><code>emit unity("PlaySound", "hit")</code></td>
 </tr>
-<tr>
-<td>### input</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td>Reads a line from console and writes the result into a field.</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td>The field name must be passed as a <strong>string literal in quotes</strong>.</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td><div class="language-morphyn highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="k">emit</span> <span class="n">input</span><span class="p">(</span><span class="s2">&quot;Enter your name: &quot;</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">)</span>
+</tbody>
+</table>
+<h3 id="input">input</h3>
+<p>Reads a line from console and writes the result into a field.
+The field name must be passed as a <strong>string literal in quotes</strong>.</p>
+<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="k">emit</span> <span class="n">input</span><span class="p">(</span><span class="s2">&quot;Enter your name: &quot;</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">)</span>
 </span><span id="__span-14-2"><a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a><span class="k">emit</span> <span class="n">input</span><span class="p">(</span><span class="s2">&quot;Enter amount: &quot;</span><span class="p">,</span> <span class="s2">&quot;amount&quot;</span><span class="p">)</span>
-</span></code></pre></div></td>
-<td></td>
-<td></td>
-</tr>
+</span></code></pre></div>
+<p>If the input can be parsed as a number it is stored as a number, otherwise as a string.</p>
+<h2 id="operators">Operators</h2>
+<h3 id="arithmetic">Arithmetic</h3>
+<table>
+<thead>
 <tr>
-<td>If the input can be parsed as a number it is stored as a number, otherwise as a string.</td>
-<td></td>
-<td></td>
+<th>Operator</th>
+<th>Description</th>
+<th>Example</th>
 </tr>
-<tr>
-<td>## Operators</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td>### Arithmetic</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td>Operator</td>
-<td>Description</td>
-<td>Example</td>
-</tr>
-<tr>
-<td>----------</td>
-<td>-------------</td>
-<td>---------</td>
-</tr>
+</thead>
+<tbody>
 <tr>
 <td><code>+</code></td>
 <td>Addition</td>
@@ -1817,21 +1968,18 @@ Sync calls can be chained — direct recursion (an event calling itself) is forb
 <td>Modulo</td>
 <td><code>level % 5</code></td>
 </tr>
+</tbody>
+</table>
+<h3 id="comparison">Comparison</h3>
+<table>
+<thead>
 <tr>
-<td>### Comparison</td>
-<td></td>
-<td></td>
+<th>Operator</th>
+<th>Description</th>
+<th>Example</th>
 </tr>
-<tr>
-<td>Operator</td>
-<td>Description</td>
-<td>Example</td>
-</tr>
-<tr>
-<td>----------</td>
-<td>-------------</td>
-<td>---------</td>
-</tr>
+</thead>
+<tbody>
 <tr>
 <td><code>==</code></td>
 <td>Equal</td>
@@ -1862,21 +2010,18 @@ Sync calls can be chained — direct recursion (an event calling itself) is forb
 <td>Less or equal</td>
 <td><code>mana &lt;= 0</code></td>
 </tr>
+</tbody>
+</table>
+<h3 id="logic">Logic</h3>
+<table>
+<thead>
 <tr>
-<td>### Logic</td>
-<td></td>
-<td></td>
+<th>Operator</th>
+<th>Description</th>
+<th>Example</th>
 </tr>
-<tr>
-<td>Operator</td>
-<td>Description</td>
-<td>Example</td>
-</tr>
-<tr>
-<td>----------</td>
-<td>-------------</td>
-<td>---------</td>
-</tr>
+</thead>
+<tbody>
 <tr>
 <td><code>and</code></td>
 <td>Logical AND</td>
@@ -1892,95 +2037,77 @@ Sync calls can be chained — direct recursion (an event calling itself) is forb
 <td>Logical NOT</td>
 <td><code>not dead</code></td>
 </tr>
+</tbody>
+</table>
+<h3 id="flow">Flow</h3>
+<table>
+<thead>
 <tr>
-<td>### Flow</td>
-<td></td>
-<td></td>
+<th>Operator</th>
+<th>Description</th>
+<th>Example</th>
 </tr>
-<tr>
-<td>Operator</td>
-<td>Description</td>
-<td>Example</td>
-</tr>
-<tr>
-<td>----------</td>
-<td>-------------</td>
-<td>---------</td>
-</tr>
+</thead>
+<tbody>
 <tr>
 <td><code>-&gt;</code></td>
 <td>Data flow</td>
 <td><code>value -&gt; field</code></td>
 </tr>
+</tbody>
+</table>
+<h2 id="keywords">Keywords</h2>
+<table>
+<thead>
 <tr>
-<td>## Keywords</td>
-<td></td>
-<td></td>
+<th>Keyword</th>
+<th>Purpose</th>
 </tr>
-<tr>
-<td>Keyword</td>
-<td>Purpose</td>
-<td></td>
-</tr>
-<tr>
-<td>---------</td>
-<td>---------</td>
-<td></td>
-</tr>
+</thead>
+<tbody>
 <tr>
 <td><code>entity</code></td>
 <td>Declare entity</td>
-<td></td>
 </tr>
 <tr>
 <td><code>has</code></td>
 <td>Declare field</td>
-<td></td>
 </tr>
 <tr>
 <td><code>on</code></td>
 <td>Declare event handler</td>
-<td></td>
 </tr>
 <tr>
 <td><code>emit</code></td>
 <td>Send event, call sync event, or call built-in function</td>
-<td></td>
 </tr>
 <tr>
 <td><code>check</code></td>
 <td>Conditional guard</td>
-<td></td>
 </tr>
 <tr>
 <td><code>pool</code></td>
 <td>Collection type</td>
-<td></td>
 </tr>
 <tr>
 <td><code>when</code></td>
 <td>Subscribe to another entity's event</td>
-<td></td>
 </tr>
 <tr>
 <td><code>unwhen</code></td>
 <td>Unsubscribe from another entity's event</td>
-<td></td>
 </tr>
 <tr>
 <td><code>true</code></td>
 <td>Boolean true</td>
-<td></td>
 </tr>
 <tr>
 <td><code>false</code></td>
 <td>Boolean false</td>
-<td></td>
 </tr>
 <tr>
 <td><code>null</code></td>
 <td>Null value</td>
-<td></td>
 </tr>
 </tbody>
 </table>
