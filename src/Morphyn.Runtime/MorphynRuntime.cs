@@ -18,8 +18,12 @@ namespace Morphyn.Runtime
         private static readonly Dictionary<(string, string), List<(Entity subscriber, string handler)>>
             _subscriptions = new();
 
-        // Prevents nested sync calls to eliminate recursion
-        private static bool _inSyncCall = false;
+        // Tracks active sync call stack per (entity, event) — allows chaining A->B->C, blocks A->A recursion
+        private static readonly HashSet<(string entity, string eventName)> _syncCallStack = new();
+
+        // Side-effect emits fired inside sync events go here, drained immediately after sync completes
+        private static readonly Queue<PendingEvent> _syncSideEffectQueue = new();
+        private static bool _inSyncContext = false;
 
         public static Action<string, object?[]>? UnityCallback { get; set; }
 
@@ -44,7 +48,11 @@ namespace Morphyn.Runtime
                     return;
             }
 
-            _eventQueue.Enqueue(new PendingEvent(target, eventName, args ?? EmptyArgs));
+            var pendingEvent = new PendingEvent(target, eventName, args ?? EmptyArgs);
+            if (_inSyncContext)
+                _syncSideEffectQueue.Enqueue(pendingEvent);
+            else
+                _eventQueue.Enqueue(pendingEvent);
 
             OnEventFired?.Invoke(target.Name, eventName, args?.ToArray() ?? Array.Empty<object?>());
 
@@ -121,18 +129,23 @@ namespace Morphyn.Runtime
         }
 
         // Executes an event synchronously and returns the last assigned value.
-        // Nested sync calls are blocked to prevent recursion.
+        // Chains are allowed (A -> B -> C), only direct recursion (A -> A) is blocked.
+        // Regular emits inside sync events are deferred to _syncSideEffectQueue and flushed after.
         public static object? ExecuteSync(Entity callerEntity, Entity targetEntity,
             string eventName, List<object?> args, EntityData data)
         {
-            if (_inSyncCall)
+            var callKey = (targetEntity.Name, eventName);
+
+            if (_syncCallStack.Contains(callKey))
                 throw new Exception(
-                    $"[Sync Error] Nested sync calls not allowed. Cannot use 'emit ... -> field' inside a sync event '{eventName}'.");
+                    $"[Sync Error] Recursive sync call detected: '{targetEntity.Name}.{eventName}' is already in the call stack.");
 
             if (!targetEntity.EventCache.TryGetValue(eventName, out var ev))
                 throw new Exception($"[Sync Error] Event '{eventName}' not found in '{targetEntity.Name}'.");
 
-            _inSyncCall = true;
+            bool wasInSyncContext = _inSyncContext;
+            _syncCallStack.Add(callKey);
+            _inSyncContext = true;
             object? lastAssigned = null;
 
             try
@@ -153,7 +166,15 @@ namespace Morphyn.Runtime
             }
             finally
             {
-                _inSyncCall = false;
+                _syncCallStack.Remove(callKey);
+                _inSyncContext = wasInSyncContext;
+
+                // Flush side-effect queue only when exiting the outermost sync call
+                if (!wasInSyncContext)
+                {
+                    while (_syncSideEffectQueue.Count > 0)
+                        _eventQueue.Enqueue(_syncSideEffectQueue.Dequeue());
+                }
             }
 
             return lastAssigned;
@@ -253,7 +274,7 @@ namespace Morphyn.Runtime
             List<object?> resolvedArgs)
         {
             string? targetName = emit.TargetEntityName == "self" ? null : emit.TargetEntityName;
-            
+
             if (!string.IsNullOrEmpty(targetName) && targetName.Contains('.'))
             {
                 var parts = targetName.Split('.');
@@ -371,10 +392,61 @@ namespace Morphyn.Runtime
                     return true;
                 }
 
-                case EmitWithReturnIndexAction:
-                case EmitWithReturnAction:
-                    throw new Exception(
-                        "[Sync Error] Nested sync calls not allowed. Cannot use 'emit ... -> field' inside a sync event.");
+                case EmitWithReturnIndexAction emitRetIdxSync:
+                {
+                    List<object?> resolvedArgs = new List<object?>(emitRetIdxSync.Arguments.Count);
+                    foreach (var argExpr in emitRetIdxSync.Arguments)
+                        resolvedArgs.Add(EvaluateExpression(entity, argExpr, localScope, data));
+
+                    Entity? target = string.IsNullOrEmpty(emitRetIdxSync.TargetEntityName)
+                        ? entity
+                        : (data.Entities.TryGetValue(emitRetIdxSync.TargetEntityName, out var e) ? e : null);
+
+                    if (target == null)
+                        throw new Exception($"[Sync Error] Entity '{emitRetIdxSync.TargetEntityName}' not found.");
+
+                    object? syncResult = ExecuteSync(entity, target, emitRetIdxSync.EventName, resolvedArgs, data);
+
+                    var idxVal = EvaluateExpression(entity, emitRetIdxSync.IndexExpr, localScope, data);
+                    int poolIndex = Convert.ToInt32(idxVal) - 1;
+
+                    if (entity.Fields.TryGetValue(emitRetIdxSync.TargetPoolName, out var poolObj) && poolObj is MorphynPool pool)
+                    {
+                        if (poolIndex >= 0 && poolIndex < pool.Values.Count)
+                            pool.Values[poolIndex] = syncResult;
+                        else
+                            throw new Exception($"Index {poolIndex + 1} out of bounds for pool '{emitRetIdxSync.TargetPoolName}'");
+                    }
+                    else
+                        throw new Exception($"Target '{emitRetIdxSync.TargetPoolName}' is not a pool or not found.");
+
+                    lastAssigned = syncResult;
+                    return true;
+                }
+
+                case EmitWithReturnAction emitRetSync:
+                {
+                    List<object?> resolvedArgs = new List<object?>(emitRetSync.Arguments.Count);
+                    foreach (var argExpr in emitRetSync.Arguments)
+                        resolvedArgs.Add(EvaluateExpression(entity, argExpr, localScope, data));
+
+                    Entity? target = string.IsNullOrEmpty(emitRetSync.TargetEntityName)
+                        ? entity
+                        : (data.Entities.TryGetValue(emitRetSync.TargetEntityName, out var e) ? e : null);
+
+                    if (target == null)
+                        throw new Exception($"[Sync Error] Entity '{emitRetSync.TargetEntityName}' not found.");
+
+                    object? syncResult = ExecuteSync(entity, target, emitRetSync.EventName, resolvedArgs, data);
+
+                    if (entity.Fields.ContainsKey(emitRetSync.TargetField))
+                        entity.Fields[emitRetSync.TargetField] = syncResult;
+                    else
+                        localScope[emitRetSync.TargetField] = syncResult;
+
+                    lastAssigned = syncResult;
+                    return true;
+                }
 
                 case EmitAction emit:
                 {
