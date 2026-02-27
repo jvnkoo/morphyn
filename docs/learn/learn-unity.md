@@ -81,6 +81,10 @@ morphyn.Subscribe("Logger", "Player", "death", "onPlayerDeath");
 
 morphyn.Unsubscribe("Logger", "Player", "death", "onPlayerDeath");
 
+// Note: C# Subscribe does not support handler args (the (arg) syntax from when).
+// To pass args to the handler, use the .morph when syntax directly inside an init event,
+// or use On/Off and handle the logic in C#.
+
 // On vs Subscribe:
 // On / Off      — C# method reacts to Morphyn event
 // Subscribe     — Morphyn entity reacts to another Morphyn entity's event

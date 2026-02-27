@@ -7,9 +7,6 @@ namespace Morphyn.Parser
     /// </summary>
     public abstract class MorphynAction { }
 
-    /// <summary>
-    /// Represents an action that emits an event.
-    /// </summary>
     public class EmitAction : MorphynAction
     {
         public string? TargetEntityName { get; init; }
@@ -17,10 +14,6 @@ namespace Morphyn.Parser
         public List<MorphynExpression> Arguments { get; init; } = new();
     }
 
-    /// <summary>
-    /// Represents an action that emits an event synchronously and assigns the result to a field.
-    /// Nested sync calls are not allowed to prevent recursion.
-    /// </summary>
     public class EmitWithReturnAction : MorphynAction
     {
         public string? TargetEntityName { get; init; }
@@ -29,9 +22,6 @@ namespace Morphyn.Parser
         public required string TargetField { get; init; }
     }
 
-    /// <summary>
-    /// Represents a sync emit that assigns result to a pool index: emit X() -> pool.at[idx]
-    /// </summary>
     public class EmitWithReturnIndexAction : MorphynAction
     {
         public string? TargetEntityName { get; init; }
@@ -42,30 +32,31 @@ namespace Morphyn.Parser
     }
 
     /// <summary>
-    /// Subscribes current entity to an event of another entity.
     /// when TargetEntity.eventName : localHandler
+    /// when TargetEntity.eventName : localHandler(arg)
+    /// HandlerArgs are evaluated against the subscriber entity at fire time.
+    /// Null = no args forwarded to handler.
     /// </summary>
     public class WhenAction : MorphynAction
     {
         public required string TargetEntityName { get; init; }
         public required string TargetEventName { get; init; }
         public required string HandlerEventName { get; init; }
+        public List<MorphynExpression>? HandlerArgs { get; init; }
     }
 
     /// <summary>
-    /// Unsubscribes current entity from an event of another entity.
     /// unwhen TargetEntity.eventName : localHandler
+    /// unwhen TargetEntity.eventName : localHandler(arg)
     /// </summary>
     public class UnwhenAction : MorphynAction
     {
         public required string TargetEntityName { get; init; }
         public required string TargetEventName { get; init; }
         public required string HandlerEventName { get; init; }
+        public List<MorphynExpression>? HandlerArgs { get; init; }
     }
 
-    /// <summary>
-    /// Represents an action that checks a condition. 
-    /// </summary>
     public class CheckAction : MorphynAction
     {
         public required MorphynExpression Condition { get; set; }

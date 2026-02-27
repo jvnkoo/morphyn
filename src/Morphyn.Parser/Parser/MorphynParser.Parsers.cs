@@ -212,6 +212,8 @@ namespace Morphyn.Parser
                     TargetField = target
                 }).Try();
 
+        // when Entity.event : handler
+        // when Entity.event : handler(arg)
         private static TokenListParser<MorphynToken, MorphynAction> WhenAction =>
             (from whenKeyword in Token.EqualTo(MorphynToken.When)
                 from targetEntity in Identifier
@@ -219,13 +221,17 @@ namespace Morphyn.Parser
                 from targetEvent in Identifier
                 from colon in Token.EqualTo(MorphynToken.Colon)
                 from handler in Identifier
+                from handlerArgs in CallArguments.OptionalOrDefault(null)
                 select (MorphynAction)new WhenAction
                 {
                     TargetEntityName = targetEntity,
                     TargetEventName = targetEvent,
-                    HandlerEventName = handler
+                    HandlerEventName = handler,
+                    HandlerArgs = handlerArgs?.ToList()
                 }).Try();
 
+        // unwhen Entity.event : handler
+        // unwhen Entity.event : handler(arg)
         private static TokenListParser<MorphynToken, MorphynAction> UnwhenAction =>
             (from unwhenKeyword in Token.EqualTo(MorphynToken.Unwhen)
                 from targetEntity in Identifier
@@ -233,11 +239,13 @@ namespace Morphyn.Parser
                 from targetEvent in Identifier
                 from colon in Token.EqualTo(MorphynToken.Colon)
                 from handler in Identifier
+                from handlerArgs in CallArguments.OptionalOrDefault(null)
                 select (MorphynAction)new UnwhenAction
                 {
                     TargetEntityName = targetEntity,
                     TargetEventName = targetEvent,
-                    HandlerEventName = handler
+                    HandlerEventName = handler,
+                    HandlerArgs = handlerArgs?.ToList()
                 }).Try();
 
         private static TokenListParser<MorphynToken, MorphynExpression> ArithExpression =>

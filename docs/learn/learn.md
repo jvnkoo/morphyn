@@ -184,21 +184,30 @@ entity MathLib {
 # ── SUBSCRIPTIONS ─────────────────────────────────────────────────────────────
 # when: subscribe to another entity's event
 # unwhen: unsubscribe
-# when fires handlerEvent on subscriber with the same args as the original event
+#
+# The optional (arg) after the handler name is evaluated against the SUBSCRIBER
+# at the moment the event fires — not the args from the original event.
+#
+# when Player.die : onPlayerDied           # no args
+# when Player.die : onPlayerDied(42)       # fixed literal
+# when Player.die : onPlayerDied(myField)  # field — read from subscriber at fire time
 
 entity Logger {
+  has severity: 3
+
   on init {
-    when Player.die : onPlayerDied       # subscribe
-    when Enemy.die  : onEnemyDied
+    when Player.die : onPlayerDied             # subscribe, no args
+    when Enemy.die  : onEnemyDied(severity)    # passes Logger.severity at fire time
   }
 
   on onPlayerDied {
     emit log("Player died")
-    unwhen Player.die : onPlayerDied     # unsubscribe after first death
+    unwhen Player.die : onPlayerDied           # unsubscribe — no args to match
   }
 
-  on onEnemyDied {
-    emit log("Enemy died")
+  on onEnemyDied(sev) {
+    emit log("Enemy died, severity:", sev)
+    unwhen Enemy.die : onEnemyDied(severity)   # unwhen args must match the when args
   }
 }
 
@@ -207,6 +216,7 @@ entity Logger {
 # - duplicate subscriptions are ignored
 # - destroyed entities are cleaned up automatically
 # - when/unwhen can be used in any event, not just init
+# - unwhen args must match the args used in the original when
 
 # ── IMPORTS ───────────────────────────────────────────────────────────────────
 # import "mathlib.morph"

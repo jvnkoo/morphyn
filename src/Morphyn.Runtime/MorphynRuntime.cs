@@ -11,11 +11,15 @@ namespace Morphyn.Runtime
     public static class MorphynRuntime
     {
         private static readonly Queue<PendingEvent> _eventQueue = new();
+        private static EntityData? _currentData;
         private static readonly List<object?> EmptyArgs = new List<object?>(0);
         private static readonly HashSet<(Entity, string)> _pendingEventSet = new();
         private const int HASH_SET_THRESHOLD = 20; // Use HashSet only when queue grows
 
-        private static readonly Dictionary<(string, string), List<(Entity subscriber, string handler)>>
+        // Key: (targetEntityName, targetEventName)
+        // Value: list of (subscriber, handlerEvent, handlerArgs)
+        // handlerArgs: null = no args passed, non-null = evaluated against subscriber at fire time
+        private static readonly Dictionary<(string, string), List<(Entity subscriber, string handler, List<MorphynExpression>? handlerArgs)>>
             _subscriptions = new();
 
         // Tracks active sync call stack per (entity, event) — allows chaining A->B->C, blocks A->A recursion
@@ -59,10 +63,20 @@ namespace Morphyn.Runtime
             var key = (target.Name, eventName);
             if (_subscriptions.TryGetValue(key, out var subscribers))
             {
-                foreach (var (subscriber, handler) in subscribers)
+                foreach (var (subscriber, handler, handlerArgs) in subscribers)
                 {
                     if (!subscriber.IsDestroyed)
-                        Send(subscriber, handler, args);
+                    {
+                        List<object?>? resolvedArgs = null;
+                        if (handlerArgs != null)
+                        {
+                            resolvedArgs = new List<object?>(handlerArgs.Count);
+                            var emptyScope = new System.Collections.Generic.Dictionary<string, object?>();
+                            foreach (var argExpr in handlerArgs)
+                                resolvedArgs.Add(MorphynEvaluator.EvaluateExpression(subscriber, argExpr, emptyScope, _currentData!));
+                        }
+                        Send(subscriber, handler, resolvedArgs);
+                    }
                 }
             }
         }
@@ -78,6 +92,7 @@ namespace Morphyn.Runtime
 
         public static void RunFullCycle(EntityData data)
         {
+            _currentData = data;
             while (_eventQueue.Count > 0)
             {
                 var current = _eventQueue.Dequeue();
@@ -181,7 +196,7 @@ namespace Morphyn.Runtime
         }
 
         public static void Subscribe(Entity subscriber, Entity target,
-            string targetEvent, string handlerEvent)
+            string targetEvent, string handlerEvent, List<MorphynExpression>? handlerArgs = null)
         {
             if (subscriber == target)
             {
@@ -193,12 +208,12 @@ namespace Morphyn.Runtime
             var key = (target.Name, targetEvent);
             if (!_subscriptions.TryGetValue(key, out var list))
             {
-                list = new List<(Entity, string)>();
+                list = new List<(Entity, string, List<MorphynExpression>?)>();
                 _subscriptions[key] = list;
             }
 
             if (!list.Any(s => s.subscriber == subscriber && s.handler == handlerEvent))
-                list.Add((subscriber, handlerEvent));
+                list.Add((subscriber, handlerEvent, handlerArgs));
         }
 
         public static void Unsubscribe(Entity subscriber, Entity target,
@@ -475,7 +490,7 @@ namespace Morphyn.Runtime
                         Console.WriteLine($"[Subscription Error] Entity '{whenAct.TargetEntityName}' not found.");
                         return true;
                     }
-                    Subscribe(entity, targetEntity, whenAct.TargetEventName, whenAct.HandlerEventName);
+                    Subscribe(entity, targetEntity, whenAct.TargetEventName, whenAct.HandlerEventName, whenAct.HandlerArgs);
                     return true;
                 }
 
@@ -647,7 +662,7 @@ namespace Morphyn.Runtime
                         Console.WriteLine($"[Subscription Error] Entity '{whenAct.TargetEntityName}' not found.");
                         return true;
                     }
-                    Subscribe(entity, targetEntity, whenAct.TargetEventName, whenAct.HandlerEventName);
+                    Subscribe(entity, targetEntity, whenAct.TargetEventName, whenAct.HandlerEventName, whenAct.HandlerArgs);
                     return true;
                 }
 
