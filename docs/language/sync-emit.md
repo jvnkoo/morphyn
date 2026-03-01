@@ -72,18 +72,33 @@ entity MathLib {
 }
 ```
 
-### Direct recursion is forbidden
-An event **cannot call itself** synchronously. This prevents infinite loops:
+### Recursion and Loops
+Sync calls now support deep recursion. This allows you to implement while and for logic by having an event call itself or other events synchronously.
+
+Since the runtime uses a managed heap-based stack instead of the system call stack, these calls are safe and won't crash the application even at high iteration counts.
 
 ```morphyn
-entity Bad {
-  event recurse(value) {
-    emit Bad.recurse(value) -> value  # runtime error — recursive sync call
+entity Loop {
+  has counter: 0
+  
+  # Recursive loop implementation
+  event repeat(times) {
+    check counter < times: {
+      counter + 1 -> counter
+      emit self.repeat(times) -> result  # OK: recursive call
+    }
+    counter -> result
   }
 }
 ```
 
-The check is per `(entity, event)` pair — `A.foo` calling `A.foo` is forbidden, but `A.foo` calling `A.bar` or `B.foo` is fine.
+Safety Limit
+
+To prevent accidental infinite loops from hanging the engine, a safety threshold is enforced:
+
+  * Max Depth: 100,000,000 nested calls.
+
+  * Exceeding this limit throws a [Sync Error] but keeps the engine running.
 
 ### Regular emit inside sync events
 Regular `emit` is allowed inside sync events. The events are held in a separate side-effect queue and flushed to the main queue **after the outermost sync call completes**. This means side effects happen after the result is returned, not during.

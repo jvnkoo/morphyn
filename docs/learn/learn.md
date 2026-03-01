@@ -91,9 +91,11 @@ entity Player {
   # Returns the last assigned value inside the called event.
   event take_damage(amount) {
     emit MathLib.clamp(hp - amount, 0, max_hp) -> hp
-    # chains are allowed: MathLib.clamp can call other sync events
-    # direct recursion is forbidden: clamp cannot call itself
-    check hp <= 0: emit self.die
+    
+    # RECURSION & LOOPS:
+    # Morphyn now supports deep recursion for implementing while/for loops.
+    # The runtime uses a heap-based stack, so 10,000+ iterations are safe.
+    check hp > 0: emit self.take_damage(1) -> hp 
   }
 
   # sync result can also go into a pool slot
