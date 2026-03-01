@@ -1763,17 +1763,17 @@
 </span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="k">has</span> <span class="nv">alive</span><span class="p">:</span> <span class="kc">true</span>
 </span></code></pre></div>
 <h4 id="event-parameters">Event Parameters</h4>
-<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="k">on</span> <span class="nf">damage</span><span class="p">(</span><span class="n">amount</span><span class="p">)</span> <span class="p">{</span>
+<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="k">on</span> <span class="n">damage</span><span class="p">(</span><span class="n">amount</span><span class="p">)</span> <span class="p">{</span>
 </span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>  <span class="n">hp</span> <span class="o o-Arithmetic">-</span> <span class="n">amount</span> <span class="o">-&gt;</span> <span class="n">hp</span>  <span class="c1"># &#39;amount&#39; is a parameter</span>
 </span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="p">}</span>
 </span></code></pre></div>
 <h3 id="arithmetic-operators">Arithmetic Operators</h3>
 <h4 id="basic-math">Basic Math</h4>
 <div class="language-morphyn highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="n">hp</span> <span class="o o-Arithmetic">+</span> <span class="m">10</span>       <span class="c1"># Addition</span>
-</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="nf">hp</span> <span class="o o-Arithmetic">-</span> <span class="m">5</span>        <span class="c1"># Subtraction</span>
-</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="nf">damage</span> <span class="o o-Arithmetic">*</span> <span class="m">2</span>    <span class="c1"># Multiplication</span>
-</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="nf">armor</span> <span class="o o-Arithmetic">/</span> <span class="m">3</span>     <span class="c1"># Division</span>
-</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="nf">level</span> <span class="o o-Arithmetic">%</span> <span class="m">5</span>     <span class="c1"># Modulo</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="n">hp</span> <span class="o o-Arithmetic">-</span> <span class="m">5</span>        <span class="c1"># Subtraction</span>
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="n">damage</span> <span class="o o-Arithmetic">*</span> <span class="m">2</span>    <span class="c1"># Multiplication</span>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="n">armor</span> <span class="o o-Arithmetic">/</span> <span class="m">3</span>     <span class="c1"># Division</span>
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="n">level</span> <span class="o o-Arithmetic">%</span> <span class="m">5</span>     <span class="c1"># Modulo</span>
 </span></code></pre></div>
 <h4 id="complex-expressions">Complex Expressions</h4>
 <div class="language-morphyn highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="p">(</span><span class="n">hp</span> <span class="o o-Arithmetic">+</span> <span class="n">shield</span><span class="p">)</span> <span class="o o-Arithmetic">*</span> <span class="m">0.5</span> <span class="o">-&gt;</span> <span class="n">total_defense</span>
