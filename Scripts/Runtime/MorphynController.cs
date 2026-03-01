@@ -59,10 +59,10 @@ public class MorphynController : MonoBehaviour
     
     // Optimization: Pre-cache tick entities and reuse tick args buffer
     private List<Entity> _tickEntities = new();
-    private readonly List<object> _tickArgsBuffer = new List<object>(1) { 0.0 };
-    private readonly List<object?> _internalArgsBuffer = new List<object?>(8);
-    private readonly List<object?> _syncArgsBuffer = new List<object?>(4);
-    
+    private readonly object?[] _tickArgsBuffer = new object?[] { 0.0 };
+    private object?[] _internalArgsBuffer = new object?[8];
+    private object?[] _syncArgsBuffer = new object?[4];
+
     public EntityData Context => _context;
 
     void Awake()
@@ -81,21 +81,20 @@ public class MorphynController : MonoBehaviour
 
     void Start()
     {
+        MorphynParser.OnError = msg => Debug.LogError(msg);
+
         MorphynRuntime.UnityCallback = (name, args) =>
-        {
             UnityBridge.Instance.InvokeUnityCallback(name, args);
-        };
-        
+
+        MorphynRuntime.OnEventFired = (entityName, eventName, args) =>
+            UnityBridge.Instance.NotifyListeners(entityName, eventName, args);
+
         if (runOnStart)
         {
             LoadAndRun();
-            LoadPersistentStates(); 
+            LoadPersistentStates();
             if (enableHotReload) SetupHotReload();
         }
-
-        MorphynRuntime.OnEventFired = (entityName, eventName, args) => {
-            UnityBridge.Instance.NotifyListeners(entityName, eventName, args);
-        };
     }
 
     public void LoadAndRun()
@@ -382,28 +381,25 @@ public class MorphynController : MonoBehaviour
     public object? GetField(string entityName, string fieldName)
     {
         if (_context != null && _context.Entities.TryGetValue(entityName, out var entity))
-        {
             if (entity.Fields.TryGetValue(fieldName, out var value))
-            {
-                return value;
-            }
-        }
+                return value.ToObject(); // MorphynValue → object?
         return null;
     }
 
     public void SetField(string entityName, string fieldName, object? value)
     {
         if (_context != null && _context.Entities.TryGetValue(entityName, out var entity))
-        {
-            entity.Fields[fieldName] = value;
-        }
+            entity.Fields[fieldName] = MorphynValue.FromObject(value); // object? → MorphynValue
     }
 
     public Dictionary<string, object?> GetAllFields(string entityName)
     {
         if (_context != null && _context.Entities.TryGetValue(entityName, out var entity))
         {
-            return new Dictionary<string, object?>(entity.Fields);
+            var result = new Dictionary<string, object?>(entity.Fields.Count);
+            foreach (var kvp in entity.Fields)
+                result[kvp.Key] = kvp.Value.ToObject();
+            return result;
         }
         return new Dictionary<string, object?>();
     }
@@ -413,11 +409,10 @@ public class MorphynController : MonoBehaviour
         if (_context != null && _context.Entities.TryGetValue(entityName, out var entity))
         {
             // Optimization: Reuse buffer to avoid List allocation
-            _internalArgsBuffer.Clear();
+            if (args.Length > _internalArgsBuffer.Length)
+                _internalArgsBuffer = new object?[args.Length];
             for (int i = 0; i < args.Length; i++)
-            {
-                _internalArgsBuffer.Add(args[i]);
-            }
+                _internalArgsBuffer[i] = args[i];
 
             MorphynRuntime.Send(entity, eventName, _internalArgsBuffer);
             MorphynRuntime.RunFullCycle(_context);
@@ -428,10 +423,9 @@ public class MorphynController : MonoBehaviour
     {
         if (_context != null && _context.Entities.TryGetValue(entityName, out var entity))
         {
-            _syncArgsBuffer.Clear();
-            if (arg0 != null) _syncArgsBuffer.Add(arg0);
-
-            return MorphynRuntime.ExecuteSync(null, entity, eventName, _syncArgsBuffer, _context);
+            _syncArgsBuffer[0] = arg0;
+            return MorphynRuntime.ExecuteSync(null, entity, eventName,
+                arg0 != null ? _syncArgsBuffer : Array.Empty<object?>(), _context);
         }
         return null;
     }
