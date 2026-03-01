@@ -1,7 +1,8 @@
-# Morphyn 
 <div align="center">
 <img src="https://github.com/user-attachments/assets/c5d54834-7e49-4a55-a0b9-91d12442d12a" width="128" height="128" alt="Morphyn Logo" />
-
+    
+# Morphyn 
+    
 ### [Morphyn](https://jvnkoo.github.io/morphyn) is a scripting language providing a clean, event-driven syntax to manage configs and logic. It's designed to be lightweight and opinionated, focusing entirely on entity states and reactive events without the overhead of a general-purpose language.
 
 [📥 Download](https://github.com/jvnkoo/morphyn/releases/latest) · [📖 Docs](https://jvnkoo.github.io/morphyn) · [💡 Examples](https://jvnkoo.github.io/morphyn/examples/basic/) · [🐛 Issues](https://github.com/jvnkoo/morphyn/issues)
@@ -14,7 +15,7 @@
 
 ---
 ## Here's a taste:
-```morphyn
+```coffeescript
 entity MathUtils {
     event get_crit_chance(dex) {
         dex * 0.5 -> chance
@@ -34,7 +35,7 @@ entity MathUtils {
 **1.** Download and import [`Morphyn.unitypackage`](https://github.com/jvnkoo/morphyn/releases/latest)
 
 **2.** Create a `.morph` file:
-```morphyn
+```coffeescript
 entity Enemy {
     has hp: 100
     has alive: true
