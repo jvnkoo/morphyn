@@ -36,7 +36,6 @@ namespace Morphyn.Parser
             var lines = input.Split('\n');
             int lineIndex = Math.Clamp(position.Line - 1, 0, lines.Length - 1);
             int columnIndex = Math.Clamp(position.Column - 1, 0, lines[lineIndex].Length);
-
             Console.Error.WriteLine("Context:");
             if (lineIndex < lines.Length)
             {

@@ -5,6 +5,8 @@
         <ImplicitUsings>disable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <LangVersion>latest</LangVersion>
+        <!-- workaround for .NET 10 preview restore bug -->
+        <RestoreUseStaticGraphEvaluation>false</RestoreUseStaticGraphEvaluation>
     </PropertyGroup>
 
 

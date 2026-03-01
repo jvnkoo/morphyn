@@ -12,13 +12,22 @@ namespace Morphyn.Core
     class Program
     {
         private static readonly string[] ValidExtensions = { ".mrph", ".morph", ".morphyn" };
-        private static readonly List<object?> TickArgsBuffer = new List<object?>(1) { 0.0 };
+        
+        // CHANGED: Use array instead of List to match new MorphynRuntime.Send signature (Zero-alloc)
+        private static readonly object?[] TickArgsBuffer = new object?[] { 0.0 };
 
         static void Main(string[] args)
         {
             if (args.Length == 0)
             {
                 // Console.WriteLine("Usage: morphyn <filename.morphyn>");
+                return;
+            }
+
+            // ── Benchmark mode ────────────────────────────────────────────
+            if (Benchmark.IsBenchmarkMode(args))
+            {
+                Benchmark.Run(args);
                 return;
             }
 
@@ -49,17 +58,10 @@ namespace Morphyn.Core
                 foreach (var entity in context.Entities.Values)
                 {
                     entity.BuildCache();
-                    // Console.WriteLine($"[AST] Entity loaded: {entity.Name}");
-                    // foreach (var field in entity.Fields)
-                    //    Console.WriteLine($"  -> {field.Key}: {field.Value}");
 
                     if (entity.Events.Any(e => e.Name == "init"))
                     {
                         MorphynRuntime.Send(entity, "init");
-                    }
-                    else
-                    {
-                        // Console.WriteLine($"  [Info] {entity.Name} has no 'init' event. Static data only.");
                     }
                 }
 
@@ -105,26 +107,22 @@ namespace Morphyn.Core
                     }
 
                     double currentFrameTime = stopwatch.Elapsed.TotalMilliseconds;
-                    // Calculate fps
                     double dtMs = currentFrameTime - lastFrameTime;
                     lastFrameTime = currentFrameTime;
 
+                    // Update buffer without new allocations
                     TickArgsBuffer[0] = dtMs;
 
                     int tickCount = tickEntities.Count;
                     for (int i = 0; i < tickCount; i++)
                     {
+                        // Now passes object?[] which matches the optimized Send(Entity, string, object?[]?)
                         MorphynRuntime.Send(tickEntities[i], "tick", TickArgsBuffer);
                     }
 
                     MorphynRuntime.RunFullCycle(context);
-
                     MorphynRuntime.GarbageCollect(context);
-
-                    // System.Threading.Thread.Sleep(16); 
                 }
-
-                // Console.WriteLine("--- Simulation Finished ---");
             }
             catch (Exception ex)
             {
@@ -203,13 +201,8 @@ namespace Morphyn.Core
             }
         }
 
-        // Resolves import statements recursively
-        // filePath: Path to the file to process
-        // visited: Set of already processed files (prevents circular imports)
-        // Returns: Combined content of all imported files
         static string ResolveImports(string filePath, HashSet<string> visited)
         {
-            // Get absolute path to ensure uniqueness in 'visited' set
             string absolutePath = Path.GetFullPath(filePath);
             if (visited.Contains(absolutePath)) return "";
             visited.Add(absolutePath);
@@ -236,7 +229,6 @@ namespace Morphyn.Core
                     if (firstQuote != -1 && lastQuote > firstQuote)
                     {
                         string fileName = trimmed.Substring(firstQuote + 1, lastQuote - firstQuote - 1);
-
                         string? currentDir = Path.GetDirectoryName(absolutePath);
                         string subPath = Path.GetFullPath(Path.Combine(currentDir ?? "", fileName));
 
@@ -249,11 +241,9 @@ namespace Morphyn.Core
                             Console.WriteLine(
                                 $"[Warning] Import file not found: {subPath} (imported from {absolutePath})");
                         }
-                        
                         continue; 
                     }
                 }
-                
                 finalContent.Add(line);
             }
 

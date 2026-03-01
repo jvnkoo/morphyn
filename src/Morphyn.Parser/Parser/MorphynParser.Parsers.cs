@@ -279,8 +279,8 @@ namespace Morphyn.Parser
             EmitWithReturnIndexAction.Try() // must be first: emit X() -> pool.at[idx]
                 .Or(EmitWithReturnAction.Try()) // then: emit X() -> field
                 .Or(EmitAction.Try())
-                .Or(WhenAction.Try())      
-                .Or(UnwhenAction.Try())  
+                .Or(WhenAction.Try())
+                .Or(UnwhenAction.Try())
                 .Or(FlowAction.Try());
 
         private static TokenListParser<MorphynToken, MorphynAction> CheckAction =>
@@ -349,7 +349,8 @@ namespace Morphyn.Parser
                 Fields = members.OfType<KeyValuePair<string, object>>()
                     .GroupBy(f => f.Key).Any(g => g.Count() > 1)
                     ? throw new Exception($"[Semantic Error]: Entity '{name}' has duplicate fields.")
-                    : members.OfType<KeyValuePair<string, object>>().ToDictionary(f => f.Key, f => f.Value),
+                    : members.OfType<KeyValuePair<string, object>>()
+                        .ToDictionary(f => f.Key, f => MorphynValue.FromObject(f.Value)),
 
                 Events = members.OfType<Event>()
                     .GroupBy(e => e.Name).Any(g => g.Count() > 1)
