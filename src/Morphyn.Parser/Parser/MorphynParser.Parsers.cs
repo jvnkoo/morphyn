@@ -219,19 +219,22 @@ namespace Morphyn.Parser
         // when Entity.event : handler(arg)
         private static TokenListParser<MorphynToken, MorphynAction> WhenAction =>
             (from whenKeyword in Token.EqualTo(MorphynToken.When)
-                from targetEntity in Identifier
+            from targetPath in (
+                from entityName in Identifier
                 from dot in Token.EqualTo(MorphynToken.Dot)
-                from targetEvent in Identifier
-                from colon in Token.EqualTo(MorphynToken.Colon)
-                from handler in Identifier
-                from handlerArgs in CallArguments.OptionalOrDefault(null)
-                select (MorphynAction)new WhenAction
-                {
-                    TargetEntityName = targetEntity,
-                    TargetEventName = targetEvent,
-                    HandlerEventName = handler,
-                    HandlerArgs = handlerArgs?.ToList()
-                }).Try();
+                from eventName in Identifier
+                select (entity: entityName, ev: eventName)
+            ).Try().Or(Identifier.Select(name => (entity: "self", ev: name))) 
+            from colon in Token.EqualTo(MorphynToken.Colon)
+            from handler in Identifier
+            from handlerArgs in CallArguments.OptionalOrDefault(null)
+            select (MorphynAction)new WhenAction
+            {
+                TargetEntityName = targetPath.entity,
+                TargetEventName = targetPath.ev,
+                HandlerEventName = handler,
+                HandlerArgs = handlerArgs?.ToList()
+            }).Try();
 
         // unwhen Entity.event : handler
         // unwhen Entity.event : handler(arg)

@@ -583,10 +583,9 @@ namespace Morphyn.Runtime
         public static void Subscribe(Entity subscriber, Entity target,
             string targetEvent, string handlerEvent, List<MorphynExpression>? handlerArgs = null)
         {
-            if (subscriber == target)
+            if (targetEvent == handlerEvent && subscriber == target)
             {
-                Console.WriteLine($"[Subscription Error] Entity '{subscriber.Name}' cannot subscribe to its own events.");
-                return;
+                Console.WriteLine($"[Warning] Possible infinite loop: {subscriber.Name} subscribed {handlerEvent} to itself.");
             }
 
             var key = (target.Name, targetEvent);
