@@ -13,6 +13,9 @@ namespace Morphyn.Parser
     {
         private static readonly Tokenizer<MorphynToken> Tokenizer = MorphynTokenizer.Create();
 
+        // Error handling callback, Unity can redirect this to Debug.LogError for better integration.
+        public static Action<string>? OnError = message => Console.Error.WriteLine(message);
+
         public static EntityData ParseFile(string input)
         {
             try
@@ -23,10 +26,19 @@ namespace Morphyn.Parser
             }
             catch (ParseException ex)
             {
-                Console.Error.WriteLine("Morphyn parse error");
-                Console.Error.WriteLine($"Position: {ex.ErrorPosition}");
-                Console.Error.WriteLine($"Message: {ex.Message}");
-                PrintErrorContext(input, ex.ErrorPosition);
+                var sb = new System.Text.StringBuilder();
+                sb.AppendLine("[Morphyn] Parse error");
+                sb.AppendLine($"Position: line {ex.ErrorPosition.Line}, col {ex.ErrorPosition.Column}");
+                sb.AppendLine($"Message: {ex.Message}");
+
+                var lines = input.Split('\n');
+                int lineIndex = Math.Clamp(ex.ErrorPosition.Line - 1, 0, lines.Length - 1);
+                int colIndex = Math.Clamp(ex.ErrorPosition.Column - 1, 0, lines[lineIndex].Length);
+                sb.AppendLine("Context:");
+                sb.AppendLine(lines[lineIndex]);
+                sb.AppendLine(new string(' ', colIndex) + "^");
+
+                OnError?.Invoke(sb.ToString());
                 throw new Exception("Morphyn parsing failed. See context above.");
             }
         }
