@@ -21,7 +21,7 @@ entity Enemy {
 
 **Hot reload** — edit logic and values without restarting:
 ```morphyn
-on damage(amount) {
+event damage(amount) {
   hp - amount -> hp
   check hp <= 0: emit die
 }
@@ -31,7 +31,7 @@ on damage(amount) {
 ```morphyn
 entity Shop {
   has gold: 100
-  on buy(cost) {
+  event buy(cost) {
     check gold >= cost: {
       gold - cost -> gold
       emit inventory.add("sword")

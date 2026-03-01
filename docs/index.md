@@ -11,12 +11,12 @@ entity Player {
   has hp: 100
   has level: 1
 
-  on damage(amount) {
+  event damage(amount) {
     hp - amount -> hp
     check hp <= 0: emit die
   }
 
-  on level_up {
+  event level_up {
     level + 1 -> level
     hp + 20 -> hp
   }
@@ -36,7 +36,7 @@ entity Enemy {
     has hp: 100
     has alive: true
 
-    on take_damage(amount) {
+    event take_damage(amount) {
         hp - amount -> hp
         emit log("Enemy hit! HP:", hp)
 
@@ -87,7 +87,7 @@ Morphyn exists because setting up Lua in Unity shouldn't take days. Simpler, opi
 ```morphyn
 entity Shop {
   has gold: 100
-  on buy(cost) {
+  event buy(cost) {
     check gold >= cost: {
       gold - cost -> gold
       emit add_item("sword")
@@ -106,10 +106,10 @@ emit heal(10)            # Same as above, implicit
 **Subscriptions** let entities react to each other:
 ```morphyn
 entity Logger {
-  on init {
+  event init {
     when Player.die : onPlayerDied
   }
-  on onPlayerDied {
+  event onPlayerDied {
     emit log("Player died")
   }
 }
@@ -121,7 +121,7 @@ hp - 10 -> hp       # Subtract
 max_hp -> hp        # Set
 ```
 
-**Check** stop execution if condition fails(only if there is no block to execute):
+**Check** stops execution if condition fails (only if there is no block to execute):
 ```morphyn
 check false
 ```

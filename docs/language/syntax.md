@@ -44,7 +44,7 @@ has flags: pool[true, false, true]
 ### Without Parameters
 
 ```morphyn
-on event_name {
+event event_name {
   # actions
 }
 ```
@@ -52,7 +52,7 @@ on event_name {
 ### With Parameters
 
 ```morphyn
-on event_name(param1, param2) {
+event event_name(param1, param2) {
   # actions
 }
 ```
@@ -100,7 +100,7 @@ emit Entity.event_name(args) -> pool.at[idx]
 Sync calls can be chained — direct recursion (an event calling itself) is forbidden.
 ```morphyn
 entity MathLib {
-  on clamp(value, min, max) {
+  event clamp(value, min, max) {
     check value < min: min -> value
     check value > max: max -> value
     value -> result
@@ -109,7 +109,7 @@ entity MathLib {
 entity Player {
   has hp: 150
   has max_hp: 100
-  on heal(amount) {
+  event heal(amount) {
     emit MathLib.clamp(hp + amount, 0, max_hp) -> hp
   }
 }
@@ -124,10 +124,10 @@ unwhen TargetEntity.eventName : handlerEvent
 ```
 ```morphyn
 entity Logger {
-  on init {
+  event init {
     when Player.death : onPlayerDeath
   }
-  on onPlayerDeath {
+  event onPlayerDeath {
     emit log("Player died!")
   }
 }
@@ -203,7 +203,7 @@ If the input can be parsed as a number it is stored as a number, otherwise as a 
 |---------|---------|
 | `entity` | Declare entity |
 | `has` | Declare field |
-| `on` | Declare event handler |
+| `event` | Declare event handler |
 | `emit` | Send event, call sync event, or call built-in function |
 | `check` | Conditional guard |
 | `pool` | Collection type |

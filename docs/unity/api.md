@@ -129,11 +129,11 @@ MorphynController.Instance.Unsubscribe("Logger", "Player", "death", "onPlayerDea
 ```morphyn
 entity Logger {
   has count: 0
-  on onPlayerDeath {
+  event onPlayerDeath {
     count + 1 -> count
     emit unity("Log", "Player died! Total deaths:", count)
   }
-  on onPlayerLevelUp(level) {
+  event onPlayerLevelUp(level) {
     emit unity("Log", "Player reached level:", level)
   }
 }
@@ -178,12 +178,12 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         // Register callback BEFORE MorphynController.Start()
-UnityBridge.Instance.RegisterCallback("PlaySound", args => {
-string soundName = args[0]?.ToString() ?? "";
-AudioSource.PlayOneShot(Resources.Load<AudioClip>(soundName));
+        UnityBridge.Instance.RegisterCallback("PlaySound", args => {
+            string soundName = args[0]?.ToString() ?? "";
+            AudioSource.PlayOneShot(Resources.Load<AudioClip>(soundName));
         });
-UnityBridge.Instance.RegisterCallback("ShowMessage", args => {
-Debug.Log($"Message: {string.Join(" ", args)}");
+        UnityBridge.Instance.RegisterCallback("ShowMessage", args => {
+            Debug.Log($"Message: {string.Join(" ", args)}");
         });
     }
 }
@@ -192,7 +192,7 @@ Debug.Log($"Message: {string.Join(" ", args)}");
 ```morphyn
 entity Enemy {
   has hp: 50
-  on damage(amount) {
+  event damage(amount) {
     hp - amount -> hp
     emit unity("PlaySound", "hit")
     check hp <= 0: {
@@ -250,7 +250,7 @@ public class Setup : MonoBehaviour
 {
     void Awake() // Use Awake, not Start
     {
-UnityBridge.Instance.RegisterCallback("MyCallback", args => {});
+        UnityBridge.Instance.RegisterCallback("MyCallback", args => {});
     }
 }
 ```
@@ -266,7 +266,7 @@ entity ComplexAI { /* don't do this */ }
 ```cs
 if (MorphynController.Instance == null)
 {
-Debug.LogError("Add MorphynController to scene!");
+    Debug.LogError("Add MorphynController to scene!");
 }
 ```
 ### "Callback not found"
@@ -292,7 +292,6 @@ void Start()
     MorphynController.Instance.Subscribe("Logger", "Player", "death", "onPlayerDeath");
 }
 ```
-
 ### C# listener called after object destroyed
 ```cs
 // Always unsubscribe in OnDestroy

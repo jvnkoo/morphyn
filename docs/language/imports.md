@@ -30,7 +30,7 @@ import "player.morph"
 import "enemy.morph"
 
 entity Game {
-  on init {
+  event init {
     emit log("Game started")
   }
 }

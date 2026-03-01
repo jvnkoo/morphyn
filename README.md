@@ -1,9 +1,8 @@
 # Morphyn 
-
 <div align="center">
 <img src="https://github.com/user-attachments/assets/c5d54834-7e49-4a55-a0b9-91d12442d12a" width="128" height="128" alt="Morphyn Logo" />
 
-### [Morphyn](https://jvnkoo.github.io/morphyn) is a scripting language providing a clean, event-driven syntax to manage configs and logic. It’s designed to be lightweight and opinionated, focusing entirely on entity states and reactive events without the overhead of a general-purpose language.
+### [Morphyn](https://jvnkoo.github.io/morphyn) is a scripting language providing a clean, event-driven syntax to manage configs and logic. It's designed to be lightweight and opinionated, focusing entirely on entity states and reactive events without the overhead of a general-purpose language.
 
 [📥 Download](https://github.com/jvnkoo/morphyn/releases/latest) · [📖 Docs](https://jvnkoo.github.io/morphyn) · [💡 Examples](https://jvnkoo.github.io/morphyn/examples/basic/) · [🐛 Issues](https://github.com/jvnkoo/morphyn/issues)
 
@@ -11,22 +10,18 @@
 ![License](https://img.shields.io/badge/license-Apache%202.0-blue)
 ![Unity](https://img.shields.io/badge/Unity-2020.3+-black)
 ![Status](https://img.shields.io/badge/status-beta-orange)
-
 </div>
 
 ---
-
 ## Here's a taste:
-
 ```morphyn
 entity MathUtils {
-    on get_crit_chance(dex) {
+    event get_crit_chance(dex) {
         dex * 0.5 -> chance
         check chance > 50: 50 -> chance
         chance -> result
     }
-
-    on calculate_damage(raw_dmg, armor) {
+    event calculate_damage(raw_dmg, armor) {
         raw_dmg * (100 / (100 + armor)) -> final_dmg
         final_dmg -> result
     }
@@ -44,7 +39,7 @@ entity Enemy {
     has hp: 100
     has alive: true
 
-    on take_damage(amount) {
+    event take_damage(amount) {
         hp - amount -> hp
         emit log("Enemy hit! HP:", hp)
 
@@ -59,7 +54,6 @@ entity Enemy {
 **3.** Use in C#:
 ```csharp
 MorphynController.Instance.Emit("Enemy", "take_damage", 25);
-
 bool isAlive = Convert.ToBoolean(MorphynController.Instance.GetField("Enemy", "alive"));
 ```
 
@@ -68,7 +62,6 @@ bool isAlive = Convert.ToBoolean(MorphynController.Instance.GetField("Enemy", "a
 Full docs at [jvnkoo.github.io/morphyn](https://jvnkoo.github.io/morphyn).
 
 ---
-
 ## Why not Lua?
 
 The Unity bridges are a mess. MoonSharp hasn't been updated in years.
@@ -80,7 +73,6 @@ Simpler, opinionated, built specifically for game config and logic.
 You lose the standard library. You gain something that works on the first try.
 
 ---
-
 ## VS Code Extension
 
 Syntax highlighting, bracket matching, comment support for `.morph` files.
@@ -88,7 +80,6 @@ Syntax highlighting, bracket matching, comment support for `.morph` files.
 [📥 Download `.vsix` from Releases](https://github.com/jvnkoo/morphyn/releases/latest) → Extensions → `...` → Install from VSIX
 
 ---
-
 ## Standalone Runtime
 
 Works with any .NET project, no Unity required.
@@ -102,7 +93,6 @@ Works with any .NET project, no Unity required.
 ```
 
 ---
-
 ## Roadmap
 
 - [x] Core language runtime
@@ -115,7 +105,6 @@ Works with any .NET project, no Unity required.
 - [ ] Self-hosted interpreter
 
 ---
-
 ## Contributing
 
 - [Report Issues](https://github.com/jvnkoo/morphyn/issues)
@@ -124,7 +113,6 @@ Works with any .NET project, no Unity required.
 PRs are welcome. 
 
 ---
-
 ## License
 
 Apache 2.0 — see [LICENSE](LICENSE) and [NOTICE](NOTICE). Free for commercial use.
@@ -132,7 +120,5 @@ Apache 2.0 — see [LICENSE](LICENSE) and [NOTICE](NOTICE). Free for commercial 
 ---
 
 <div align="center">
-
 <img src="https://media1.tenor.com/m/ugRQCY7AKEsAAAAd/texh-texhnolyze.gif" width="1000" height="300" alt="gif">
-
 </div>

@@ -152,12 +152,12 @@ entity Enemy {
   has hp: 50
   has reward: 100
 
-  on take_damage(amount) {
+  event take_damage(amount) {
     hp - amount -> hp
     check hp <= 0: emit self.die
   }
 
-  on die {
+  event die {
     emit unity("OnEnemyDied", reward)
     emit self.destroy
   }

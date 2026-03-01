@@ -18,16 +18,16 @@ The result written to `field` is the **last assigned value** inside the called e
 ## Example
 ```morphyn
 entity MathLib {
-  on clamp(value, min, max) {
+  event clamp(value, min, max) {
     check value < min: min -> value
     check value > max: max -> value
     value -> result
   }
-  on abs(value) {
+  event abs(value) {
     check value < 0: value * -1 -> value
     value -> result
   }
-  on lerp(a, b, t) {
+  event lerp(a, b, t) {
     a + (b - a) * t -> result
   }
 }
@@ -35,10 +35,10 @@ entity Player {
   has hp: 150
   has max_hp: 100
   has x: 0.0
-  on heal(amount) {
+  event heal(amount) {
     emit MathLib.clamp(hp + amount, 0, max_hp) -> hp
   }
-  on tick(dt) {
+  event tick(dt) {
     emit MathLib.lerp(x, 10, 0.1) -> x
   }
 }
@@ -52,7 +52,7 @@ entity Player {
 
 ```morphyn
 entity Pipeline {
-  on process(value) {
+  event process(value) {
     emit MathLib.abs(value) -> value            # ok — calls MathLib.abs
     emit MathLib.clamp(value, 0, 100) -> value  # ok — calls MathLib.clamp
     value -> result
@@ -60,11 +60,11 @@ entity Pipeline {
 }
 
 entity MathLib {
-  on abs(value) {
+  event abs(value) {
     check value < 0: value * -1 -> value
     value -> result
   }
-  on clamp(value, min, max) {
+  event clamp(value, min, max) {
     check value < min: min -> value
     check value > max: max -> value
     value -> result
@@ -77,7 +77,7 @@ An event **cannot call itself** synchronously. This prevents infinite loops:
 
 ```morphyn
 entity Bad {
-  on recurse(value) {
+  event recurse(value) {
     emit Bad.recurse(value) -> value  # runtime error — recursive sync call
   }
 }
@@ -90,7 +90,7 @@ Regular `emit` is allowed inside sync events. The events are held in a separate 
 
 ```morphyn
 entity MathLib {
-  on clamp(value, min, max) {
+  event clamp(value, min, max) {
     check value < min: min -> value
     check value > max: max -> value
     value -> result
@@ -102,7 +102,7 @@ entity MathLib {
 ### Return value
 The return value is the **last value assigned** inside the event body, regardless of which branch executed.
 ```morphyn
-on clamp(value, min, max) {
+event clamp(value, min, max) {
   check value < min: min -> value
   check value > max: max -> value
   value -> result             # this is the return value
@@ -127,19 +127,19 @@ on clamp(value, min, max) {
 ### Math utilities
 ```morphyn
 entity MathLib {
-  on clamp(value, min, max) {
+  event clamp(value, min, max) {
     check value < min: min -> value
     check value > max: max -> value
     value -> result
   }
-  on abs(value) {
+  event abs(value) {
     check value < 0: value * -1 -> value
     value -> result
   }
-  on lerp(a, b, t) {
+  event lerp(a, b, t) {
     a + (b - a) * t -> result
   }
-  on normalize(value, min, max) {
+  event normalize(value, min, max) {
     (value - min) / (max - min) -> result
   }
 }
@@ -148,15 +148,15 @@ entity MathLib {
 ### Chained computation
 ```morphyn
 entity StatLib {
-  on raw_to_final(damage, armor, crit) {
+  event raw_to_final(damage, armor, crit) {
     emit StatLib.apply_armor(damage, armor) -> damage
     emit StatLib.apply_crit(damage, crit) -> damage
     damage -> result
   }
-  on apply_armor(damage, armor) {
+  event apply_armor(damage, armor) {
     damage * (1 - armor / 100) -> result
   }
-  on apply_crit(damage, crit) {
+  event apply_crit(damage, crit) {
     check crit: damage * 2 -> damage
     damage -> result
   }
@@ -164,7 +164,7 @@ entity StatLib {
 entity Player {
   has hp: 100
   has armor: 30
-  on take_damage(raw, crit) {
+  event take_damage(raw, crit) {
     emit StatLib.raw_to_final(raw, armor, crit) -> final
     hp - final -> hp
     check hp <= 0: emit die
@@ -175,10 +175,10 @@ entity Player {
 ### Stat computation
 ```morphyn
 entity StatLib {
-  on apply_armor(damage, armor) {
+  event apply_armor(damage, armor) {
     damage * (1 - armor / 100) -> result
   }
-  on exp_to_next(level) {
+  event exp_to_next(level) {
     level * level * 50 -> result
   }
 }
@@ -187,12 +187,12 @@ entity Player {
   has armor: 30
   has level: 5
   has exp: 0
-  on take_damage(amount) {
+  event take_damage(amount) {
     emit StatLib.apply_armor(amount, armor) -> amount
     hp - amount -> hp
     check hp <= 0: emit die
   }
-  on add_exp(amount) {
+  event add_exp(amount) {
     exp + amount -> exp
     emit StatLib.exp_to_next(level) -> needed
     check exp >= needed: emit level_up
@@ -204,7 +204,7 @@ entity Player {
 **mathlib.morph:**
 ```morphyn
 entity MathLib {
-  on clamp(value, min, max) {
+  event clamp(value, min, max) {
     check value < min: min -> value
     check value > max: max -> value
     value -> result
@@ -217,7 +217,7 @@ import "mathlib.morph"
 entity Player {
   has hp: 100
   has max_hp: 100
-  on heal(amount) {
+  event heal(amount) {
     emit MathLib.clamp(hp + amount, 0, max_hp) -> hp
   }
 }

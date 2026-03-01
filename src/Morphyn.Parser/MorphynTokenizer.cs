@@ -19,7 +19,7 @@ namespace Morphyn.Parser
         // Keywords
         Entity,
         Has,
-        On,
+        Event,   // renamed from On
         Emit,
         When,
         Unwhen,
@@ -70,7 +70,7 @@ namespace Morphyn.Parser
             
             .Match(Span.EqualTo("entity"), MorphynToken.Entity, requireDelimiters: true)
             .Match(Span.EqualTo("has"), MorphynToken.Has, requireDelimiters: true)
-            .Match(Span.EqualTo("on"), MorphynToken.On, requireDelimiters: true)
+            .Match(Span.EqualTo("event"), MorphynToken.Event, requireDelimiters: true)  // renamed from "on"
             .Match(Span.EqualTo("emit"), MorphynToken.Emit, requireDelimiters: true)
             .Match(Span.EqualTo("when"), MorphynToken.When, requireDelimiters: true)
             .Match(Span.EqualTo("unwhen"), MorphynToken.Unwhen, requireDelimiters: true)

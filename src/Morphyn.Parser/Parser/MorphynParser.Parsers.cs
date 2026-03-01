@@ -318,9 +318,9 @@ namespace Morphyn.Parser
                 .Or(Parse.Ref(() => CheckAction).Try())
                 .Or(SimpleActionParser);
 
-        // Parse event: on eventName(params) { actions }
+        // Parse event: event eventName(params) { actions }
         private static TokenListParser<MorphynToken, Event> EventDeclaration =>
-            from onKeyword in Token.EqualTo(MorphynToken.On)
+            from eventKeyword in Token.EqualTo(MorphynToken.Event)  // renamed from MorphynToken.On
             from eventName in Identifier
             from parameters in OptionalParameterList
             from leftBrace in Token.EqualTo(MorphynToken.LeftBrace)

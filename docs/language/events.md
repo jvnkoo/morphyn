@@ -10,7 +10,7 @@ Called when an entity is first created or spawned:
 ```morphyn
 entity Enemy {
   has hp: 50
-  on init {
+  event init {
     emit log("Enemy spawned")
   }
 }
@@ -21,7 +21,7 @@ Called every frame with delta time in milliseconds:
 ```morphyn
 entity Timer {
   has time: 0
-  on tick(dt) {
+  event tick(dt) {
     time + dt -> time
   }
 }
@@ -32,7 +32,7 @@ Marks entity for garbage collection:
 ```morphyn
 entity Enemy {
   has hp: 50
-  on damage(v) {
+  event damage(v) {
     hp - v -> hp
     check hp <= 0: emit self.destroy
   }
@@ -43,10 +43,10 @@ entity Enemy {
 Define your own events:
 ```morphyn
 entity Player {
-  on jump {
+  event jump {
     emit log("Player jumped!")
   }
-  on heal(amount) {
+  event heal(amount) {
     hp + amount -> hp
   }
 }
@@ -90,11 +90,11 @@ The argument in `handlerEvent(arg)` is evaluated against the **subscriber** enti
 ### Basic Example — no args
 ```morphyn
 entity Logger {
-  on init {
+  event init {
     when Player.death : onPlayerDeath
   }
 
-  on onPlayerDeath {
+  event onPlayerDeath {
     emit log("Player has died!")
   }
 }
@@ -103,11 +103,11 @@ entity Logger {
 ### With a fixed argument
 ```morphyn
 entity Logger {
-  on init {
+  event init {
     when Player.death : onPlayerDeath(42)  # always passes 42
   }
 
-  on onPlayerDeath(code) {
+  event onPlayerDeath(code) {
     emit log("Player died. Code:", code)
   }
 }
@@ -118,11 +118,11 @@ entity Logger {
 entity Logger {
   has severity: 3
 
-  on init {
+  event init {
     when Player.death : onPlayerDeath(severity)  # reads Logger.severity when Player.death fires
   }
 
-  on onPlayerDeath(sev) {
+  event onPlayerDeath(sev) {
     emit log("Player died. Severity:", sev)
   }
 }
@@ -136,11 +136,11 @@ Use `unwhen` to stop receiving events. The `unwhen` args must match what was use
 entity Logger {
   has severity: 3
 
-  on init {
+  event init {
     when Player.death : onPlayerDeath(severity)
   }
 
-  on onPlayerDeath(sev) {
+  event onPlayerDeath(sev) {
     emit log("Player died")
     unwhen Player.death : onPlayerDeath(severity)  # matches the original when
   }
@@ -151,7 +151,7 @@ entity Logger {
 - **An entity cannot subscribe to its own instance's events.**
 ```morphyn
 entity Logger {
-  on init {
+  event init {
     when Logger.something : onSomething  # runtime error — same instance
     when Player.death : onPlayerDeath    # ok — different entity
   }
@@ -161,35 +161,35 @@ Two clones of the same entity type spawned via `pool.add` are separate instances
 
 - **Duplicate subscriptions are ignored.** Subscribing the same handler to the same event twice has no effect.
 - **Dead entities are cleaned up automatically.** If a subscriber is destroyed, its subscriptions are removed during garbage collection.
-- **`when` and `unwhen` can be used anywhere** — inside `on init`, `on tick`, or any other event handler.
+- **`when` and `unwhen` can be used anywhere** — inside `event init`, `event tick`, or any other event handler.
 
 ### Multiple Subscribers
 Multiple entities can subscribe to the same event independently:
 ```morphyn
 entity Logger {
-  on init {
+  event init {
     when Player.death : onPlayerDeath
   }
-  on onPlayerDeath {
+  event onPlayerDeath {
     emit log("Logger: player died")
   }
 }
 
 entity UI {
-  on init {
+  event init {
     when Player.death : onPlayerDeath
   }
-  on onPlayerDeath {
+  event onPlayerDeath {
     emit log("UI: showing death screen")
   }
 }
 
 entity Stats {
   has deaths: 0
-  on init {
+  event init {
     when Player.death : recordDeath
   }
-  on recordDeath {
+  event recordDeath {
     deaths + 1 -> deaths
   }
 }
@@ -228,13 +228,13 @@ entity Calc {
   has a: 0
   has b: 0
   has op: ""
-  on init {
+  event init {
     emit input("First number: ", "a")
     emit input("Operator (+,-,*,/): ", "op")
     emit input("Second number: ", "b")
     emit calculate
   }
-  on calculate {
+  event calculate {
     check op == "+": emit log(a, "+", b, "=", a + b)
     check op == "-": emit log(a, "-", b, "=", a - b)
     check op == "*": emit log(a, "*", b, "=", a * b)

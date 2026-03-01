@@ -23,21 +23,21 @@ entity Player {
 
   # ── BUILT-IN EVENTS ───────────────────────────────────────────────────────
   # init runs once when entity is created
-  on init {
+  event init {
     emit log("Player created:", name)
   }
 
   # tick(dt) runs every frame — dt is milliseconds since last frame
-  on tick(dt) {
+  event tick(dt) {
     # use dt to make frame-independent timers
   }
 
   # ── CUSTOM EVENTS ─────────────────────────────────────────────────────────
-  on jump {
+  event jump {
     emit log("jumped!")
   }
 
-  on heal(amount) {
+  event heal(amount) {
     hp + amount -> hp         # data flow: expression -> target
     check hp > max_hp: {
       max_hp -> hp
@@ -45,7 +45,7 @@ entity Player {
   }
 
   # ── DATA FLOW ─────────────────────────────────────────────────────────────
-  on examples {
+  event examples {
     100 -> hp                 # set
     hp - 10 -> hp             # subtract
     hp * 2 -> doubled         # store in local var
@@ -56,7 +56,7 @@ entity Player {
   }
 
   # ── CHECK (GUARD) ─────────────────────────────────────────────────────────
-  on check_examples {
+  event check_examples {
     # inline action — only runs if condition is true
     check hp > 0: emit log("alive")
 
@@ -76,7 +76,7 @@ entity Player {
   }
 
   # ── EMIT ──────────────────────────────────────────────────────────────────
-  on emit_examples {
+  event emit_examples {
     emit jump                       # send to self (implicit)
     emit self.jump                  # send to self (explicit)
     emit Enemy.take_damage(25)      # send to another entity
@@ -89,7 +89,7 @@ entity Player {
   # ── SYNC EMIT (returns a value) ───────────────────────────────────────────
   # Executes immediately, bypassing the event queue.
   # Returns the last assigned value inside the called event.
-  on take_damage(amount) {
+  event take_damage(amount) {
     emit MathLib.clamp(hp - amount, 0, max_hp) -> hp
     # chains are allowed: MathLib.clamp can call other sync events
     # direct recursion is forbidden: clamp cannot call itself
@@ -97,12 +97,12 @@ entity Player {
   }
 
   # sync result can also go into a pool slot
-  on sync_to_pool {
+  event sync_to_pool {
     emit MathLib.abs(scores.at[1]) -> scores.at[1]
   }
 
   # ── ARITHMETIC ────────────────────────────────────────────────────────────
-  on math {
+  event math {
     hp + 10 -> hp
     hp - 5 -> hp
     hp * 2 -> hp
@@ -111,7 +111,7 @@ entity Player {
   }
 
   # ── STRINGS ───────────────────────────────────────────────────────────────
-  on strings {
+  event strings {
     "Hello" + " " + "World" -> greeting
     check name == "Hero": emit log("is hero")
     check name != "Villain": emit log("not villain")
@@ -119,7 +119,7 @@ entity Player {
   }
 
   # ── BLOCK ─────────────────────────────────────────────────────────────────
-  on block_example {
+  event block_example {
     {
       hp + 10 -> hp
       emit log("healed")
@@ -132,7 +132,7 @@ entity PoolExamples {
   has items: pool["sword", "shield", "potion"]
   has enemies: pool[]
 
-  on init {
+  event init {
     # read
     items.count -> size            # number of elements
     items.at[1] -> first           # get by index (1-based)
@@ -161,22 +161,22 @@ entity PoolExamples {
 
 # ── SYNC LIBRARY PATTERN ──────────────────────────────────────────────────────
 entity MathLib {
-  on clamp(value, min, max) {
+  event clamp(value, min, max) {
     check value < min: min -> value
     check value > max: max -> value
     value -> result               # last assigned = return value
   }
 
-  on abs(value) {
+  event abs(value) {
     check value < 0: value * -1 -> value
     value -> result
   }
 
-  on lerp(a, b, t) {
+  event lerp(a, b, t) {
     a + (b - a) * t -> result
   }
 
-  on normalize(value, min, max) {
+  event normalize(value, min, max) {
     (value - min) / (max - min) -> result
   }
 }
@@ -195,17 +195,17 @@ entity MathLib {
 entity Logger {
   has severity: 3
 
-  on init {
+  event init {
     when Player.die : onPlayerDied             # subscribe, no args
     when Enemy.die  : onEnemyDied(severity)    # passes Logger.severity at fire time
   }
 
-  on onPlayerDied {
+  event onPlayerDied {
     emit log("Player died")
     unwhen Player.die : onPlayerDied           # unsubscribe — no args to match
   }
 
-  on onEnemyDied(sev) {
+  event onEnemyDied(sev) {
     emit log("Enemy died, severity:", sev)
     unwhen Enemy.die : onEnemyDied(severity)   # unwhen args must match the when args
   }
@@ -229,11 +229,11 @@ entity Enemy {
   has hp: 50
   has alive: true
 
-  on init {
+  event init {
     emit log("Enemy spawned")
   }
 
-  on take_damage(amount) {
+  event take_damage(amount) {
     hp - amount -> hp
     check hp <= 0: {
       false -> alive
@@ -241,7 +241,7 @@ entity Enemy {
     }
   }
 
-  on die {
+  event die {
     emit log("Enemy died")
     emit self.destroy               # marks entity for garbage collection
                                     # removed from pools on next GarbageCollect
@@ -254,13 +254,13 @@ entity Game {
   has enemies: pool[]
   has timer: 0
 
-  on init {
+  event init {
     emit enemies.add("Enemy")
     emit enemies.add("Enemy")
     emit log("Game started with", enemies.count, "enemies")
   }
 
-  on tick(dt) {
+  event tick(dt) {
     timer + dt -> timer
     check timer >= 2000: {
       emit enemies.add("Enemy")
@@ -268,11 +268,11 @@ entity Game {
     }
   }
 
-  on player_attack(damage) {
+  event player_attack(damage) {
     emit enemies.each("take_damage", damage)
   }
 
-  on enemy_died {
+  event enemy_died {
     score + 100 -> score
     emit log("Score:", score)
   }

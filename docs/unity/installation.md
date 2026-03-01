@@ -21,8 +21,8 @@ entity Player {
   has hp: 100
   has damage: 25
   has level: 1
-  
-  on level_up {
+
+  event level_up {
     level + 1 -> level
     hp + 20 -> hp
     emit unity("Log", "Level up! New level:", level)
@@ -43,10 +43,10 @@ public class PlayerController : MonoBehaviour
         double hp = System.Convert.ToDouble(
             MorphynController.Instance.GetField("Player", "hp")
         );
-        
+
         Debug.Log($"Player HP: {hp}");
     }
-    
+
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.L))
@@ -69,5 +69,4 @@ public class PlayerController : MonoBehaviour
 ## Next Steps
 
 - [Unity API Reference](api.md)
-- [Unity Examples](examples.md)
-- [Hot Reload Guide](overview.md#hot-reload)
+- [Learn in Y minutes](learn-unity.md)
