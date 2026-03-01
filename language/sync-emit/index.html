@@ -791,10 +791,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#direct-recursion-is-forbidden" class="md-nav__link">
+  <a href="#recursion-and-loops" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Direct recursion is forbidden
+        Recursion and Loops
       
     </span>
   </a>
@@ -1406,10 +1406,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#direct-recursion-is-forbidden" class="md-nav__link">
+  <a href="#recursion-and-loops" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Direct recursion is forbidden
+        Recursion and Loops
       
     </span>
   </a>
@@ -1599,15 +1599,32 @@ The result written to <code>field</code> is the <strong>last assigned value</str
 </span><span id="__span-3-18"><a id="__codelineno-3-18" name="__codelineno-3-18" href="#__codelineno-3-18"></a>  <span class="p">}</span>
 </span><span id="__span-3-19"><a id="__codelineno-3-19" name="__codelineno-3-19" href="#__codelineno-3-19"></a><span class="p">}</span>
 </span></code></pre></div>
-<h3 id="direct-recursion-is-forbidden">Direct recursion is forbidden</h3>
-<p>An event <strong>cannot call itself</strong> synchronously. This prevents infinite loops:</p>
-<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="k">entity</span> <span class="nc">Bad</span> <span class="p">{</span>
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>  <span class="k">event</span> <span class="nf">recurse</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="p">{</span>
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>    <span class="k">emit</span> <span class="nc">Bad</span><span class="p">.</span><span class="n">recurse</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">value</span>  <span class="c1"># runtime error — recursive sync call</span>
-</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>  <span class="p">}</span>
-</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="p">}</span>
+<h3 id="recursion-and-loops">Recursion and Loops</h3>
+<p>Sync calls now support deep recursion. This allows you to implement while and for logic by having an event call itself or other events synchronously.</p>
+<p>Since the runtime uses a managed heap-based stack instead of the system call stack, these calls are safe and won't crash the application even at high iteration counts.</p>
+<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="k">entity</span> <span class="nc">Loop</span> <span class="p">{</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>  <span class="k">has</span> <span class="nv">counter</span><span class="p">:</span> <span class="m">0</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>  <span class="c1"># Recursive loop implementation</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>  <span class="k">event</span> <span class="nf">repeat</span><span class="p">(</span><span class="n">times</span><span class="p">)</span> <span class="p">{</span>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>    <span class="k">check</span> <span class="n">counter</span> <span class="o o-Comparison">&lt;</span> <span class="n">times</span><span class="p">:</span> <span class="p">{</span>
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>      <span class="n">counter</span> <span class="o o-Arithmetic">+</span> <span class="m">1</span> <span class="o">-&gt;</span> <span class="n">counter</span>
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>      <span class="k">emit</span> <span class="kc">self</span><span class="p">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">times</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">result</span>  <span class="c1"># OK: recursive call</span>
+</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a>    <span class="p">}</span>
+</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a>    <span class="n">counter</span> <span class="o">-&gt;</span> <span class="n">result</span>
+</span><span id="__span-4-11"><a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a>  <span class="p">}</span>
+</span><span id="__span-4-12"><a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a><span class="p">}</span>
 </span></code></pre></div>
-<p>The check is per <code>(entity, event)</code> pair — <code>A.foo</code> calling <code>A.foo</code> is forbidden, but <code>A.foo</code> calling <code>A.bar</code> or <code>B.foo</code> is fine.</p>
+<p>Safety Limit</p>
+<p>To prevent accidental infinite loops from hanging the engine, a safety threshold is enforced:</p>
+<ul>
+<li>
+<p>Max Depth: 100,000,000 nested calls.</p>
+</li>
+<li>
+<p>Exceeding this limit throws a [Sync Error] but keeps the engine running.</p>
+</li>
+</ul>
 <h3 id="regular-emit-inside-sync-events">Regular emit inside sync events</h3>
 <p>Regular <code>emit</code> is allowed inside sync events. The events are held in a separate side-effect queue and flushed to the main queue <strong>after the outermost sync call completes</strong>. This means side effects happen after the result is returned, not during.</p>
 <div class="language-morphyn highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="k">entity</span> <span class="nc">MathLib</span> <span class="p">{</span>
