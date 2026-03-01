@@ -1,7 +1,7 @@
 {
   "iconDefinitions": {
     "morph_icon": {
-      "iconPath": "./media/icon.png"
+      "iconPath": "media/icon.svg" 
     }
   },
   "fileExtensions": {

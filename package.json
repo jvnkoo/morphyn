@@ -1,60 +1,65 @@
 {
-    "name": "morphyn-lang",
-    "displayName": "Morphyn Language",
-    "description": "Support for Morphyn language including syntax highlighting and custom icons.",
-    "version": "1.0.0",
-    "publisher": "sakvmori",
-    "author": {
-        "name": "sakvmori"
-    },
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/jvnkoo/morphyn/tree/vscode-extension"
-    },
-    "engines": {
-        "vscode": "^1.50.0"
-    },
-    "categories": [
-        "Programming Languages"
-    ],
-    "contributes": {
-        "languages": [
-            {
-                "id": "morphyn",
-                "aliases": [
-                    "Morphyn"
-                ],
-                "extensions": [
-                    ".morphyn",
-                    ".morph",
-                    ".mrph"
-                ],
-                "configuration": "./language-configuration.json",
-                "icon": {
-                    "light": "./media/icon.png",
-                    "dark": "./media/icon.png"
-                }
-            }
-        ],
-        "grammars": [
-            {
-                "language": "morphyn",
-                "scopeName": "source.morphyn",
-                "path": "./morphyn.tmLanguage.json"
-            }
-        ],
-        "snippets": [
-            {
-                "language": "morphyn",
-                "path": "./snippets.json"
-            }
-        ],
-        "iconThemes": [
-            {
-                "id": "morphyn-icons",
-                "label": "Morphyn Icons",
-                "path": "./file-icons.json"
-            }
-        ]
-    }
+	"name": "morphyn-lang",
+	"displayName": "Morphyn Language",
+	"description": "Support for Morphyn language including syntax highlighting and custom icons.",
+	"version": "1.0.0",
+	"publisher": "sakvmori",
+	"author": {
+		"name": "sakvmori"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/jvnkoo/morphyn/tree/vscode-extension"
+	},
+	"engines": {
+		"vscode": "^1.50.0"
+	},
+	"categories": [
+		"Programming Languages"
+	],
+	"contributes": {
+		"languages": [
+			{
+				"id": "morphyn",
+				"aliases": [
+					"Morphyn"
+				],
+				"extensions": [
+					".morphyn",
+					".morph",
+					".mrph"
+				],
+				"configuration": "./language-configuration.json",
+				"icon": {
+					"light": "./media/icon.svg",
+					"dark": "./media/icon.svg"
+				}
+			}
+		],
+		"grammars": [
+			{
+				"language": "morphyn",
+				"scopeName": "source.morphyn",
+				"path": "./morphyn.tmLanguage.json"
+			}
+		],
+		"snippets": [
+			{
+				"language": "morphyn",
+				"path": "./snippets.json"
+			}
+		],
+		"iconThemes": [
+			{
+				"id": "morphyn-icons",
+				"label": "Morphyn Icons",
+				"path": "./file-icons.json"
+			}
+		]
+	},
+	"__metadata": {
+		"installedTimestamp": 1772140781668,
+		"targetPlatform": "undefined",
+		"size": 1759757
+	}
 }

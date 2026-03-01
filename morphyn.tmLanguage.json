@@ -29,7 +29,7 @@
     },
     {
       "name": "keyword.control.morphyn",
-      "match": "\\b(entity|on|has|check|import|emit|when|unwhen|and|or|not)\\b"
+      "match": "\\b(entity|event|has|check|import|emit|when|unwhen|and|or|not)\\b"
     },
     {
       "name": "constant.language.morphyn",
@@ -65,7 +65,11 @@
     },
     {
       "name": "entity.name.function.morphyn",
-      "match": "(?<=on\\s+)[a-z_][a-zA-Z0-9_]*"
+      "match": "(?<=event\\s+)[a-z_][a-zA-Z0-9_]*"
+    },
+    {
+      "name": "support.function.builtin.morphyn",
+      "match": "\\b(log|count|add|remove_at|at|each|push|pop|shift|swap|insert|remove|clear|abs|min|max|clamp|lerp|pow|input|unity)\\b"
     },
     {
       "name": "support.function.builtin.morphyn",

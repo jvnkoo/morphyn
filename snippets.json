@@ -5,16 +5,16 @@
       "entity ${1:Name} {",
       "\thas ${2:property}: ${3:value}",
       "",
-      "\ton init {",
+      "\tevent init {",
       "\t\t${0}",
       "\t}",
       "}"
     ]
   },
-  "On Event": {
-    "prefix": "on",
+  "Event Handler": {
+    "prefix": "event",
     "body": [
-      "on ${1:event_name}(${2:params}) {",
+      "event ${1:event_name}(${2:params}) {",
       "\t${0}",
       "}"
     ]
