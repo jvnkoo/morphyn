@@ -17,7 +17,7 @@ class MorphynLexer(RegexLexer):
             (r'"[^"]*"', String.Double),
             
             # Keywords
-            (words(('entity', 'on', 'has', 'check', 'import', 'emit'), suffix=r'\b'), Keyword),
+            (words(('entity', 'event', 'has', 'check', 'import', 'emit'), suffix=r'\b'), Keyword),
             
             # Constants
             (words(('true', 'false', 'self', 'pool', 'null'), suffix=r'\b'), Keyword.Constant),
