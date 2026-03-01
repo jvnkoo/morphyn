@@ -39,7 +39,7 @@ class MorphynLexer(RegexLexer):
             (r'\b[A-Z][a-zA-Z0-9_]*\b', Name.Class),
             
             # Function/event names
-            (r'(?<=on\s)[a-z_][a-zA-Z0-9_]*', Name.Function),
+            (r'(?<=event\s)[a-z_][a-zA-Z0-9_]*', Name.Function),
             
             # Field names
             (r'(?<=has\s)[a-z_][a-zA-Z0-9_]*', Name.Variable),
