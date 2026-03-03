@@ -63,6 +63,11 @@ public class MorphynController : MonoBehaviour
     private object?[] _internalArgsBuffer = new object?[8];
     private object?[] _syncArgsBuffer = new object?[4];
 
+    private static readonly Dictionary<string, string> _stdlibPaths = new()
+    {
+        { "math",   "MorphynStdLib/math"   },
+    };
+
     public EntityData Context => _context;
 
     void Awake()
@@ -123,8 +128,7 @@ public class MorphynController : MonoBehaviour
                         combinedCode += script.text + "\n";
                     }
 #else
-                // In Build, we rely on the pre-loaded TextAsset content
-                combinedCode += script.text + "\n";
+                combinedCode += ResolveImportsFromText(script.text, visitedFiles) + "\n";
 #endif
             }
 
@@ -242,8 +246,20 @@ public class MorphynController : MonoBehaviour
                 {
                     string relativePath = trimmed.Substring(firstQuote + 1, lastQuote - firstQuote - 1);
                     string fullSubPath = Path.GetFullPath(Path.Combine(currentDir, relativePath));
-                    
-                    finalContent.Add(ResolveImports(fullSubPath, visited));
+
+                    if (File.Exists(fullSubPath))
+                    {
+                        finalContent.Add(ResolveImports(fullSubPath, visited));
+                    }
+                    else
+                    {
+                        // Fallback: попробовать стандартную библиотеку
+                        string? stdlib = TryLoadStdlib(relativePath);
+                        if (stdlib != null)
+                            finalContent.Add(stdlib);
+                        else
+                            Debug.LogWarning($"[Morphyn] Import not found: {fullSubPath}");
+                    }
                     continue; // Skip adding the import line itself
                 }
             }
@@ -252,6 +268,53 @@ public class MorphynController : MonoBehaviour
         }
 
         return string.Join("\n", finalContent);
+    }
+
+    private string ResolveImportsFromText(string content, HashSet<string> visited)
+    {
+        string[] lines = content.Split('\n');
+        var finalContent = new List<string>(lines.Length);
+
+        foreach (var line in lines)
+        {
+            string trimmed = line.Trim();
+            if (trimmed.StartsWith("import ") && trimmed.Contains("\""))
+            {
+                int firstQuote = trimmed.IndexOf('"');
+                int lastQuote = trimmed.LastIndexOf('"');
+                if (firstQuote != -1 && lastQuote > firstQuote)
+                {
+                    string importName = trimmed.Substring(firstQuote + 1, lastQuote - firstQuote - 1);
+                    string key = importName.ToLowerInvariant();
+
+                    if (!visited.Contains(key))
+                    {
+                        visited.Add(key);
+                        string? stdlib = TryLoadStdlib(importName);
+                        if (stdlib != null)
+                            finalContent.Add(stdlib);
+                        else
+                            Debug.LogWarning($"[Morphyn] Import '{importName}' not found.");
+                    }
+                    continue;
+                }
+            }
+            finalContent.Add(line);
+        }
+        return string.Join("\n", finalContent);
+    }
+
+    private static string? TryLoadStdlib(string importName)
+    {
+        string name = Path.GetFileNameWithoutExtension(importName);
+
+        if (_stdlibPaths.TryGetValue(name, out var resourcePath))
+        {
+            var asset = Resources.Load<TextAsset>(resourcePath);
+            if (asset != null) return asset.text;
+            Debug.LogWarning($"[Morphyn] Stdlib '{name}' not found at Resources/{resourcePath}");
+        }
+        return null;
     }
 
     void SetupHotReload()

@@ -1,0 +1,1236 @@
+entity math {
+    # === LIB CONSTANTS ===
+    has EPSILON: 0.000001
+    has INFINITY: 1000000000.0
+    has PI: 3.1415926535
+    has TAU: 6.2831853071
+    has E: 2.7182818284
+
+    # Multi-value return fields — vector functions write here instead of 'result'
+    has out_x: 0.0
+    has out_y: 0.0
+    has out_z: 0.0
+    has out_velocity: 0.0
+
+    # Matrix 3x3 output fields (row-major: m00, m01, m02, m10...)
+    has out_m00: 0.0
+    has out_m01: 0.0
+    has out_m02: 0.0
+    has out_m10: 0.0
+    has out_m11: 0.0
+    has out_m12: 0.0
+    has out_m20: 0.0
+    has out_m21: 0.0
+    has out_m22: 0.0
+
+    has random_seed: 12345.0
+
+    # Float rounding to specific decimal places
+    event to_fixed(value, decimals) {
+        emit pow(10.0, decimals) -> factor
+        emit round(value * factor) -> rounded
+        rounded / factor -> result
+    }
+
+    # === BASIC ARITHMETIC ===
+
+    # Returns the absolute value of a number
+    # Examples: abs(-5) = 5, abs(3.14) = 3.14
+    event abs(value) {
+        check value < 0.0: value * -1.0 -> result
+        check value >= 0.0: value -> result
+    }
+
+    # Returns the smaller of two values
+    # Example: min(10, 5) = 5
+    event min(a, b) {
+        check a < b: a -> result
+        check a >= b: b -> result
+    }
+
+    # Returns the larger of two values
+    # Example: max(10, 5) = 10
+    event max(a, b) {
+        check a > b: a -> result
+        check a <= b: b -> result
+    }
+
+    # Clamps a value between a minimum and maximum
+    # Example: clamp(150, 0, 100) = 100
+    event clamp(value, min, max) {
+        check value < min: min -> result
+        check value > max: max -> result
+        check value >= min and value <= max: value -> result
+    }
+
+    # Returns the sign of a number: 1 for positive, -1 for negative, 0 for zero
+    # Examples: sign(5) = 1, sign(-3) = -1, sign(0) = 0
+    event sign(value) {
+        check value > 0.0: 1.0 -> result
+        check value < 0.0: -1.0 -> result
+        check value == 0.0: 0.0 -> result
+    }
+
+    # === INTERPOLATION ===
+
+    # Linear interpolation between a and b by factor t
+    # t=0 returns a, t=1 returns b, t=0.5 returns midpoint
+    # Example: lerp(0, 100, 0.5) = 50
+    event lerp(a, b, t) {
+        a + (b - a) * t -> result
+    }
+
+    # Linear interpolation with t clamped between 0 and 1
+    # Prevents extrapolation outside the [a, b] range
+    event lerp_clamped(a, b, t) {
+        emit clamp(t, 0.0, 1.0) -> clamped_t
+        a + (b - a) * clamped_t -> result
+    }
+
+    # Inverse of lerp: finds t such that lerp(a, b, t) = value
+    # Example: inverse_lerp(0, 100, 50) = 0.5
+    event inverse_lerp(a, b, value) {
+        (value - a) / (b - a) -> result
+    }
+
+    # Smooth interpolation using Hermite curve (ease in/out)
+    # Creates smooth acceleration and deceleration
+    # Example: smooth_step(0, 100, 0.5) ≈ 50 but with smooth curve
+    event smooth_step(a, b, t) {
+        emit clamp(t, 0.0, 1.0) -> t_clamped
+        t_clamped * t_clamped * (3.0 - 2.0 * t_clamped) -> smooth_t
+        emit lerp(a, b, smooth_t) -> result
+    }
+
+    # Spherical Linear Interpolation for angles
+    # Smoother than lerp_angle, moves at constant angular velocity
+    event slerp_angle(a, b, t) {
+        emit delta_angle(a, b) -> delta
+        a + delta * t -> result
+    }
+
+    # Catmull-Rom spline for smooth paths through 4 control points (1D)
+    event catmull_rom(p0, p1, p2, p3, t) {
+        0.5 * ((2.0 * p1) + (p2 - p0) * t + (2.0 * p0 - 5.0 * p1 + 4.0 * p2 - p3) * t * t + (3.0 * p1 - p0 - 3.0 * p2 + p3) * t * t * t) -> result
+    }
+
+    # Catmull-Rom spline for 2D paths — result in out_x, out_y
+    event catmull_rom_2d(p0x, p0y, p1x, p1y, p2x, p2y, p3x, p3y, t) {
+        emit catmull_rom(p0x, p1x, p2x, p3x, t) -> out_x
+        emit catmull_rom(p0y, p1y, p2y, p3y, t) -> out_y
+    }
+
+    # Physical spring: updates position towards target with momentum
+    # Store out_velocity and pass it back each frame
+    event spring(current, target, velocity, stiffness, damping, dt) {
+        target - current -> force
+        force * stiffness -> accel
+        accel - (velocity * damping) -> total_force
+        velocity + total_force * dt -> out_velocity
+        current + out_velocity * dt -> result
+    }
+
+    # Linear interpolation for 2D vectors — result in out_x, out_y
+    event lerp_2d(ax, ay, bx, by, t) {
+        emit lerp(ax, bx, t) -> out_x
+        emit lerp(ay, by, t) -> out_y
+    }
+
+    # Linear interpolation for 3D vectors — result in out_x, out_y, out_z
+    event lerp_3d(ax, ay, az, bx, by, bz, t) {
+        emit lerp(ax, bx, t) -> out_x
+        emit lerp(ay, by, t) -> out_y
+        emit lerp(az, bz, t) -> out_z
+    }
+
+    # === ROUNDING ===
+
+    # Rounds down to nearest integer
+    # Examples: floor(3.7) = 3, floor(-2.3) = -3
+    event floor(value) {
+        check value >= 0.0: {
+            value -> int_part
+            int_part -> result
+        }
+        check value < 0.0: {
+            value -> int_part
+            check value != int_part: int_part - 1.0 -> result
+            check value == int_part: int_part -> result
+        }
+    }
+
+    # Rounds up to nearest integer
+    # Examples: ceil(3.2) = 4, ceil(-2.7) = -2
+    event ceil(value) {
+        emit floor(value) -> f
+        check value == f: f -> result        
+        check value != f: f + 1.0 -> result  
+    }
+
+    # Rounds to nearest integer (0.5 rounds up)
+    # Examples: round(3.5) = 4, round(3.4) = 3
+    event round(value) {
+        emit floor(value + 0.5) -> result
+    }
+
+    # Snaps a value to the nearest grid step
+    # Example: snap(13, 10) = 10, snap(17, 10) = 20
+    event snap(value, step) {
+        emit round(value / step) -> rounded
+        rounded * step -> result
+    }
+
+    # === NORMALIZATION & MAPPING ===
+
+    # Converts value from [min, max] range to [0, 1] range
+    # Example: normalize(50, 0, 100) = 0.5
+    event normalize(value, min, max) {
+        (value - min) / (max - min) -> result
+    }
+
+    # Maps value from one range to another
+    # Example: remap(50, 0, 100, 0, 200) = 100
+    # (50% of 0-100 becomes 50% of 0-200)
+    event remap(value, from_min, from_max, to_min, to_max) {
+        emit normalize(value, from_min, from_max) -> normalized
+        emit lerp(to_min, to_max, normalized) -> result
+    }
+
+    # === DISTANCE & MAGNITUDE ===
+
+    # Distance between two points event a line
+    # Example: distance_1d(10, 5) = 5
+    event distance_1d(a, b) {
+        b - a -> diff
+        emit abs(diff) -> result
+    }
+
+    # Distance between two points in 2D space
+    # Example: distance_2d(0, 0, 3, 4) = 5
+    event distance_2d(x1, y1, x2, y2) {
+        x2 - x1 -> dx
+        y2 - y1 -> dy
+        emit sqrt(dx * dx + dy * dy) -> result
+    }
+
+    # Distance between two points in 3D space
+    # Example: distance_3d(0, 0, 0, 1, 1, 1) ≈ 1.732
+    event distance_3d(x1, y1, z1, x2, y2, z2) {
+        x2 - x1 -> dx
+        y2 - y1 -> dy
+        z2 - z1 -> dz
+        emit sqrt(dx * dx + dy * dy + dz * dz) -> result
+    }
+
+    # Length of a 2D vector from origin
+    # Example: magnitude_2d(3, 4) = 5
+    event magnitude_2d(x, y) {
+        emit sqrt(x * x + y * y) -> result
+    }
+
+    # Length of a 3D vector from origin
+    # Example: magnitude_3d(1, 2, 2) = 3
+    event magnitude_3d(x, y, z) {
+        emit sqrt(x * x + y * y + z * z) -> result
+    }
+
+    # === POWER & ROOTS ===
+
+    # Square root using Newton's method approximation (10 iterations max)
+    # Example: sqrt(25) = 5, sqrt(2) ≈ 1.414
+    event sqrt(value) {
+        check value <= 0.0: 0.0 -> result
+        check value > 0.0: {
+            value / 2.0 -> guess
+            emit sqrt_iterate(guess, value, 0) -> result
+        }
+    }
+
+    # Internal helper for sqrt - iterates Newton's method
+    # Don't call directly, use sqrt() instead
+    event sqrt_iterate(guess, value, iterations) {
+        check iterations >= 10: guess -> result
+        check iterations < 10: {
+            (guess + value / guess) / 2.0 -> new_guess
+            emit abs(new_guess - guess) -> diff
+            check diff < 0.0001: new_guess -> result
+            check diff >= 0.0001: {
+                iterations + 1 -> next_iter
+                emit sqrt_iterate(new_guess, value, next_iter) -> result
+            }
+        }
+    }
+
+    # Inverse square root
+    # Example: inv_sqrt(4) = 0.5
+    event inv_sqrt(x) {
+        emit sqrt(x) -> sqrt_val
+        1.0 / sqrt_val -> result
+    }
+
+    # Fast Inverse Square Root approximation
+    # Essential for high-performance vector normalization
+    event fast_inv_sqrt(x) {
+        check x <= 0.0: 0.0 -> result
+        check x > 0.0: {
+            # Initial guess
+            1.0 / x -> y
+            # One iteration of Newton's method for better precision
+            y * (1.5 - (x * 0.5 * y * y)) -> result
+        }
+    }
+
+    # Power function for integer exponents between -20 and 20
+    # Example: pow(2, 3) = 8, pow(10, -2) = 0.01
+    # Warning: Non-integer exponents will be floored
+    event pow(base, exp) {
+        check exp == 0.0: 1.0 -> result
+        check exp == 1.0: base -> result
+        check base == 0.0: 0.0 -> result
+        check exp > 1.0: {
+            emit floor(exp) -> exp_int
+            emit pow_int(base, exp_int) -> result
+        }
+        check exp < 0.0: {
+            emit abs(exp) -> abs_exp
+            emit floor(abs_exp) -> exp_int
+            emit pow_int(base, exp_int) -> power
+            1.0 / power -> result  
+        }
+        check exp > 0.0 and exp < 1.0: {
+            emit pow_fixed(base, exp) -> result
+        }
+    }
+
+    # Internal helper for pow - calculates base^exp for positive integers
+    # Don't call directly, use pow() instead
+    event pow_int(base, exp) {
+        emit pow_loop(base, base, 1.0, exp) -> result
+    }
+
+    # Internal loop for pow_int
+    event pow_loop(base, current, counter, exp) {
+        check counter >= exp: current -> result
+        check counter < exp: {
+            current * base -> next_val
+            counter + 1.0 -> next_counter
+            emit pow_loop(base, next_val, next_counter, exp) -> result
+        }
+    }
+
+    # Power function supporting fractional exponents via e^(exp * ln(base))
+    # Example: pow_fixed(2, 0.5) ≈ 1.414 (square root of 2)
+    event pow_fixed(base, exp) {
+        check base > 0.0: {
+            emit ln_approx(base) -> ln_b
+            emit exp_approx(exp * ln_b) -> result
+        }
+        check base == 0.0: 0.0 -> result
+        check base < 0.0: {
+            emit floor(exp) -> exp_int
+            emit pow_int(base, exp_int) -> result
+        }
+    }
+
+    # === ADVANCED MATH (Trig, Log) ===
+
+    # Tangent function
+    event tan(x) {
+        emit sin(x) -> s
+        emit cos(x) -> c
+        emit abs(c) -> abs_c
+        check abs_c < EPSILON: INFINITY -> result
+        check abs_c >= EPSILON: s / c -> result
+    }
+
+    # Inverse sine approximation, accurate for x in [-1, 1]
+    event asin(x) {
+        emit clamp(x, -1.0, 1.0) -> cx
+        cx + (cx * cx * cx) / 6.0 + (3.0 * cx * cx * cx * cx * cx) / 40.0 -> result
+    }
+
+    # Inverse cosine: acos(x) = PI/2 - asin(x)
+    event acos(x) {
+        emit asin(x) -> a
+        1.570796 - a -> result
+    }
+
+    # Inverse tangent approximation
+    event atan(x) {
+        (x * (15.0 + x * x)) / (15.0 + 9.0 * x * x) -> result
+    }
+
+    # Base-10 logarithm
+    event log10(x) {
+        emit ln_approx(x) -> ln_val
+        ln_val / 2.302585 -> result
+    }
+
+    # Logarithm of any base: log_base(x, b) = ln(x) / ln(b)
+    event log_base(x, b) {
+        emit ln_approx(x) -> ln_x
+        emit ln_approx(b) -> ln_b
+        ln_x / ln_b -> result
+    }
+
+    # === COMPARISON & APPROXIMATION ===
+
+    # Checks if two numbers are approximately equal within epsilon tolerance
+    # Returns 1.0 (true) if |a - b| < epsilon, otherwise 0.0 (false)
+    # Example: approximately(0.1 + 0.2, 0.3, 0.0001) = 1.0 (handles float precision)
+    event approximately(a, b, epsilon) {
+        emit abs(a - b) -> diff
+        check diff < epsilon: 1.0 -> result
+        check diff >= epsilon: 0.0 -> result
+    }
+
+    # Checks if two numbers are approximately equal (epsilon = 0.0001)
+    # Useful for comparing floating point results
+    event approximately_default(a, b) {
+        emit approximately(a, b, 0.0001) -> result
+    }
+
+    # === ANGLE OPERATIONS ===
+
+    # Finds the shortest rotation between two angles in degrees
+    # Returns value in range [-180, 180]
+    # Example: delta_angle(350, 10) = 20 (not 340)
+    event delta_angle(current, target) {
+        target - current -> diff
+        check diff > 180.0: diff - 360.0 -> result
+        check diff < -180.0: diff + 360.0 -> result
+        check diff >= -180.0 and diff <= 180.0: diff -> result
+    }
+
+    # Wraps value between 0 and length (modulo operation)
+    # Example: repeat(370, 360) = 10, repeat(-10, 360) = 350
+    event repeat(value, length) {
+        emit floor(value / length) -> quotient
+        value - quotient * length -> result
+    }
+
+    # Creates a ping-pong effect: value bounces between 0 and length
+    # Example: ping_pong(0.5, 1) = 0.5, ping_pong(1.5, 1) = 0.5
+    # Useful for animations that reverse direction
+    event ping_pong(t, length) {
+        length * 2.0 -> doubleLength
+        emit repeat(t, doubleLength) -> repeated
+        repeated - length -> diff
+        emit abs(diff) -> absDiff
+        length - absDiff -> result
+    }
+
+    # Clamps an angle (in degrees) between min and max, handling 360-degree wrap
+    # Prevents "neck-snapping" rotations in AI or cameras
+    event clamp_angle(angle, min, max) {
+        emit repeat(angle, 360.0) -> a
+        check a > 180.0: a - 360.0 -> a
+        emit clamp(a, min, max) -> result
+    }
+
+    # === EASING FUNCTIONS ===
+
+    # Quadratic ease-in: slow start, accelerating
+    # Example: ease_in_quad(0.5) = 0.25
+    event ease_in_quad(t) {
+        t * t -> result
+    }
+
+    # Quadratic ease-out: fast start, decelerating
+    # Example: ease_out_quad(0.5) = 0.75
+    event ease_out_quad(t) {
+        t * (2.0 - t) -> result
+    }
+
+    # Quadratic ease-in-out: slow start and end, fast middle
+    # Example: ease_in_out_quad(0.5) = 0.5
+    event ease_in_out_quad(t) {
+        check t < 0.5: 2.0 * t * t -> result
+        check t >= 0.5: {
+            -1.0 + (4.0 - 2.0 * t) * t -> result
+        }
+    }
+
+    # Cubic ease-in: very slow start, strong acceleration
+    # Example: ease_in_cubic(0.5) = 0.125
+    event ease_in_cubic(t) {
+        t * t * t -> result
+    }
+
+    # Cubic ease-out: fast start, strong deceleration
+    # Example: ease_out_cubic(0.5) = 0.875
+    event ease_out_cubic(t) {
+        (t - 1.0) -> t_minus_1
+        t_minus_1 * t_minus_1 * t_minus_1 + 1.0 -> result
+    }
+
+    # Cubic ease-in-out: very smooth acceleration and deceleration
+    # Example: ease_in_out_cubic(0.5) = 0.5
+    event ease_in_out_cubic(t) {
+        check t < 0.5: 4.0 * t * t * t -> result
+        check t >= 0.5: {
+            (2.0 * t - 2.0) -> factor
+            (factor * factor * factor + 2.0) / 2.0 -> result
+        }
+    }
+
+    # Overshoots the target slightly then settles back
+    # Great for "organic" UI button pops
+    event ease_out_back(t) {
+        2.70158 -> c1
+        (t - 1.0) -> t1
+        1.0 + c1 * (t1 * t1 * t1) + 1.70158 * (t1 * t1) -> result
+    }
+
+    # Ease-in version of back easing
+    event ease_in_back(t) {
+        (1.70158 + 1.0) * t * t * t - 1.70158 * t * t -> result
+    }
+
+    # Ease-in-out version of back easing
+    event ease_in_out_back(t) {
+        1.70158 * 1.525 -> c1
+        check t < 0.5: {
+            (2.0 * t) * (2.0 * t) * ((c1 + 1.0) * 2.0 * t - c1) / 2.0 -> result
+        }
+        check t >= 0.5: {
+            (2.0 * t - 2.0) -> f
+            (f * f * ((c1 + 1.0) * f + c1) + 2.0) / 2.0 -> result
+        }
+    }
+
+    # Creates a bouncing effect like a falling ball
+    event ease_out_bounce(t) {
+        check t < 0.3636: 7.5625 * t * t -> result
+        check t >= 0.3636 and t < 0.7272: {
+            (t - 0.5454) -> t2
+            7.5625 * t2 * t2 + 0.75 -> result
+        }
+        check t >= 0.7272: {
+            (t - 0.9090) -> t2
+            7.5625 * t2 * t2 + 0.9843 -> result
+        }
+    }
+
+    # Ease-in version of bounce easing
+    event ease_in_bounce(t) {
+        emit ease_out_bounce(1.0 - t) -> eb
+        1.0 - eb -> result
+    }
+
+    # Ease-in-out version of bounce easing
+    event ease_in_out_bounce(t) {
+        check t < 0.5: {
+            emit ease_in_bounce(t * 2.0) -> eb
+            eb / 2.0 -> result
+        }
+        check t >= 0.5: {
+            emit ease_out_bounce(t * 2.0 - 1.0) -> eb
+            (1.0 + eb) / 2.0 -> result
+        }
+    }
+
+    # === WAVE SHAPES ===
+
+    # Triangle wave: unlike Sin, this is perfectly linear up and down
+    event triangle_wave(t) {
+        emit repeat(t, 1.0) -> x
+        emit abs(x * 2.0 - 1.0) -> result
+    }
+
+    # Square wave: returns 1.0 or -1.0. Used for blinking, pulsing, or digital logic.
+    event square_wave(t) {
+        emit sin(t) -> s
+        check s >= 0.0: 1.0 -> result
+        check s < 0.0: -1.0 -> result
+    }
+
+    # === MATRIX 3x3 OPERATIONS ===
+    # Matrices are represented by 9 values in row-major order: m00, m01, m02, m10...
+    # Results are written to out_m00..out_m22 fields
+
+    # Creates an Identity Matrix (The "1" of matrices)
+    event matrix_identity() {
+        # 1 0 0
+        # 0 1 0
+        # 0 0 1
+        1.0 -> out_m00
+        0.0 -> out_m01
+        0.0 -> out_m02
+        0.0 -> out_m10
+        1.0 -> out_m11
+        0.0 -> out_m12
+        0.0 -> out_m20
+        0.0 -> out_m21
+        1.0 -> out_m22
+    }
+
+    # Creates a Translation Matrix (Movement)
+    event matrix_translation(tx, ty) {
+        1.0 -> out_m00
+        0.0 -> out_m01
+        tx  -> out_m02
+        0.0 -> out_m10
+        1.0 -> out_m11
+        ty  -> out_m12
+        0.0 -> out_m20
+        0.0 -> out_m21
+        1.0 -> out_m22
+    }
+
+    # Creates a Rotation Matrix (Angle in Radians)
+    event matrix_rotation(angle_rad) {
+        emit cos(angle_rad) -> c
+        emit sin(angle_rad) -> s
+        c   -> out_m00
+        -s  -> out_m01
+        0.0 -> out_m02
+        s   -> out_m10
+        c   -> out_m11
+        0.0 -> out_m12
+        0.0 -> out_m20
+        0.0 -> out_m21
+        1.0 -> out_m22
+    }
+
+    # Multiplies a Matrix by a 2D Vector (Point Transformation)
+    # This version correctly handles translation via m02 and m12
+    event matrix_multiply_point(px, py, m00, m01, m02, m10, m11, m12) {
+        (m00 * px + m01 * py + m02) -> out_x
+        (m10 * px + m11 * py + m12) -> out_y
+    }
+
+    # Creates a Scaling Matrix (Resize)
+    event matrix_scaling(sx, sy) {
+        sx -> out_m00
+        0.0 -> out_m01
+        0.0 -> out_m02
+        0.0 -> out_m10
+        sy -> out_m11
+        0.0 -> out_m12
+        0.0 -> out_m20
+        0.0 -> out_m21
+        1.0 -> out_m22
+    }
+
+    # === MATRIX 4x4 & PROJECTION ===
+    # Extra fields for 4x4 matrix (m00-m22 already declared above)
+    has out_m03: 0.0
+    has out_m13: 0.0
+    has out_m23: 0.0
+    has out_m30: 0.0
+    has out_m31: 0.0
+    has out_m32: 0.0
+    has out_m33: 0.0
+
+    # Perspective Projection Matrix
+    # fov_rad: Field of view, aspect: width/height, near/far: clipping planes
+    event matrix_perspective(fov_rad, aspect, near, far) {
+        emit tan(fov_rad * 0.5) -> tan_half_fov
+        1.0 / tan_half_fov -> f
+        
+        f / aspect -> out_m00
+        0.0 -> out_m01
+        0.0 -> out_m02
+        0.0 -> out_m03
+        
+        0.0 -> out_m10
+        f -> out_m11
+        0.0 -> out_m12
+        0.0 -> out_m13
+        
+        0.0 -> out_m20
+        0.0 -> out_m21
+        (far + near) / (near - far) -> out_m22
+        (2.0 * far * near) / (near - far) -> out_m23
+        
+        0.0 -> out_m30
+        0.0 -> out_m31
+        -1.0 -> out_m32
+        0.0 -> out_m33
+    }
+
+    # === PERCENTAGE & RATIO ===
+
+    # Converts value to percentage of total
+    # Example: percentage(25, 100) = 25.0
+    event percentage(value, total) {
+        (value / total) * 100.0 -> result
+    }
+
+    # Calculates what value is percent% of total
+    # Example: percent_of(50, 200) = 100.0
+    event percent_of(percent, total) {
+        (percent / 100.0) * total -> result
+    }
+
+    # Calculates ratio of a to b
+    # Example: ratio(3, 4) = 0.75
+    event ratio(a, b) {
+        a / b -> result
+    }
+
+    # === STATISTICS ===
+
+    # Average of two numbers
+    # Example: average_2(10, 20) = 15
+    event average_2(a, b) {
+        (a + b) / 2.0 -> result
+    }
+
+    # Average of three numbers
+    # Example: average_3(10, 20, 30) = 20
+    event average_3(a, b, c) {
+        (a + b + c) / 3.0 -> result
+    }
+
+    # Average of four numbers
+    # Example: average_4(10, 20, 30, 40) = 25
+    event average_4(a, b, c, d) {
+        (a + b + c + d) / 4.0 -> result
+    }
+
+    # === RANGE CHECKS ===
+
+    # Checks if value is within [min, max] inclusive
+    # Returns 1.0 (true) if in range, 0.0 (false) otherwise
+    # Example: in_range(5, 0, 10) = 1.0
+    event in_range(value, min, max) {
+        check value >= min and value <= max: 1.0 -> result
+        check value < min or value > max: 0.0 -> result
+    }
+
+    # Checks if value is within (min, max) exclusive
+    # Returns 1.0 (true) if in range, 0.0 (false) otherwise
+    # Example: in_range_exclusive(10, 0, 10) = 0.0
+    event in_range_exclusive(value, min, max) {
+        check value > min and value < max: 1.0 -> result
+        check value <= min or value >= max: 0.0 -> result
+    }
+
+    # === MOVE TOWARDS ===
+
+    # Moves current value towards target by at most max_delta
+    # Useful for smooth value transitions
+    # Example: move_towards(10, 20, 3) = 13
+    event move_towards(current, target, max_delta) {
+        target - current -> diff
+        emit abs(diff) -> distance
+        check distance <= max_delta: target -> result
+        check distance > max_delta: {
+            emit sign(diff) -> direction
+            current + direction * max_delta -> result
+        }
+    }
+
+    # Moves current angle towards target angle by at most max_delta
+    # Takes shortest rotation path, handles wraparound
+    # Example: move_towards_angle(350, 10, 15) = 5
+    event move_towards_angle(current, target, max_delta) {
+        emit delta_angle(current, target) -> delta
+        emit abs(delta) -> abs_delta
+        check abs_delta < max_delta: target -> result
+        check abs_delta >= max_delta: {
+            emit sign(delta) -> direction
+            current + direction * max_delta -> result
+        }
+    }
+
+    # === EXPONENTIAL & LOGARITHM (approximations) ===
+
+    # Approximates e^x using Taylor series (10 terms)
+    # Example: exp_approx(1) ≈ 2.718 (actual e)
+    # Accurate for small x values (-5 to 5)
+    event exp_approx(x) {
+        1.0 -> result
+        1.0 -> term
+        term * x / 1.0 -> term
+        result + term -> result
+        term * x / 2.0 -> term
+        result + term -> result
+        term * x / 3.0 -> term
+        result + term -> result
+        term * x / 4.0 -> term
+        result + term -> result
+        term * x / 5.0 -> term
+        result + term -> result
+        term * x / 6.0 -> term
+        result + term -> result
+        term * x / 7.0 -> term
+        result + term -> result
+        term * x / 8.0 -> term
+        result + term -> result
+        term * x / 9.0 -> term
+        result + term -> result
+        term * x / 10.0 -> term
+        result + term -> result
+    }
+
+    # Approximates natural logarithm ln(x) for x > 0
+    # Uses a simple series for values near 1.0
+    event ln_approx(x) {
+        check x <= 0.0: -999.0 -> result
+        check x > 0.0: {
+            (x - 1.0) / (x + 1.0) -> t
+            t * t -> t2
+            2.0 * t * (1.0 + t2 / 3.0 + (t2 * t2) / 5.0) -> result
+        }
+    }
+
+    # === RANDOM ===
+    # Note: NOT cryptographically secure, for game variance only
+    # Use set_random_seed(dt) from tick event to initialize randomness
+
+    # Generates a random number between 0 and 1
+    # Call set_random_seed(dt) first to initialize with frame time
+    # Example: random() might return 0.736281
+    event random {
+        # Linear Congruential Generator
+        random_seed * 1103515245.0 + 12345.0 -> new_seed
+        emit repeat(new_seed, 2147483648.0) -> wrapped_seed
+        wrapped_seed -> random_seed
+        random_seed / 2147483648.0 -> result
+    }
+
+    # Generates a random number between min and max
+    # Example: random_range(10, 20) might return 14.537
+    event random_range(min, max) {
+        emit random -> rand_01
+        emit lerp(min, max, rand_01) -> result
+    }
+
+    # Sets the random seed (use frame delta time for variance)
+    # Call this from tick event: emit MathLib.set_random_seed(dt)
+    # This makes random numbers different each frame
+    event set_random_seed(seed) {
+        seed -> random_seed
+    }
+
+    # === TRIGONOMETRY (Approximations) ===
+
+    # Calculates Sine using Taylor series (up to x^7)
+    # Useful for waves, oscillations, and basic rotation
+    event sin(x) {
+        # Normalize angle to [-PI, PI]
+        emit repeat(x + 3.14159, 6.28318) -> shifted
+        shifted - 3.14159 -> clean_x
+        clean_x -> x1
+        clean_x * clean_x * clean_x / 6.0 -> x3
+        clean_x * clean_x * clean_x * clean_x * clean_x / 120.0 -> x5
+        clean_x * clean_x * clean_x * clean_x * clean_x * clean_x * clean_x / 5040.0 -> x7
+        x1 - x3 + x5 - x7 -> result
+    }
+
+    # Calculates Cosine using Sine shift: cos(x) = sin(x + PI/2)
+    event cos(x) {
+        emit sin(x + 1.570796) -> result
+    }
+
+    # === VECTOR OPERATIONS ===
+
+    # Normalizes a 2D vector to have a magnitude of 1.0
+    # Essential for constant speed movement regardless of direction
+    # Result in out_x, out_y
+    event normalize_2d(x, y) {
+        emit magnitude_2d(x, y) -> mag
+        check mag > 0.0: {
+            x / mag -> out_x
+            y / mag -> out_y
+        }
+        check mag <= 0.0: {
+            0.0 -> out_x
+            0.0 -> out_y
+        }
+    }
+
+    # Normalizes a 3D vector to have a magnitude of 1.0
+    # Result in out_x, out_y, out_z
+    event normalize_3d(x, y, z) {
+        emit magnitude_3d(x, y, z) -> mag
+        check mag > 0.0: {
+            x / mag -> out_x
+            y / mag -> out_y
+            z / mag -> out_z
+        }
+        check mag <= 0.0: {
+            0.0 -> out_x
+            0.0 -> out_y
+            0.0 -> out_z
+        }
+    }
+
+    # Returns the Dot Product of two 2D vectors
+    # Positive if pointing same way, 0 if perpendicular, negative if opposite
+    event dot_2d(x1, y1, x2, y2) {
+        (x1 * x2) + (y1 * y2) -> result
+    }
+
+    # Returns the angle in radians between origin and (x, y)
+    # Essential for "LookAt" logic
+    event atan2(y, x) {
+        emit abs(y) -> ay
+        emit abs(x) -> ax
+        check x > 0.0: {
+            y / (ax + ay) * 1.5707 -> result
+        }
+        check x <= 0.0: {
+            emit sign(y) -> s
+            (s * 3.14159) - (y / (ay - ax) * 1.5707) -> result
+        }
+    }
+
+    # === VECTOR 3D OPERATIONS ===
+
+    # 3D Dot Product
+    event dot_3d(x1, y1, z1, x2, y2, z2) {
+        (x1 * x2) + (y1 * y2) + (z1 * z2) -> result
+    }
+
+    # 3D Cross Product — result stored in out_x, out_y, out_z
+    event cross_product_3d(ax, ay, az, bx, by, bz) {
+        ay * bz - az * by -> out_x
+        az * bx - ax * bz -> out_y
+        ax * by - ay * bx -> out_z
+    }
+
+    # Returns the 2D cross product (determinant) of two vectors
+    # Positive: B is to the left of A. Negative: B is to the right.
+    # Essential for AI steering and rotation direction logic.
+    event cross_product_2d(ax, ay, bx, by) {
+        (ax * by) - (ay * bx) -> result
+    }
+
+    # Projects vector A onto vector B
+    # Critical for sliding along walls or physics resolutions
+    # Result in out_x, out_y
+    event project_2d(ax, ay, bx, by) {
+        emit dot_2d(ax, ay, bx, by) -> dot
+        emit dot_2d(bx, by, bx, by) -> mag_sq
+        check mag_sq > 0.0: {
+            dot / mag_sq -> scale
+            bx * scale -> out_x
+            by * scale -> out_y
+        }
+        check mag_sq <= 0.0: {
+            0.0 -> out_x
+            0.0 -> out_y
+        }
+    }
+
+    # Reflects a vector based event a surface normal
+    # Used for bouncing projectiles or light rays
+    # Result in out_x, out_y
+    event reflect_2d(vx, vy, nx, ny) {
+        emit dot_2d(vx, vy, nx, ny) -> dot
+        vx - (2.0 * dot * nx) -> out_x
+        vy - (2.0 * dot * ny) -> out_y
+    }
+
+    # Dampened spring-like motion (simplified)
+    # Makes values "elastic" without complex physics
+    # Note: read out_velocity after call and pass it back as velocity next frame
+    event smooth_damp(current, target, velocity, smooth_time, dt) {
+        2.0 / smooth_time -> omega
+        omega * dt -> x
+        1.0 / (1.0 + x + 0.48 * x * x + 0.235 * x * x * x) -> exp
+        current - target -> change
+        (velocity + omega * change) * dt -> temp
+        (velocity - omega * temp) * exp -> out_velocity
+        target + (change + temp) * exp -> result
+    }
+
+    # === NOISE & SHAKE ===
+
+    # Generates a pseudo-noise value for screen shakes or organic movement
+    # Based event sine wave multiplication for non-repeating feel
+    event simple_noise(seed) {
+        emit sin(seed * 12.9898) -> s
+        emit abs(s * 43758.5453) -> val
+        emit repeat(val, 1.0) -> result
+    }
+
+    # 2D pseudo-random noise for 2D coordinates
+    event noise_2d(x, y) {
+        emit simple_noise(x + y * 57.0) -> result
+    }
+
+    # === BITWISE-LIKE (Math hacks) ===
+
+    # Returns 1.0 if number is even, 0.0 if odd
+    event is_even(value) {
+        emit repeat(value, 2.0) -> rem
+        check rem == 0.0: 1.0 -> result
+        check rem != 0.0: 0.0 -> result
+    }
+
+    # Steps: Returns 0.0 if x < edge, 1.0 if x >= edge
+    # Useful for hard thresholds in logic
+    event step(edge, x) {
+        check x < edge: 0.0 -> result
+        check x >= edge: 1.0 -> result
+    }
+
+    # === GEOMETRY & ROTATION ===
+
+    # Rotates a point (px, py) around center (cx, cy) by an angle in radians
+    # Result in out_x, out_y
+    event rotate_point(px, py, cx, cy, angle) {
+        emit cos(angle) -> c
+        emit sin(angle) -> s
+        px - cx -> dx
+        py - cy -> dy
+        (dx * c - dy * s) + cx -> out_x
+        (dx * s + dy * c) + cy -> out_y
+    }
+
+    # Rotates a direction vector (vx, vy) by angle in radians
+    # Perfect for spreading bullets or changing movement direction
+    # Result in out_x, out_y
+    event rotate_vector_2d(vx, vy, angle) {
+        emit cos(angle) -> c
+        emit sin(angle) -> s
+        vx * c - vy * s -> out_x
+        vx * s + vy * c -> out_y
+    }
+
+    # Returns a vector perpendicular to the input (90 degrees counter-clockwise)
+    # Essential for calculating surface normals and side-stepping logic
+    # Result in out_x, out_y
+    event get_perpendicular_2d(vx, vy) {
+        -1.0 * vy -> out_x
+        vx -> out_y
+    }
+
+    # Calculates the shortest distance from point (px, py) to line (x1, y1) -> (x2, y2)
+    # Used for precision triggers and "near-miss" mechanics
+    event distance_point_to_line(px, py, x1, y1, x2, y2) {
+        emit distance_2d(x1, y1, x2, y2) -> line_len
+        check line_len == 0.0: {
+            emit distance_2d(px, py, x1, y1) -> result
+        }
+        check line_len > 0.0: {
+            ((px - x1) * (x2 - x1) + (py - y1) * (y2 - y1)) / (line_len * line_len) -> t
+            emit clamp(t, 0.0, 1.0) -> t_clamped
+            x1 + t_clamped * (x2 - x1) -> closest_x
+            y1 + t_clamped * (y2 - y1) -> closest_y
+            emit distance_2d(px, py, closest_x, closest_y) -> result
+        }
+    }
+
+    # === COLLISION & GEOMETRY ===
+
+    # Checks if a point is inside a rectangle
+    # Returns 1.0 for true, 0.0 for false
+    event point_in_rect(px, py, rx, ry, rw, rh) {
+        check px >= rx and px <= rx + rw and py >= ry and py <= ry + rh: 1.0 -> result
+        check px < rx or px > rx + rw or py < ry or py > ry + rh: 0.0 -> result
+    }
+
+    # Checks if two circles are overlapping
+    event circles_intersect(x1, y1, r1, x2, y2, r2) {
+        emit distance_2d(x1, y1, x2, y2) -> d
+        check d <= (r1 + r2): 1.0 -> result
+        check d > (r1 + r2): 0.0 -> result
+    }
+
+    # Checks if two line segments (p1-p2 and p3-p4) intersect
+    # Returns 1.0 if they do, 0.0 otherwise
+    event lines_intersect(x1, y1, x2, y2, x3, y3, x4, y4) {
+        ((x4 - x3) * (y1 - y3) - (y4 - y3) * (x1 - x3)) / ((y4 - y3) * (x2 - x1) - (x4 - x3) * (y2 - y1)) -> ua
+        ((x2 - x1) * (y1 - y3) - (y2 - y1) * (x1 - x3)) / ((y4 - y3) * (x2 - x1) - (x4 - x3) * (y2 - y1)) -> ub
+        check ua >= 0.0 and ua <= 1.0 and ub >= 0.0 and ub <= 1.0: 1.0 -> result
+        check ua < 0.0 or ua > 1.0 or ub < 0.0 or ub > 1.0: 0.0 -> result
+    }
+
+    # Checks if a line segment (x1, y1) to (x2, y2) intersects a circle (cx, cy, r)
+    # Returns 1.0 if it hits, 0.0 otherwise. Essential for complex projectile hits.
+    event line_intersects_circle(x1, y1, x2, y2, cx, cy, r) {
+        emit distance_point_to_line(cx, cy, x1, y1, x2, y2) -> dist
+        check dist <= r: 1.0 -> result
+        check dist > r: 0.0 -> result
+    }
+
+    # Barycentric coordinates: Checks if point (px, py) is inside triangle (v1, v2, v3)
+    # This is how GPU renders every single pixel!
+    event point_in_triangle(px, py, x1, y1, x2, y2, x3, y3) {
+        ((y2 - y3) * (px - x3) + (x3 - x2) * (py - y3)) / ((y2 - y3) * (x1 - x3) + (x3 - x2) * (y1 - y3)) -> w1
+        ((y3 - y1) * (px - x3) + (x1 - x3) * (py - y3)) / ((y2 - y3) * (x1 - x3) + (x3 - x2) * (y1 - y3)) -> w2
+        1.0 - w1 - w2 -> w3
+        check w1 >= 0.0 and w2 >= 0.0 and w3 >= 0.0: 1.0 -> result
+        check w1 < 0.0 or w2 < 0.0 or w3 < 0.0: 0.0 -> result
+    }
+
+    # Signed Area of a Triangle
+    # If positive, vertices are counter-clockwise. Essential for "backface culling".
+    event triangle_signed_area(x1, y1, x2, y2, x3, y3) {
+        0.5 * ((x1 * (y2 - y3)) + (x2 * (y3 - y1)) + (x3 * (y1 - y2))) -> result
+    }
+
+    # Rectangle-to-Rectangle collision (AABB)
+    event rects_intersect(x1, y1, w1, h1, x2, y2, w2, h2) {
+        check x1 < x2 + w2 and x1 + w1 > x2 and y1 < y2 + h2 and y1 + h1 > y2: 1.0 -> result
+        check not (x1 < x2 + w2 and x1 + w1 > x2 and y1 < y2 + h2 and y1 + h1 > y2): 0.0 -> result
+    }
+
+    # Resolve Elastic Collision: calculates new velocity after hit
+    # e: restitution (0 to 1)
+    event resolve_collision(v1, v2, m1, m2, e) {
+        (v1 * (m1 - m2) + (2.0 * m2 * v2)) / (m1 + m2) -> v1_final
+        v1_final * e -> result
+    }
+
+    # PID Controller: for smooth movement stabilization
+    event pid_update(error, last_error, integral, p, i, d, dt) {
+        integral + error * dt -> new_integral
+        (error - last_error) / dt -> derivative
+        (p * error) + (i * new_integral) + (d * derivative) -> result
+    }
+
+    # === PHYSICS ===
+
+    # Newton's Universal Gravitation between two bodies
+    event gravity_force(m1, m2, distance, g_constant) {
+        check distance < EPSILON: 0.0 -> result
+        check distance >= EPSILON: (g_constant * m1 * m2) / (distance * distance) -> result
+    }
+
+    # Air resistance (Drag force)
+    # v: velocity, drag_coeff: how "aerodynamic" the object is
+    event air_resistance(v, drag_coeff) {
+        emit sign(v) -> s
+        -1.0 * v * v * drag_coeff * s -> result
+    }
+
+    # === ARTIFICIAL INTELLIGENCE ===
+
+    # Sigmoid: squeezes value between 0 and 1. Standard for probability.
+    event sigmoid(x) {
+        0.0 - x -> neg_x
+        emit exp_approx(neg_x) -> e
+        1.0 / (1.0 + e) -> result
+    }
+
+    # ReLU (Rectified Linear Unit): returns x if positive, else 0. 
+    # The gold standard for modern deep learning.
+    event relu(x) {
+        emit max(0.0, x) -> result
+    }
+
+    # Tanh: squeezes value between -1 and 1.
+    event tanh(x) {
+        emit exp_approx(x) -> ex
+        emit exp_approx(-x) -> enx
+        (ex - enx) / (ex + enx) -> result
+    }
+
+    # === CONVERSIONS ===
+
+    # Converts Degrees to Radians
+    event deg_to_rad(deg) {
+        deg * (PI / 180.0) -> result
+    }
+
+    # Converts Radians to Degrees
+    event rad_to_deg(rad) {
+        rad * (180.0 / PI) -> result
+    }
+
+    # === CURVES (Bezier) ===
+
+    # Quadratic Bezier curve: returns a point between p0 and p2 using p1 as control
+    # Useful for curved grenade throws or smooth pathfinding
+    # Result in out_x, out_y
+    event get_bezier_quadratic_2d(p0x, p0y, p1x, p1y, p2x, p2y, t) {
+        1.0 - t -> inv_t
+        (inv_t * inv_t) -> it2
+        (2.0 * inv_t * t) -> middle
+        (t * t) -> t2
+        it2 * p0x + middle * p1x + t2 * p2x -> out_x
+        it2 * p0y + middle * p1y + t2 * p2y -> out_y
+    }
+
+    # Cubic Bezier curve: uses two control points (p1, p2) for complex paths
+    # Result in out_x, out_y
+    event get_bezier_cubic_2d(p0x, p0y, p1x, p1y, p2x, p2y, p3x, p3y, t) {
+        1.0 - t -> inv_t
+        inv_t * inv_t * inv_t -> it3
+        3.0 * inv_t * inv_t * t -> c1
+        3.0 * inv_t * t * t -> c2
+        t * t * t -> t3
+        it3 * p0x + c1 * p1x + c2 * p2x + t3 * p3x -> out_x
+        it3 * p0y + c1 * p1y + c2 * p2y + t3 * p3y -> out_y
+    }
+
+    # === PROCEDURAL GENERATION ===
+
+    # Fractal Brownian Motion (3 octaves)
+    # Layering noise to create organic, natural-looking randomness
+    event fractal_noise(seed, lacunarity, persistence) {
+        emit simple_noise(seed) -> n1
+        emit simple_noise(seed * lacunarity) -> n2_raw
+        n2_raw * persistence -> n2
+        emit simple_noise(seed * lacunarity * lacunarity) -> n3_raw
+        n3_raw * (persistence * persistence) -> n3
+        (n1 + n2 + n3) / (1.0 + persistence + persistence * persistence) -> result
+    }
+
+    # === SMOOTHING ===
+
+    # A simple low-pass filter to smooth out jittery input (like mouse or joystick)
+    # factor: 0.1 is very smooth/slow, 0.9 is very responsive/fast
+    event low_pass_filter(current, target, factor) {
+        emit lerp(current, target, factor) -> result
+    }
+
+    # === ADVANCED UTILS ===
+
+    # Calculates the Look-At rotation (Degrees) to face a target
+    # Perfect for turrets or player facing the mouse
+    event look_at_angle(source_x, source_y, target_x, target_y) {
+        target_y - source_y -> dy
+        target_x - source_x -> dx
+        emit atan2(dy, dx) -> rad
+        emit rad_to_deg(rad) -> result
+    }
+
+    # Checks if a point is within a "Vision Cone"
+    event is_in_cone(px, py, fov_deg, view_dist, origin_x, origin_y, view_dir_x, view_dir_y) {
+        emit distance_2d(px, py, origin_x, origin_y) -> dist
+        check dist > view_dist: 0.0 -> result
+        check dist <= view_dist: {
+            px - origin_x -> dx
+            py - origin_y -> dy
+            emit magnitude_2d(dx, dy) -> mag
+            check mag > 0.0: {
+                dx / mag -> ndx
+                dy / mag -> ndy
+                emit dot_2d(ndx, ndy, view_dir_x, view_dir_y) -> dot
+                fov_deg / 2.0 -> half_fov
+                emit deg_to_rad(half_fov) -> half_rad
+                emit cos(half_rad) -> threshold
+                check dot >= threshold: 1.0 -> result
+                check dot < threshold: 0.0 -> result
+            }
+            check mag <= 0.0: 1.0 -> result
+        }
+    }
+
+    # Checks if a ray intersects a circle (Raycasting)
+    # Returns distance to hit, or -1.0 if miss
+    event ray_intersects_circle(ox, oy, dx, dy, cx, cy, r) {
+        cx - ox -> ocx
+        cy - oy -> ocy
+        emit dot_2d(ocx, ocy, dx, dy) -> tca
+        check tca < 0.0: -1.0 -> result
+        check tca >= 0.0: {
+            emit dot_2d(ocx, ocy, ocx, ocy) -> oc_sq
+            oc_sq - tca * tca -> d2
+            r * r -> r2
+            check d2 > r2: -1.0 -> result
+            check d2 <= r2: {
+                emit sqrt(r2 - d2) -> thc
+                tca - thc -> result
+            }
+        }
+    }
+}
