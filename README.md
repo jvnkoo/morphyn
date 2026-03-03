@@ -65,9 +65,7 @@ Full docs at [jvnkoo.github.io/morphyn](https://jvnkoo.github.io/morphyn).
 ---
 ## Why not Lua?
 
-The Unity bridges are a mess. MoonSharp hasn't been updated in years.
-XLua is maintained but built for a different ecosystem entirely.
-Getting either to work with hot reload and state preservation is a project in itself.
+The Unity bridges are a mess. MoonSharp hasn’t been updated in years, and newer alternatives like NLua and xLua bring their own baggage - NLua often trips over AOT constraints, while xLua’s power comes at the cost of high complexity. Getting either to work with hot reload and state preservation is a project in itself.
 
 Morphyn exists because setting up Lua in Unity shouldn't take days.
 Simpler, opinionated, built specifically for game config and logic.
