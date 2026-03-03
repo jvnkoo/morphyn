@@ -16,16 +16,37 @@
 ---
 ## Here's a taste:
 ```coffeescript
-entity MathUtils {
-    event get_crit_chance(dex) {
-        dex * 0.5 -> chance
-        check chance > 50: 50 -> chance
-        chance -> result
+import "math"
+
+entity BubbleSort {
+  has data: pool[64, 25, 12, 22, 11]
+  has n: 5
+  has r: 0
+
+  event init {
+    emit log("Before:", data.at[1], data.at[2], data.at[3], data.at[4], data.at[5])
+    emit self.outer(1) -> r
+    emit log("After: ", data.at[1], data.at[2], data.at[3], data.at[4], data.at[5])
+  }
+
+  event outer(p) {
+    check p < n: {
+      emit self.inner(1, n - p) -> r
+      emit self.outer(p + 1) -> result
     }
-    event calculate_damage(raw_dmg, armor) {
-        raw_dmg * (100 / (100 + armor)) -> final_dmg
-        final_dmg -> result
+  }
+
+  event inner(i, lim) {
+    check i < lim: {
+      data.at[i] -> a
+      data.at[i + 1] -> b
+      check a > b: {
+        b -> data.at[i]
+        a -> data.at[i + 1]
+      }
+      emit self.inner(i + 1, lim) -> result
     }
+  }
 }
 ```
 
