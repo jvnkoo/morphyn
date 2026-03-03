@@ -149,13 +149,13 @@ entity math {
     # Examples: floor(3.7) = 3, floor(-2.3) = -3
     event floor(value) {
         check value >= 0.0: {
-            value -> int_part
-            int_part -> result
+            value % 1.0 -> frac
+            value - frac -> result
         }
         check value < 0.0: {
-            value -> int_part
-            check value != int_part: int_part - 1.0 -> result
-            check value == int_part: int_part -> result
+            value % 1.0 -> frac
+            check frac == 0.0: value -> result
+            check frac != 0.0: value - frac - 1.0 -> result
         }
     }
 
