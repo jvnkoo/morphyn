@@ -67,6 +67,9 @@ nav:
       - Sync Emit: language/sync-emit.md
       - Pool System: language/pools.md
       - Import System: language/imports.md
+  - Standard Library:
+      - Overview: stdlib/index.md
+      - math: stdlib/math.md
   - Unity Integration:
       - Overview: unity/overview.md
       - Installation: unity/installation.md

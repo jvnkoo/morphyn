@@ -11,8 +11,16 @@ namespace Morphyn.Core
     // Main entry point for Morphyn language interpreter
     class Program
     {
+        private static readonly System.Reflection.Assembly _assembly =
+            System.Reflection.Assembly.GetExecutingAssembly();
+
         private static readonly string[] ValidExtensions = { ".mrph", ".morph", ".morphyn" };
-        
+
+        private static readonly Dictionary<string, string> _builtinLibs = new()
+        {
+            { "math", "Morphyn.Core.stdlib.math.morph" },
+        };
+
         // CHANGED: Use array instead of List to match new MorphynRuntime.Send signature (Zero-alloc)
         private static readonly object?[] TickArgsBuffer = new object?[] { 0.0 };
 
@@ -238,8 +246,19 @@ namespace Morphyn.Core
                         }
                         else
                         {
-                            Console.WriteLine(
-                                $"[Warning] Import file not found: {subPath} (imported from {absolutePath})");
+                            string? builtinContent = TryLoadBuiltin(fileName);
+                            if (builtinContent != null)
+                            {
+                                finalContent.Add(builtinContent);
+                            }
+                            else
+                            {
+                                var sb = new System.Text.StringBuilder();
+                                sb.AppendLine($"[Error] Import file not found: {subPath} (imported from {absolutePath})");
+                                sb.AppendLine($"[Suggestion] Make sure the file exists and is in the correct directory.");
+                                MorphynParser.OnError(sb.ToString());
+                                throw new Exception("Morphyn parsing failed. See context above.");
+                            }
                         }
                         continue; 
                     }
@@ -248,6 +267,22 @@ namespace Morphyn.Core
             }
 
             return string.Join("\n", finalContent);
+        }
+
+        private static string? TryLoadBuiltin(string importName)
+        {
+            string name = System.IO.Path.GetFileNameWithoutExtension(importName);
+
+            if (_builtinLibs.TryGetValue(name, out var resourceName))
+            {
+                using var stream = _assembly.GetManifestResourceStream(resourceName);
+                if (stream != null)
+                {
+                    using var reader = new System.IO.StreamReader(stream);
+                    return reader.ReadToEnd();
+                }
+            }
+            return null;
         }
     }
 }

@@ -12,5 +12,6 @@
 
     <ItemGroup>
         <ProjectReference Include="..\Morphyn.Runtime\Morphyn.Runtime.csproj" />
+        <EmbeddedResource Include="stdlib\math.morph" />
     </ItemGroup>
 </Project>

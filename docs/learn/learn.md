@@ -221,9 +221,10 @@ entity Logger {
 # - unwhen args must match the args used in the original when
 
 # ── IMPORTS ───────────────────────────────────────────────────────────────────
-# import "mathlib.morph"
-# import "entities/enemy.morph"
-# import "../shared/utils.morph"
+import "math" # built-in standard library
+# import "mathlib.morph" # local file
+# import "entities/enemy.morph" # relative path
+# import "../shared/utils.morph" # parent directory
 # Circular imports are prevented automatically.
 
 # ── ENTITY LIFECYCLE ──────────────────────────────────────────────────────────
