@@ -83,20 +83,20 @@ namespace Morphyn.Runtime
             var left = EvaluateExpression(entity, b.Left, localScope, data);
             if (left == null) return false;
 
-            bool leftBool = (bool)left;
+            bool leftBool = Convert.ToBoolean(left);
 
             if (b.Operator == "or")
             {
                 if (leftBool) return true;
                 var right = EvaluateExpression(entity, b.Right, localScope, data);
-                return right != null && (bool)right;
+                return right != null && Convert.ToBoolean(right);
             }
 
             if (b.Operator == "and")
             {
                 if (!leftBool) return false;
                 var right = EvaluateExpression(entity, b.Right, localScope, data);
-                return right != null && (bool)right;
+                return right != null && Convert.ToBoolean(right);
             }
 
             throw new Exception($"Unknown logic operator: {b.Operator}");

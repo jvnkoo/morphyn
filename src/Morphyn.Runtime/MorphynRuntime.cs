@@ -227,7 +227,7 @@ namespace Morphyn.Runtime
         // Each SyncFrame represents one active event invocation on the explicit call stack.
         // ActionQueue contains the remaining actions to execute for this frame.
         // When the queue empties the frame is popped and the result propagates to the parent.
-        private struct SyncFrame
+        private class SyncFrame
         {
             public Entity Entity;
             public Event Event;
