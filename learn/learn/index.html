@@ -285,6 +285,26 @@
     
     
       <li class="md-tabs__item">
+        <a href="../../stdlib/" class="md-tabs__link">
+          
+  
+  
+  Standard Library
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
         <a href="../../unity/overview/" class="md-tabs__link">
           
   
@@ -788,7 +808,7 @@
   <span class="md-ellipsis">
     
   
-    Unity Integration
+    Standard Library
   
 
     
@@ -801,6 +821,123 @@
         
         <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Standard Library
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stdlib/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../stdlib/math/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    math
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Unity Integration
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -954,10 +1091,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" checked>
         
           
-          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="">
             
   
   
@@ -975,8 +1112,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
-          <label class="md-nav__title" for="__nav_5">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_6">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -1053,10 +1190,10 @@
         
           
         
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_6" >
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_7" >
         
           
-          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
             
   
   
@@ -1074,8 +1211,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_6">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -1379,64 +1516,65 @@
 </span><span id="__span-0-218"><a id="__codelineno-0-218" name="__codelineno-0-218" href="#__codelineno-0-218"></a><span class="c1"># - unwhen args must match the args used in the original when</span>
 </span><span id="__span-0-219"><a id="__codelineno-0-219" name="__codelineno-0-219" href="#__codelineno-0-219"></a>
 </span><span id="__span-0-220"><a id="__codelineno-0-220" name="__codelineno-0-220" href="#__codelineno-0-220"></a><span class="c1"># ── IMPORTS ───────────────────────────────────────────────────────────────────</span>
-</span><span id="__span-0-221"><a id="__codelineno-0-221" name="__codelineno-0-221" href="#__codelineno-0-221"></a><span class="c1"># import &quot;mathlib.morph&quot;</span>
-</span><span id="__span-0-222"><a id="__codelineno-0-222" name="__codelineno-0-222" href="#__codelineno-0-222"></a><span class="c1"># import &quot;entities/enemy.morph&quot;</span>
-</span><span id="__span-0-223"><a id="__codelineno-0-223" name="__codelineno-0-223" href="#__codelineno-0-223"></a><span class="c1"># import &quot;../shared/utils.morph&quot;</span>
-</span><span id="__span-0-224"><a id="__codelineno-0-224" name="__codelineno-0-224" href="#__codelineno-0-224"></a><span class="c1"># Circular imports are prevented automatically.</span>
-</span><span id="__span-0-225"><a id="__codelineno-0-225" name="__codelineno-0-225" href="#__codelineno-0-225"></a>
-</span><span id="__span-0-226"><a id="__codelineno-0-226" name="__codelineno-0-226" href="#__codelineno-0-226"></a><span class="c1"># ── ENTITY LIFECYCLE ──────────────────────────────────────────────────────────</span>
-</span><span id="__span-0-227"><a id="__codelineno-0-227" name="__codelineno-0-227" href="#__codelineno-0-227"></a><span class="k">entity</span> <span class="nc">Enemy</span> <span class="p">{</span>
-</span><span id="__span-0-228"><a id="__codelineno-0-228" name="__codelineno-0-228" href="#__codelineno-0-228"></a>  <span class="k">has</span> <span class="nv">hp</span><span class="p">:</span> <span class="m">50</span>
-</span><span id="__span-0-229"><a id="__codelineno-0-229" name="__codelineno-0-229" href="#__codelineno-0-229"></a>  <span class="k">has</span> <span class="nv">alive</span><span class="p">:</span> <span class="kc">true</span>
-</span><span id="__span-0-230"><a id="__codelineno-0-230" name="__codelineno-0-230" href="#__codelineno-0-230"></a>
-</span><span id="__span-0-231"><a id="__codelineno-0-231" name="__codelineno-0-231" href="#__codelineno-0-231"></a>  <span class="k">event</span> <span class="nf">init</span> <span class="p">{</span>
-</span><span id="__span-0-232"><a id="__codelineno-0-232" name="__codelineno-0-232" href="#__codelineno-0-232"></a>    <span class="k">emit</span> <span class="nb">log</span><span class="p">(</span><span class="s2">&quot;Enemy spawned&quot;</span><span class="p">)</span>
-</span><span id="__span-0-233"><a id="__codelineno-0-233" name="__codelineno-0-233" href="#__codelineno-0-233"></a>  <span class="p">}</span>
-</span><span id="__span-0-234"><a id="__codelineno-0-234" name="__codelineno-0-234" href="#__codelineno-0-234"></a>
-</span><span id="__span-0-235"><a id="__codelineno-0-235" name="__codelineno-0-235" href="#__codelineno-0-235"></a>  <span class="k">event</span> <span class="nf">take_damage</span><span class="p">(</span><span class="n">amount</span><span class="p">)</span> <span class="p">{</span>
-</span><span id="__span-0-236"><a id="__codelineno-0-236" name="__codelineno-0-236" href="#__codelineno-0-236"></a>    <span class="n">hp</span> <span class="o o-Arithmetic">-</span> <span class="n">amount</span> <span class="o">-&gt;</span> <span class="n">hp</span>
-</span><span id="__span-0-237"><a id="__codelineno-0-237" name="__codelineno-0-237" href="#__codelineno-0-237"></a>    <span class="k">check</span> <span class="n">hp</span> <span class="o o-Comparison">&lt;=</span> <span class="m">0</span><span class="p">:</span> <span class="p">{</span>
-</span><span id="__span-0-238"><a id="__codelineno-0-238" name="__codelineno-0-238" href="#__codelineno-0-238"></a>      <span class="kc">false</span> <span class="o">-&gt;</span> <span class="n">alive</span>
-</span><span id="__span-0-239"><a id="__codelineno-0-239" name="__codelineno-0-239" href="#__codelineno-0-239"></a>      <span class="k">emit</span> <span class="kc">self</span><span class="p">.</span><span class="n">die</span>
-</span><span id="__span-0-240"><a id="__codelineno-0-240" name="__codelineno-0-240" href="#__codelineno-0-240"></a>    <span class="p">}</span>
-</span><span id="__span-0-241"><a id="__codelineno-0-241" name="__codelineno-0-241" href="#__codelineno-0-241"></a>  <span class="p">}</span>
-</span><span id="__span-0-242"><a id="__codelineno-0-242" name="__codelineno-0-242" href="#__codelineno-0-242"></a>
-</span><span id="__span-0-243"><a id="__codelineno-0-243" name="__codelineno-0-243" href="#__codelineno-0-243"></a>  <span class="k">event</span> <span class="nf">die</span> <span class="p">{</span>
-</span><span id="__span-0-244"><a id="__codelineno-0-244" name="__codelineno-0-244" href="#__codelineno-0-244"></a>    <span class="k">emit</span> <span class="nb">log</span><span class="p">(</span><span class="s2">&quot;Enemy died&quot;</span><span class="p">)</span>
-</span><span id="__span-0-245"><a id="__codelineno-0-245" name="__codelineno-0-245" href="#__codelineno-0-245"></a>    <span class="k">emit</span> <span class="kc">self</span><span class="p">.</span><span class="n">destroy</span>               <span class="c1"># marks entity for garbage collection</span>
-</span><span id="__span-0-246"><a id="__codelineno-0-246" name="__codelineno-0-246" href="#__codelineno-0-246"></a>                                    <span class="c1"># removed from pools on next GarbageCollect</span>
-</span><span id="__span-0-247"><a id="__codelineno-0-247" name="__codelineno-0-247" href="#__codelineno-0-247"></a>  <span class="p">}</span>
-</span><span id="__span-0-248"><a id="__codelineno-0-248" name="__codelineno-0-248" href="#__codelineno-0-248"></a><span class="p">}</span>
-</span><span id="__span-0-249"><a id="__codelineno-0-249" name="__codelineno-0-249" href="#__codelineno-0-249"></a>
-</span><span id="__span-0-250"><a id="__codelineno-0-250" name="__codelineno-0-250" href="#__codelineno-0-250"></a><span class="c1"># ── FULL EXAMPLE ──────────────────────────────────────────────────────────────</span>
-</span><span id="__span-0-251"><a id="__codelineno-0-251" name="__codelineno-0-251" href="#__codelineno-0-251"></a><span class="k">entity</span> <span class="nc">Game</span> <span class="p">{</span>
-</span><span id="__span-0-252"><a id="__codelineno-0-252" name="__codelineno-0-252" href="#__codelineno-0-252"></a>  <span class="k">has</span> <span class="nv">score</span><span class="p">:</span> <span class="m">0</span>
-</span><span id="__span-0-253"><a id="__codelineno-0-253" name="__codelineno-0-253" href="#__codelineno-0-253"></a>  <span class="k">has</span> <span class="nv">enemies</span><span class="p">:</span> <span class="kc">pool</span><span class="p">[]</span>
-</span><span id="__span-0-254"><a id="__codelineno-0-254" name="__codelineno-0-254" href="#__codelineno-0-254"></a>  <span class="k">has</span> <span class="nv">timer</span><span class="p">:</span> <span class="m">0</span>
-</span><span id="__span-0-255"><a id="__codelineno-0-255" name="__codelineno-0-255" href="#__codelineno-0-255"></a>
-</span><span id="__span-0-256"><a id="__codelineno-0-256" name="__codelineno-0-256" href="#__codelineno-0-256"></a>  <span class="k">event</span> <span class="nf">init</span> <span class="p">{</span>
-</span><span id="__span-0-257"><a id="__codelineno-0-257" name="__codelineno-0-257" href="#__codelineno-0-257"></a>    <span class="k">emit</span> <span class="n">enemies</span><span class="p">.</span><span class="nb">add</span><span class="p">(</span><span class="s2">&quot;Enemy&quot;</span><span class="p">)</span>
+</span><span id="__span-0-221"><a id="__codelineno-0-221" name="__codelineno-0-221" href="#__codelineno-0-221"></a><span class="k">import</span> <span class="s2">&quot;math&quot;</span> <span class="c1"># built-in standard library</span>
+</span><span id="__span-0-222"><a id="__codelineno-0-222" name="__codelineno-0-222" href="#__codelineno-0-222"></a><span class="c1"># import &quot;mathlib.morph&quot; # local file</span>
+</span><span id="__span-0-223"><a id="__codelineno-0-223" name="__codelineno-0-223" href="#__codelineno-0-223"></a><span class="c1"># import &quot;entities/enemy.morph&quot; # relative path</span>
+</span><span id="__span-0-224"><a id="__codelineno-0-224" name="__codelineno-0-224" href="#__codelineno-0-224"></a><span class="c1"># import &quot;../shared/utils.morph&quot; # parent directory</span>
+</span><span id="__span-0-225"><a id="__codelineno-0-225" name="__codelineno-0-225" href="#__codelineno-0-225"></a><span class="c1"># Circular imports are prevented automatically.</span>
+</span><span id="__span-0-226"><a id="__codelineno-0-226" name="__codelineno-0-226" href="#__codelineno-0-226"></a>
+</span><span id="__span-0-227"><a id="__codelineno-0-227" name="__codelineno-0-227" href="#__codelineno-0-227"></a><span class="c1"># ── ENTITY LIFECYCLE ──────────────────────────────────────────────────────────</span>
+</span><span id="__span-0-228"><a id="__codelineno-0-228" name="__codelineno-0-228" href="#__codelineno-0-228"></a><span class="k">entity</span> <span class="nc">Enemy</span> <span class="p">{</span>
+</span><span id="__span-0-229"><a id="__codelineno-0-229" name="__codelineno-0-229" href="#__codelineno-0-229"></a>  <span class="k">has</span> <span class="nv">hp</span><span class="p">:</span> <span class="m">50</span>
+</span><span id="__span-0-230"><a id="__codelineno-0-230" name="__codelineno-0-230" href="#__codelineno-0-230"></a>  <span class="k">has</span> <span class="nv">alive</span><span class="p">:</span> <span class="kc">true</span>
+</span><span id="__span-0-231"><a id="__codelineno-0-231" name="__codelineno-0-231" href="#__codelineno-0-231"></a>
+</span><span id="__span-0-232"><a id="__codelineno-0-232" name="__codelineno-0-232" href="#__codelineno-0-232"></a>  <span class="k">event</span> <span class="nf">init</span> <span class="p">{</span>
+</span><span id="__span-0-233"><a id="__codelineno-0-233" name="__codelineno-0-233" href="#__codelineno-0-233"></a>    <span class="k">emit</span> <span class="nb">log</span><span class="p">(</span><span class="s2">&quot;Enemy spawned&quot;</span><span class="p">)</span>
+</span><span id="__span-0-234"><a id="__codelineno-0-234" name="__codelineno-0-234" href="#__codelineno-0-234"></a>  <span class="p">}</span>
+</span><span id="__span-0-235"><a id="__codelineno-0-235" name="__codelineno-0-235" href="#__codelineno-0-235"></a>
+</span><span id="__span-0-236"><a id="__codelineno-0-236" name="__codelineno-0-236" href="#__codelineno-0-236"></a>  <span class="k">event</span> <span class="nf">take_damage</span><span class="p">(</span><span class="n">amount</span><span class="p">)</span> <span class="p">{</span>
+</span><span id="__span-0-237"><a id="__codelineno-0-237" name="__codelineno-0-237" href="#__codelineno-0-237"></a>    <span class="n">hp</span> <span class="o o-Arithmetic">-</span> <span class="n">amount</span> <span class="o">-&gt;</span> <span class="n">hp</span>
+</span><span id="__span-0-238"><a id="__codelineno-0-238" name="__codelineno-0-238" href="#__codelineno-0-238"></a>    <span class="k">check</span> <span class="n">hp</span> <span class="o o-Comparison">&lt;=</span> <span class="m">0</span><span class="p">:</span> <span class="p">{</span>
+</span><span id="__span-0-239"><a id="__codelineno-0-239" name="__codelineno-0-239" href="#__codelineno-0-239"></a>      <span class="kc">false</span> <span class="o">-&gt;</span> <span class="n">alive</span>
+</span><span id="__span-0-240"><a id="__codelineno-0-240" name="__codelineno-0-240" href="#__codelineno-0-240"></a>      <span class="k">emit</span> <span class="kc">self</span><span class="p">.</span><span class="n">die</span>
+</span><span id="__span-0-241"><a id="__codelineno-0-241" name="__codelineno-0-241" href="#__codelineno-0-241"></a>    <span class="p">}</span>
+</span><span id="__span-0-242"><a id="__codelineno-0-242" name="__codelineno-0-242" href="#__codelineno-0-242"></a>  <span class="p">}</span>
+</span><span id="__span-0-243"><a id="__codelineno-0-243" name="__codelineno-0-243" href="#__codelineno-0-243"></a>
+</span><span id="__span-0-244"><a id="__codelineno-0-244" name="__codelineno-0-244" href="#__codelineno-0-244"></a>  <span class="k">event</span> <span class="nf">die</span> <span class="p">{</span>
+</span><span id="__span-0-245"><a id="__codelineno-0-245" name="__codelineno-0-245" href="#__codelineno-0-245"></a>    <span class="k">emit</span> <span class="nb">log</span><span class="p">(</span><span class="s2">&quot;Enemy died&quot;</span><span class="p">)</span>
+</span><span id="__span-0-246"><a id="__codelineno-0-246" name="__codelineno-0-246" href="#__codelineno-0-246"></a>    <span class="k">emit</span> <span class="kc">self</span><span class="p">.</span><span class="n">destroy</span>               <span class="c1"># marks entity for garbage collection</span>
+</span><span id="__span-0-247"><a id="__codelineno-0-247" name="__codelineno-0-247" href="#__codelineno-0-247"></a>                                    <span class="c1"># removed from pools on next GarbageCollect</span>
+</span><span id="__span-0-248"><a id="__codelineno-0-248" name="__codelineno-0-248" href="#__codelineno-0-248"></a>  <span class="p">}</span>
+</span><span id="__span-0-249"><a id="__codelineno-0-249" name="__codelineno-0-249" href="#__codelineno-0-249"></a><span class="p">}</span>
+</span><span id="__span-0-250"><a id="__codelineno-0-250" name="__codelineno-0-250" href="#__codelineno-0-250"></a>
+</span><span id="__span-0-251"><a id="__codelineno-0-251" name="__codelineno-0-251" href="#__codelineno-0-251"></a><span class="c1"># ── FULL EXAMPLE ──────────────────────────────────────────────────────────────</span>
+</span><span id="__span-0-252"><a id="__codelineno-0-252" name="__codelineno-0-252" href="#__codelineno-0-252"></a><span class="k">entity</span> <span class="nc">Game</span> <span class="p">{</span>
+</span><span id="__span-0-253"><a id="__codelineno-0-253" name="__codelineno-0-253" href="#__codelineno-0-253"></a>  <span class="k">has</span> <span class="nv">score</span><span class="p">:</span> <span class="m">0</span>
+</span><span id="__span-0-254"><a id="__codelineno-0-254" name="__codelineno-0-254" href="#__codelineno-0-254"></a>  <span class="k">has</span> <span class="nv">enemies</span><span class="p">:</span> <span class="kc">pool</span><span class="p">[]</span>
+</span><span id="__span-0-255"><a id="__codelineno-0-255" name="__codelineno-0-255" href="#__codelineno-0-255"></a>  <span class="k">has</span> <span class="nv">timer</span><span class="p">:</span> <span class="m">0</span>
+</span><span id="__span-0-256"><a id="__codelineno-0-256" name="__codelineno-0-256" href="#__codelineno-0-256"></a>
+</span><span id="__span-0-257"><a id="__codelineno-0-257" name="__codelineno-0-257" href="#__codelineno-0-257"></a>  <span class="k">event</span> <span class="nf">init</span> <span class="p">{</span>
 </span><span id="__span-0-258"><a id="__codelineno-0-258" name="__codelineno-0-258" href="#__codelineno-0-258"></a>    <span class="k">emit</span> <span class="n">enemies</span><span class="p">.</span><span class="nb">add</span><span class="p">(</span><span class="s2">&quot;Enemy&quot;</span><span class="p">)</span>
-</span><span id="__span-0-259"><a id="__codelineno-0-259" name="__codelineno-0-259" href="#__codelineno-0-259"></a>    <span class="k">emit</span> <span class="nb">log</span><span class="p">(</span><span class="s2">&quot;Game started with&quot;</span><span class="p">,</span> <span class="n">enemies</span><span class="p">.</span><span class="nb">count</span><span class="p">,</span> <span class="s2">&quot;enemies&quot;</span><span class="p">)</span>
-</span><span id="__span-0-260"><a id="__codelineno-0-260" name="__codelineno-0-260" href="#__codelineno-0-260"></a>  <span class="p">}</span>
-</span><span id="__span-0-261"><a id="__codelineno-0-261" name="__codelineno-0-261" href="#__codelineno-0-261"></a>
-</span><span id="__span-0-262"><a id="__codelineno-0-262" name="__codelineno-0-262" href="#__codelineno-0-262"></a>  <span class="k">event</span> <span class="nf">tick</span><span class="p">(</span><span class="n">dt</span><span class="p">)</span> <span class="p">{</span>
-</span><span id="__span-0-263"><a id="__codelineno-0-263" name="__codelineno-0-263" href="#__codelineno-0-263"></a>    <span class="n">timer</span> <span class="o o-Arithmetic">+</span> <span class="n">dt</span> <span class="o">-&gt;</span> <span class="n">timer</span>
-</span><span id="__span-0-264"><a id="__codelineno-0-264" name="__codelineno-0-264" href="#__codelineno-0-264"></a>    <span class="k">check</span> <span class="n">timer</span> <span class="o o-Comparison">&gt;=</span> <span class="m">2000</span><span class="p">:</span> <span class="p">{</span>
-</span><span id="__span-0-265"><a id="__codelineno-0-265" name="__codelineno-0-265" href="#__codelineno-0-265"></a>      <span class="k">emit</span> <span class="n">enemies</span><span class="p">.</span><span class="nb">add</span><span class="p">(</span><span class="s2">&quot;Enemy&quot;</span><span class="p">)</span>
-</span><span id="__span-0-266"><a id="__codelineno-0-266" name="__codelineno-0-266" href="#__codelineno-0-266"></a>      <span class="m">0</span> <span class="o">-&gt;</span> <span class="n">timer</span>
-</span><span id="__span-0-267"><a id="__codelineno-0-267" name="__codelineno-0-267" href="#__codelineno-0-267"></a>    <span class="p">}</span>
-</span><span id="__span-0-268"><a id="__codelineno-0-268" name="__codelineno-0-268" href="#__codelineno-0-268"></a>  <span class="p">}</span>
-</span><span id="__span-0-269"><a id="__codelineno-0-269" name="__codelineno-0-269" href="#__codelineno-0-269"></a>
-</span><span id="__span-0-270"><a id="__codelineno-0-270" name="__codelineno-0-270" href="#__codelineno-0-270"></a>  <span class="k">event</span> <span class="nf">player_attack</span><span class="p">(</span><span class="n">damage</span><span class="p">)</span> <span class="p">{</span>
-</span><span id="__span-0-271"><a id="__codelineno-0-271" name="__codelineno-0-271" href="#__codelineno-0-271"></a>    <span class="k">emit</span> <span class="n">enemies</span><span class="p">.</span><span class="nb">each</span><span class="p">(</span><span class="s2">&quot;take_damage&quot;</span><span class="p">,</span> <span class="n">damage</span><span class="p">)</span>
-</span><span id="__span-0-272"><a id="__codelineno-0-272" name="__codelineno-0-272" href="#__codelineno-0-272"></a>  <span class="p">}</span>
-</span><span id="__span-0-273"><a id="__codelineno-0-273" name="__codelineno-0-273" href="#__codelineno-0-273"></a>
-</span><span id="__span-0-274"><a id="__codelineno-0-274" name="__codelineno-0-274" href="#__codelineno-0-274"></a>  <span class="k">event</span> <span class="nf">enemy_died</span> <span class="p">{</span>
-</span><span id="__span-0-275"><a id="__codelineno-0-275" name="__codelineno-0-275" href="#__codelineno-0-275"></a>    <span class="n">score</span> <span class="o o-Arithmetic">+</span> <span class="m">100</span> <span class="o">-&gt;</span> <span class="n">score</span>
-</span><span id="__span-0-276"><a id="__codelineno-0-276" name="__codelineno-0-276" href="#__codelineno-0-276"></a>    <span class="k">emit</span> <span class="nb">log</span><span class="p">(</span><span class="s2">&quot;Score:&quot;</span><span class="p">,</span> <span class="n">score</span><span class="p">)</span>
-</span><span id="__span-0-277"><a id="__codelineno-0-277" name="__codelineno-0-277" href="#__codelineno-0-277"></a>  <span class="p">}</span>
-</span><span id="__span-0-278"><a id="__codelineno-0-278" name="__codelineno-0-278" href="#__codelineno-0-278"></a><span class="p">}</span>
+</span><span id="__span-0-259"><a id="__codelineno-0-259" name="__codelineno-0-259" href="#__codelineno-0-259"></a>    <span class="k">emit</span> <span class="n">enemies</span><span class="p">.</span><span class="nb">add</span><span class="p">(</span><span class="s2">&quot;Enemy&quot;</span><span class="p">)</span>
+</span><span id="__span-0-260"><a id="__codelineno-0-260" name="__codelineno-0-260" href="#__codelineno-0-260"></a>    <span class="k">emit</span> <span class="nb">log</span><span class="p">(</span><span class="s2">&quot;Game started with&quot;</span><span class="p">,</span> <span class="n">enemies</span><span class="p">.</span><span class="nb">count</span><span class="p">,</span> <span class="s2">&quot;enemies&quot;</span><span class="p">)</span>
+</span><span id="__span-0-261"><a id="__codelineno-0-261" name="__codelineno-0-261" href="#__codelineno-0-261"></a>  <span class="p">}</span>
+</span><span id="__span-0-262"><a id="__codelineno-0-262" name="__codelineno-0-262" href="#__codelineno-0-262"></a>
+</span><span id="__span-0-263"><a id="__codelineno-0-263" name="__codelineno-0-263" href="#__codelineno-0-263"></a>  <span class="k">event</span> <span class="nf">tick</span><span class="p">(</span><span class="n">dt</span><span class="p">)</span> <span class="p">{</span>
+</span><span id="__span-0-264"><a id="__codelineno-0-264" name="__codelineno-0-264" href="#__codelineno-0-264"></a>    <span class="n">timer</span> <span class="o o-Arithmetic">+</span> <span class="n">dt</span> <span class="o">-&gt;</span> <span class="n">timer</span>
+</span><span id="__span-0-265"><a id="__codelineno-0-265" name="__codelineno-0-265" href="#__codelineno-0-265"></a>    <span class="k">check</span> <span class="n">timer</span> <span class="o o-Comparison">&gt;=</span> <span class="m">2000</span><span class="p">:</span> <span class="p">{</span>
+</span><span id="__span-0-266"><a id="__codelineno-0-266" name="__codelineno-0-266" href="#__codelineno-0-266"></a>      <span class="k">emit</span> <span class="n">enemies</span><span class="p">.</span><span class="nb">add</span><span class="p">(</span><span class="s2">&quot;Enemy&quot;</span><span class="p">)</span>
+</span><span id="__span-0-267"><a id="__codelineno-0-267" name="__codelineno-0-267" href="#__codelineno-0-267"></a>      <span class="m">0</span> <span class="o">-&gt;</span> <span class="n">timer</span>
+</span><span id="__span-0-268"><a id="__codelineno-0-268" name="__codelineno-0-268" href="#__codelineno-0-268"></a>    <span class="p">}</span>
+</span><span id="__span-0-269"><a id="__codelineno-0-269" name="__codelineno-0-269" href="#__codelineno-0-269"></a>  <span class="p">}</span>
+</span><span id="__span-0-270"><a id="__codelineno-0-270" name="__codelineno-0-270" href="#__codelineno-0-270"></a>
+</span><span id="__span-0-271"><a id="__codelineno-0-271" name="__codelineno-0-271" href="#__codelineno-0-271"></a>  <span class="k">event</span> <span class="nf">player_attack</span><span class="p">(</span><span class="n">damage</span><span class="p">)</span> <span class="p">{</span>
+</span><span id="__span-0-272"><a id="__codelineno-0-272" name="__codelineno-0-272" href="#__codelineno-0-272"></a>    <span class="k">emit</span> <span class="n">enemies</span><span class="p">.</span><span class="nb">each</span><span class="p">(</span><span class="s2">&quot;take_damage&quot;</span><span class="p">,</span> <span class="n">damage</span><span class="p">)</span>
+</span><span id="__span-0-273"><a id="__codelineno-0-273" name="__codelineno-0-273" href="#__codelineno-0-273"></a>  <span class="p">}</span>
+</span><span id="__span-0-274"><a id="__codelineno-0-274" name="__codelineno-0-274" href="#__codelineno-0-274"></a>
+</span><span id="__span-0-275"><a id="__codelineno-0-275" name="__codelineno-0-275" href="#__codelineno-0-275"></a>  <span class="k">event</span> <span class="nf">enemy_died</span> <span class="p">{</span>
+</span><span id="__span-0-276"><a id="__codelineno-0-276" name="__codelineno-0-276" href="#__codelineno-0-276"></a>    <span class="n">score</span> <span class="o o-Arithmetic">+</span> <span class="m">100</span> <span class="o">-&gt;</span> <span class="n">score</span>
+</span><span id="__span-0-277"><a id="__codelineno-0-277" name="__codelineno-0-277" href="#__codelineno-0-277"></a>    <span class="k">emit</span> <span class="nb">log</span><span class="p">(</span><span class="s2">&quot;Score:&quot;</span><span class="p">,</span> <span class="n">score</span><span class="p">)</span>
+</span><span id="__span-0-278"><a id="__codelineno-0-278" name="__codelineno-0-278" href="#__codelineno-0-278"></a>  <span class="p">}</span>
+</span><span id="__span-0-279"><a id="__codelineno-0-279" name="__codelineno-0-279" href="#__codelineno-0-279"></a><span class="p">}</span>
 </span></code></pre></div>
 
 

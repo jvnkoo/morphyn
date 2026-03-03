@@ -1,0 +1,4934 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Declarative event-driven language for game logic">
+      
+      
+      
+      
+        <link rel="prev" href="../">
+      
+      
+        <link rel="next" href="../../unity/overview/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.3">
+    
+    
+      
+        <title>math - Morphyn</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="black" data-md-color-accent="deep-purple">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#math-library" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Morphyn" class="md-header__button md-logo" aria-label="Morphyn" data-md-component="logo">
+      
+  <img src="../../assets/logo.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Morphyn
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              math
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="black" data-md-color-accent="deep-purple"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3zm3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95zm-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="black" data-md-color-accent="deep-purple"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5s-1.65.15-2.39.42zM3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29zm.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14zM20.65 7l-1.77 3.79a7.02 7.02 0 0 0-2.38-4.15zm-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29zM12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/jvnkoo/morphyn" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    morphyn
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../getting-started/quick-start/" class="md-tabs__link">
+          
+  
+  
+  Getting Started
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../language/syntax/" class="md-tabs__link">
+          
+  
+  
+  Language Guide
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
+          
+  
+  
+  Standard Library
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../unity/overview/" class="md-tabs__link">
+          
+  
+  
+  Unity Integration
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../learn/learn/" class="md-tabs__link">
+          
+  
+  
+  Learn in Y minutes
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../tools/vscode/" class="md-tabs__link">
+          
+  
+  
+  Tools
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Morphyn" class="md-nav__button md-logo" aria-label="Morphyn" data-md-component="logo">
+      
+  <img src="../../assets/logo.png" alt="logo">
+
+    </a>
+    Morphyn
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/jvnkoo/morphyn" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    morphyn
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Getting Started
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/quick-start/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quick Start
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/installation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Installation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Language Guide
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Language Guide
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../language/syntax/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Syntax Reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../language/expressions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Expressions
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../language/events/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Event System
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../language/sync-emit/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Sync Emit
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../language/pools/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pool System
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../language/imports/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Import System
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Standard Library
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Standard Library
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    math
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    math
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#usage-pattern" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Usage Pattern
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#constants" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Constants
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#basic-arithmetic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Basic Arithmetic
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Basic Arithmetic">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#abs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        abs
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#min" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        min
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#max" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        max
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#clamp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        clamp
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sign" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        sign
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#rounding" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Rounding
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Rounding">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#floor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        floor
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ceil" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ceil
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#round" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        round
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#snap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        snap
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#to_fixed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        to_fixed
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#interpolation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Interpolation
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Interpolation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#lerp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        lerp
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#lerp_clamped" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        lerp_clamped
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#lerp_2d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        lerp_2d
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#lerp_3d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        lerp_3d
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inverse_lerp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        inverse_lerp
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#smooth_step" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        smooth_step
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#slerp_angle" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        slerp_angle
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#catmull_rom" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        catmull_rom
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#catmull_rom_2d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        catmull_rom_2d
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#spring" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        spring
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#normalization-mapping" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Normalization &amp; Mapping
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Normalization &amp; Mapping">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#normalize" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        normalize
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#remap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        remap
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#move_towards" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        move_towards
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#move_towards_angle" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        move_towards_angle
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#distance-magnitude" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Distance &amp; Magnitude
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Distance &amp; Magnitude">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#distance_1d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        distance_1d
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#distance_2d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        distance_2d
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#distance_3d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        distance_3d
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#magnitude_2d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        magnitude_2d
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#magnitude_3d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        magnitude_3d
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#power-roots" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Power &amp; Roots
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Power &amp; Roots">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sqrt" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        sqrt
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inv_sqrt" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        inv_sqrt
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fast_inv_sqrt" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        fast_inv_sqrt
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        pow
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#trigonometry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Trigonometry
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Trigonometry">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sin" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        sin
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        cos
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        tan
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#asin-acos-atan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        asin, acos, atan
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#atan2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        atan2
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#deg_to_rad-rad_to_deg" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        deg_to_rad / rad_to_deg
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#logarithm-exponential" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Logarithm &amp; Exponential
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Logarithm &amp; Exponential">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#exp_approx" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        exp_approx
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ln_approx" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ln_approx
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#log10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        log10
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#log_base" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        log_base
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#angle-operations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Angle Operations
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Angle Operations">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#delta_angle" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        delta_angle
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#repeat" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        repeat
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ping_pong" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ping_pong
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#clamp_angle" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        clamp_angle
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#vector-operations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Vector Operations
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Vector Operations">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#normalize_2d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        normalize_2d
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#normalize_3d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        normalize_3d
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dot_2d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        dot_2d
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dot_3d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        dot_3d
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cross_product_2d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        cross_product_2d
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cross_product_3d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        cross_product_3d
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#project_2d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        project_2d
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#reflect_2d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        reflect_2d
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rotate_vector_2d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        rotate_vector_2d
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rotate_point" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        rotate_point
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get_perpendicular_2d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        get_perpendicular_2d
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#smooth_damp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        smooth_damp
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#geometry-collision" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Geometry &amp; Collision
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Geometry &amp; Collision">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#point_in_rect" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        point_in_rect
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#circles_intersect" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        circles_intersect
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rects_intersect" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        rects_intersect
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#lines_intersect" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        lines_intersect
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#line_intersects_circle" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        line_intersects_circle
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#point_in_triangle" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        point_in_triangle
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#triangle_signed_area" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        triangle_signed_area
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#distance_point_to_line" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        distance_point_to_line
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#raycasting-ai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Raycasting &amp; AI
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Raycasting &amp; AI">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ray_intersects_circle" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ray_intersects_circle
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#is_in_cone" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        is_in_cone
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#look_at_angle" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        look_at_angle
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#wave-shapes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Wave Shapes
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Wave Shapes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#triangle_wave" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        triangle_wave
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#square_wave" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        square_wave
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#easing-functions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Easing Functions
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#statistics-ratio" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Statistics &amp; Ratio
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Statistics &amp; Ratio">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#average_2-average_3-average_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        average_2 / average_3 / average_4
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#percentage-percent_of-ratio" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        percentage / percent_of / ratio
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#in_range-in_range_exclusive" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        in_range / in_range_exclusive
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#approximately-approximately_default" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        approximately / approximately_default
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#matrix-operations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Matrix Operations
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Matrix Operations">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#3x3-matrices" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3x3 Matrices
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#matrix_multiply_point" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        matrix_multiply_point
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4x4-projection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4x4 Projection
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#noise-procedural" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Noise &amp; Procedural
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Noise &amp; Procedural">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#simple_noise" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        simple_noise
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#noise_2d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        noise_2d
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fractal_noise" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        fractal_noise
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#random" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Random
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Random">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#set_random_seed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        set_random_seed
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#random_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        random
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#random_range" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        random_range
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#smoothing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Smoothing
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Smoothing">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#low_pass_filter" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        low_pass_filter
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#physics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Physics
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Physics">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#gravity_force" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        gravity_force
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#air_resistance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        air_resistance
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#resolve_collision" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        resolve_collision
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pid_update" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        pid_update
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ai-neural-activations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        AI / Neural Activations
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="AI / Neural Activations">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sigmoid" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        sigmoid
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#relu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        relu
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tanh" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        tanh
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bezier-curves" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Bezier Curves
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Bezier Curves">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#get_bezier_quadratic_2d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        get_bezier_quadratic_2d
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get_bezier_cubic_2d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        get_bezier_cubic_2d
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#full-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Full Example
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Unity Integration
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Unity Integration
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../unity/overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../unity/installation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Installation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../unity/api/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API Reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../learn/learn-unity/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Learn unity in Y minutes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Learn in Y minutes
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Learn in Y minutes
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../learn/learn/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Learn morphyn in Y minutes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tools
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Tools
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tools/vscode/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VS Code Extension
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#usage-pattern" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Usage Pattern
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#constants" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Constants
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#basic-arithmetic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Basic Arithmetic
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Basic Arithmetic">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#abs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        abs
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#min" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        min
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#max" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        max
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#clamp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        clamp
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sign" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        sign
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#rounding" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Rounding
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Rounding">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#floor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        floor
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ceil" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ceil
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#round" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        round
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#snap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        snap
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#to_fixed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        to_fixed
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#interpolation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Interpolation
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Interpolation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#lerp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        lerp
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#lerp_clamped" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        lerp_clamped
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#lerp_2d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        lerp_2d
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#lerp_3d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        lerp_3d
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inverse_lerp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        inverse_lerp
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#smooth_step" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        smooth_step
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#slerp_angle" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        slerp_angle
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#catmull_rom" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        catmull_rom
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#catmull_rom_2d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        catmull_rom_2d
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#spring" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        spring
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#normalization-mapping" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Normalization &amp; Mapping
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Normalization &amp; Mapping">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#normalize" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        normalize
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#remap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        remap
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#move_towards" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        move_towards
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#move_towards_angle" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        move_towards_angle
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#distance-magnitude" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Distance &amp; Magnitude
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Distance &amp; Magnitude">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#distance_1d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        distance_1d
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#distance_2d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        distance_2d
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#distance_3d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        distance_3d
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#magnitude_2d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        magnitude_2d
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#magnitude_3d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        magnitude_3d
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#power-roots" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Power &amp; Roots
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Power &amp; Roots">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sqrt" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        sqrt
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inv_sqrt" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        inv_sqrt
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fast_inv_sqrt" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        fast_inv_sqrt
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        pow
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#trigonometry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Trigonometry
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Trigonometry">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sin" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        sin
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        cos
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        tan
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#asin-acos-atan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        asin, acos, atan
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#atan2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        atan2
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#deg_to_rad-rad_to_deg" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        deg_to_rad / rad_to_deg
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#logarithm-exponential" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Logarithm &amp; Exponential
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Logarithm &amp; Exponential">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#exp_approx" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        exp_approx
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ln_approx" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ln_approx
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#log10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        log10
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#log_base" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        log_base
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#angle-operations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Angle Operations
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Angle Operations">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#delta_angle" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        delta_angle
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#repeat" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        repeat
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ping_pong" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ping_pong
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#clamp_angle" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        clamp_angle
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#vector-operations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Vector Operations
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Vector Operations">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#normalize_2d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        normalize_2d
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#normalize_3d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        normalize_3d
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dot_2d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        dot_2d
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dot_3d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        dot_3d
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cross_product_2d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        cross_product_2d
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cross_product_3d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        cross_product_3d
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#project_2d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        project_2d
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#reflect_2d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        reflect_2d
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rotate_vector_2d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        rotate_vector_2d
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rotate_point" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        rotate_point
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get_perpendicular_2d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        get_perpendicular_2d
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#smooth_damp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        smooth_damp
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#geometry-collision" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Geometry &amp; Collision
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Geometry &amp; Collision">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#point_in_rect" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        point_in_rect
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#circles_intersect" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        circles_intersect
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rects_intersect" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        rects_intersect
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#lines_intersect" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        lines_intersect
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#line_intersects_circle" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        line_intersects_circle
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#point_in_triangle" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        point_in_triangle
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#triangle_signed_area" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        triangle_signed_area
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#distance_point_to_line" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        distance_point_to_line
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#raycasting-ai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Raycasting &amp; AI
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Raycasting &amp; AI">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ray_intersects_circle" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ray_intersects_circle
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#is_in_cone" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        is_in_cone
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#look_at_angle" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        look_at_angle
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#wave-shapes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Wave Shapes
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Wave Shapes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#triangle_wave" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        triangle_wave
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#square_wave" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        square_wave
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#easing-functions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Easing Functions
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#statistics-ratio" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Statistics &amp; Ratio
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Statistics &amp; Ratio">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#average_2-average_3-average_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        average_2 / average_3 / average_4
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#percentage-percent_of-ratio" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        percentage / percent_of / ratio
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#in_range-in_range_exclusive" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        in_range / in_range_exclusive
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#approximately-approximately_default" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        approximately / approximately_default
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#matrix-operations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Matrix Operations
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Matrix Operations">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#3x3-matrices" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3x3 Matrices
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#matrix_multiply_point" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        matrix_multiply_point
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4x4-projection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4x4 Projection
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#noise-procedural" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Noise &amp; Procedural
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Noise &amp; Procedural">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#simple_noise" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        simple_noise
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#noise_2d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        noise_2d
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fractal_noise" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        fractal_noise
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#random" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Random
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Random">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#set_random_seed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        set_random_seed
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#random_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        random
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#random_range" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        random_range
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#smoothing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Smoothing
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Smoothing">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#low_pass_filter" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        low_pass_filter
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#physics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Physics
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Physics">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#gravity_force" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        gravity_force
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#air_resistance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        air_resistance
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#resolve_collision" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        resolve_collision
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pid_update" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        pid_update
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ai-neural-activations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        AI / Neural Activations
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="AI / Neural Activations">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sigmoid" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        sigmoid
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#relu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        relu
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tanh" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        tanh
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bezier-curves" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Bezier Curves
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Bezier Curves">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#get_bezier_quadratic_2d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        get_bezier_quadratic_2d
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get_bezier_cubic_2d" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        get_bezier_cubic_2d
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#full-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Full Example
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="math-library">Math Library</h1>
+<p>The <code>math</code> entity is a built-in standard library. Import it once and call any function with <code>emit math.functionName(args) -&gt; result</code>.</p>
+<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">import</span> <span class="s2">&quot;math&quot;</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="k">entity</span> <span class="n">game</span> <span class="p">{</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>  <span class="k">has</span> <span class="nv">hp</span><span class="p">:</span> <span class="m">75</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>  <span class="k">has</span> <span class="nv">max_hp</span><span class="p">:</span> <span class="m">100</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>  <span class="k">event</span> <span class="nf">init</span> <span class="p">{</span>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    <span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">clamp</span><span class="p">(</span><span class="n">hp</span><span class="p">,</span> <span class="m">0</span><span class="p">,</span> <span class="n">max_hp</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">hp</span>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>    <span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">sqrt</span><span class="p">(</span><span class="m">16</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">root</span>
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>    <span class="k">emit</span> <span class="nb">log</span><span class="p">(</span><span class="n">root</span><span class="p">)</span>   <span class="c1"># 4.0</span>
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>  <span class="p">}</span>
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="p">}</span>
+</span></code></pre></div>
+<hr />
+<h2 id="usage-pattern">Usage Pattern</h2>
+<p>All math functions are called via sync emit on the <code>math</code> entity. Results are written to a local variable or field:</p>
+<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">abs</span><span class="p">(</span><span class="o o-Arithmetic">-</span><span class="m">5</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">value</span>        <span class="c1"># value = 5.0</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">lerp</span><span class="p">(</span><span class="m">0</span><span class="p">,</span> <span class="m">100</span><span class="p">,</span> <span class="m">0.5</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">x</span>  <span class="c1"># x = 50.0</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">sin</span><span class="p">(</span><span class="n">math</span><span class="p">.</span><span class="nc">PI</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">s</span>       <span class="c1"># s ≈ 0.0</span>
+</span></code></pre></div>
+<p>Functions that return multiple values write to <code>math.out_x</code>, <code>math.out_y</code>, <code>math.out_z</code>:</p>
+<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">normalize_2d</span><span class="p">(</span><span class="m">3</span><span class="p">,</span> <span class="m">4</span><span class="p">)</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="n">math</span><span class="p">.</span><span class="n">out_x</span> <span class="o">-&gt;</span> <span class="n">nx</span>   <span class="c1"># 0.6</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="n">math</span><span class="p">.</span><span class="n">out_y</span> <span class="o">-&gt;</span> <span class="n">ny</span>   <span class="c1"># 0.8</span>
+</span></code></pre></div>
+<hr />
+<h2 id="constants">Constants</h2>
+<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="n">math</span><span class="p">.</span><span class="nc">PI</span>       <span class="c1"># 3.1415926535</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="n">math</span><span class="p">.</span><span class="nc">TAU</span>      <span class="c1"># 6.2831853071  (2 * PI)</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="n">math</span><span class="p">.</span><span class="nc">E</span>        <span class="c1"># 2.7182818284</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="n">math</span><span class="p">.</span><span class="nc">EPSILON</span>  <span class="c1"># 0.000001</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="n">math</span><span class="p">.</span><span class="nc">INFINITY</span> <span class="c1"># 1000000000.0</span>
+</span></code></pre></div>
+<hr />
+<h2 id="basic-arithmetic">Basic Arithmetic</h2>
+<h3 id="abs">abs</h3>
+<p>Returns the absolute value of a number.
+<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">abs</span><span class="p">(</span><span class="o o-Arithmetic">-</span><span class="m">5</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">result</span>    <span class="c1"># 5.0</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">abs</span><span class="p">(</span><span class="m">3.14</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">result</span>  <span class="c1"># 3.14</span>
+</span></code></pre></div></p>
+<h3 id="min">min</h3>
+<p>Returns the smaller of two values.
+<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">min</span><span class="p">(</span><span class="m">10</span><span class="p">,</span> <span class="m">5</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">result</span>  <span class="c1"># 5.0</span>
+</span></code></pre></div></p>
+<h3 id="max">max</h3>
+<p>Returns the larger of two values.
+<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">max</span><span class="p">(</span><span class="m">10</span><span class="p">,</span> <span class="m">5</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">result</span>  <span class="c1"># 10.0</span>
+</span></code></pre></div></p>
+<h3 id="clamp">clamp</h3>
+<p>Clamps a value between a minimum and maximum.
+<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">clamp</span><span class="p">(</span><span class="m">150</span><span class="p">,</span> <span class="m">0</span><span class="p">,</span> <span class="m">100</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">result</span>  <span class="c1"># 100.0</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">clamp</span><span class="p">(</span><span class="o o-Arithmetic">-</span><span class="m">5</span><span class="p">,</span> <span class="m">0</span><span class="p">,</span> <span class="m">100</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">result</span>   <span class="c1"># 0.0</span>
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">clamp</span><span class="p">(</span><span class="m">50</span><span class="p">,</span> <span class="m">0</span><span class="p">,</span> <span class="m">100</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">result</span>   <span class="c1"># 50.0</span>
+</span></code></pre></div></p>
+<h3 id="sign">sign</h3>
+<p>Returns <code>1.0</code> for positive, <code>-1.0</code> for negative, <code>0.0</code> for zero.
+<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">sign</span><span class="p">(</span><span class="m">5</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">result</span>   <span class="c1"># 1.0</span>
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">sign</span><span class="p">(</span><span class="o o-Arithmetic">-</span><span class="m">3</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">result</span>  <span class="c1"># -1.0</span>
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">sign</span><span class="p">(</span><span class="m">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">result</span>   <span class="c1"># 0.0</span>
+</span></code></pre></div></p>
+<hr />
+<h2 id="rounding">Rounding</h2>
+<h3 id="floor">floor</h3>
+<p>Rounds down to the nearest integer.
+<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">floor</span><span class="p">(</span><span class="m">3.7</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">result</span>   <span class="c1"># 3.0</span>
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">floor</span><span class="p">(</span><span class="o o-Arithmetic">-</span><span class="m">2.3</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">result</span>  <span class="c1"># -3.0</span>
+</span></code></pre></div></p>
+<h3 id="ceil">ceil</h3>
+<p>Rounds up to the nearest integer.
+<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">ceil</span><span class="p">(</span><span class="m">3.2</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">result</span>   <span class="c1"># 4.0</span>
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">ceil</span><span class="p">(</span><span class="o o-Arithmetic">-</span><span class="m">2.7</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">result</span>  <span class="c1"># -2.0</span>
+</span></code></pre></div></p>
+<h3 id="round">round</h3>
+<p>Rounds to the nearest integer (0.5 rounds up).
+<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">round</span><span class="p">(</span><span class="m">3.5</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">result</span>  <span class="c1"># 4.0</span>
+</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">round</span><span class="p">(</span><span class="m">3.4</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">result</span>  <span class="c1"># 3.0</span>
+</span></code></pre></div></p>
+<h3 id="snap">snap</h3>
+<p>Snaps a value to the nearest grid step.
+<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">snap</span><span class="p">(</span><span class="m">13</span><span class="p">,</span> <span class="m">10</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">result</span>  <span class="c1"># 10.0</span>
+</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">snap</span><span class="p">(</span><span class="m">17</span><span class="p">,</span> <span class="m">10</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">result</span>  <span class="c1"># 20.0</span>
+</span></code></pre></div></p>
+<h3 id="to_fixed">to_fixed</h3>
+<p>Rounds to a specific number of decimal places.
+<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">to_fixed</span><span class="p">(</span><span class="m">3.14159</span><span class="p">,</span> <span class="m">2</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">result</span>  <span class="c1"># 3.14</span>
+</span></code></pre></div></p>
+<hr />
+<h2 id="interpolation">Interpolation</h2>
+<h3 id="lerp">lerp</h3>
+<p>Linear interpolation between <code>a</code> and <code>b</code> by factor <code>t</code>. <code>t=0</code> returns <code>a</code>, <code>t=1</code> returns <code>b</code>.
+<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">lerp</span><span class="p">(</span><span class="m">0</span><span class="p">,</span> <span class="m">100</span><span class="p">,</span> <span class="m">0.5</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">result</span>   <span class="c1"># 50.0</span>
+</span><span id="__span-14-2"><a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">lerp</span><span class="p">(</span><span class="m">0</span><span class="p">,</span> <span class="m">100</span><span class="p">,</span> <span class="m">0.25</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">result</span>  <span class="c1"># 25.0</span>
+</span></code></pre></div></p>
+<h3 id="lerp_clamped">lerp_clamped</h3>
+<p>Same as <code>lerp</code> but <code>t</code> is clamped to <code>[0, 1]</code> — no extrapolation outside the range.
+<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">lerp_clamped</span><span class="p">(</span><span class="m">0</span><span class="p">,</span> <span class="m">100</span><span class="p">,</span> <span class="m">1.5</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">result</span>  <span class="c1"># 100.0</span>
+</span></code></pre></div></p>
+<h3 id="lerp_2d">lerp_2d</h3>
+<p>Interpolates two 2D vectors. Result in <code>math.out_x</code>, <code>math.out_y</code>.
+<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">lerp_2d</span><span class="p">(</span><span class="m">0</span><span class="p">,</span> <span class="m">0</span><span class="p">,</span> <span class="m">10</span><span class="p">,</span> <span class="m">10</span><span class="p">,</span> <span class="m">0.5</span><span class="p">)</span>
+</span><span id="__span-16-2"><a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a><span class="n">math</span><span class="p">.</span><span class="n">out_x</span> <span class="o">-&gt;</span> <span class="n">px</span>  <span class="c1"># 5.0</span>
+</span><span id="__span-16-3"><a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a><span class="n">math</span><span class="p">.</span><span class="n">out_y</span> <span class="o">-&gt;</span> <span class="n">py</span>  <span class="c1"># 5.0</span>
+</span></code></pre></div></p>
+<h3 id="lerp_3d">lerp_3d</h3>
+<p>Interpolates two 3D vectors. Result in <code>math.out_x</code>, <code>math.out_y</code>, <code>math.out_z</code>.
+<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-17-1"><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">lerp_3d</span><span class="p">(</span><span class="m">0</span><span class="p">,</span> <span class="m">0</span><span class="p">,</span> <span class="m">0</span><span class="p">,</span> <span class="m">10</span><span class="p">,</span> <span class="m">10</span><span class="p">,</span> <span class="m">10</span><span class="p">,</span> <span class="m">0.5</span><span class="p">)</span>
+</span><span id="__span-17-2"><a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a><span class="n">math</span><span class="p">.</span><span class="n">out_x</span> <span class="o">-&gt;</span> <span class="n">px</span>  <span class="c1"># 5.0</span>
+</span><span id="__span-17-3"><a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a><span class="n">math</span><span class="p">.</span><span class="n">out_y</span> <span class="o">-&gt;</span> <span class="n">py</span>  <span class="c1"># 5.0</span>
+</span><span id="__span-17-4"><a id="__codelineno-17-4" name="__codelineno-17-4" href="#__codelineno-17-4"></a><span class="n">math</span><span class="p">.</span><span class="n">out_z</span> <span class="o">-&gt;</span> <span class="n">pz</span>  <span class="c1"># 5.0</span>
+</span></code></pre></div></p>
+<h3 id="inverse_lerp">inverse_lerp</h3>
+<p>Finds <code>t</code> such that <code>lerp(a, b, t) == value</code>.
+<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-18-1"><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">inverse_lerp</span><span class="p">(</span><span class="m">0</span><span class="p">,</span> <span class="m">100</span><span class="p">,</span> <span class="m">50</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">result</span>  <span class="c1"># 0.5</span>
+</span></code></pre></div></p>
+<h3 id="smooth_step">smooth_step</h3>
+<p>Smooth hermite interpolation — eases in and out.
+<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-19-1"><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">smooth_step</span><span class="p">(</span><span class="m">0</span><span class="p">,</span> <span class="m">1</span><span class="p">,</span> <span class="m">0.5</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">result</span>  <span class="c1"># 0.5 (on smooth curve)</span>
+</span></code></pre></div></p>
+<h3 id="slerp_angle">slerp_angle</h3>
+<p>Spherical linear interpolation for angles — constant angular velocity.
+<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-20-1"><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">slerp_angle</span><span class="p">(</span><span class="m">0</span><span class="p">,</span> <span class="m">90</span><span class="p">,</span> <span class="m">0.5</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">result</span>  <span class="c1"># 45.0</span>
+</span></code></pre></div></p>
+<h3 id="catmull_rom">catmull_rom</h3>
+<p>Catmull-Rom spline through 4 control points (1D).
+<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-21-1"><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">catmull_rom</span><span class="p">(</span><span class="m">0</span><span class="p">,</span> <span class="m">1</span><span class="p">,</span> <span class="m">2</span><span class="p">,</span> <span class="m">3</span><span class="p">,</span> <span class="m">0.5</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">result</span>
+</span></code></pre></div></p>
+<h3 id="catmull_rom_2d">catmull_rom_2d</h3>
+<p>Catmull-Rom spline for 2D paths. Result in <code>math.out_x</code>, <code>math.out_y</code>.
+<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-22-1"><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">catmull_rom_2d</span><span class="p">(</span><span class="n">p0x</span><span class="p">,</span> <span class="n">p0y</span><span class="p">,</span> <span class="n">p1x</span><span class="p">,</span> <span class="n">p1y</span><span class="p">,</span> <span class="n">p2x</span><span class="p">,</span> <span class="n">p2y</span><span class="p">,</span> <span class="n">p3x</span><span class="p">,</span> <span class="n">p3y</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
+</span></code></pre></div></p>
+<h3 id="spring">spring</h3>
+<p>Physical spring towards a target with momentum. Pass <code>out_velocity</code> back each frame.
+<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-23-1"><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">spring</span><span class="p">(</span><span class="n">current</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">velocity</span><span class="p">,</span> <span class="n">stiffness</span><span class="p">,</span> <span class="n">damping</span><span class="p">,</span> <span class="n">dt</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">current</span>
+</span><span id="__span-23-2"><a id="__codelineno-23-2" name="__codelineno-23-2" href="#__codelineno-23-2"></a><span class="n">math</span><span class="p">.</span><span class="n">out_velocity</span> <span class="o">-&gt;</span> <span class="n">velocity</span>
+</span></code></pre></div></p>
+<hr />
+<h2 id="normalization-mapping">Normalization &amp; Mapping</h2>
+<h3 id="normalize">normalize</h3>
+<p>Maps a value from <code>[min, max]</code> to <code>[0, 1]</code>.
+<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-24-1"><a id="__codelineno-24-1" name="__codelineno-24-1" href="#__codelineno-24-1"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">normalize</span><span class="p">(</span><span class="m">50</span><span class="p">,</span> <span class="m">0</span><span class="p">,</span> <span class="m">100</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">result</span>  <span class="c1"># 0.5</span>
+</span></code></pre></div></p>
+<h3 id="remap">remap</h3>
+<p>Maps a value from one range to another.
+<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-25-1"><a id="__codelineno-25-1" name="__codelineno-25-1" href="#__codelineno-25-1"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">remap</span><span class="p">(</span><span class="m">50</span><span class="p">,</span> <span class="m">0</span><span class="p">,</span> <span class="m">100</span><span class="p">,</span> <span class="m">0</span><span class="p">,</span> <span class="m">200</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">result</span>  <span class="c1"># 100.0</span>
+</span></code></pre></div></p>
+<h3 id="move_towards">move_towards</h3>
+<p>Moves <code>current</code> towards <code>target</code> by at most <code>max_delta</code>.
+<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-26-1"><a id="__codelineno-26-1" name="__codelineno-26-1" href="#__codelineno-26-1"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">move_towards</span><span class="p">(</span><span class="m">10</span><span class="p">,</span> <span class="m">20</span><span class="p">,</span> <span class="m">3</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">result</span>  <span class="c1"># 13.0</span>
+</span></code></pre></div></p>
+<h3 id="move_towards_angle">move_towards_angle</h3>
+<p>Moves an angle towards a target by at most <code>max_delta</code>, taking the shortest path.
+<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-27-1"><a id="__codelineno-27-1" name="__codelineno-27-1" href="#__codelineno-27-1"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">move_towards_angle</span><span class="p">(</span><span class="m">350</span><span class="p">,</span> <span class="m">10</span><span class="p">,</span> <span class="m">15</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">result</span>  <span class="c1"># 5.0</span>
+</span></code></pre></div></p>
+<hr />
+<h2 id="distance-magnitude">Distance &amp; Magnitude</h2>
+<h3 id="distance_1d">distance_1d</h3>
+<p>Absolute distance between two values on a line.
+<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-28-1"><a id="__codelineno-28-1" name="__codelineno-28-1" href="#__codelineno-28-1"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">distance_1d</span><span class="p">(</span><span class="m">10</span><span class="p">,</span> <span class="m">5</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">result</span>  <span class="c1"># 5.0</span>
+</span></code></pre></div></p>
+<h3 id="distance_2d">distance_2d</h3>
+<p>Euclidean distance between two 2D points.
+<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-29-1"><a id="__codelineno-29-1" name="__codelineno-29-1" href="#__codelineno-29-1"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">distance_2d</span><span class="p">(</span><span class="m">0</span><span class="p">,</span> <span class="m">0</span><span class="p">,</span> <span class="m">3</span><span class="p">,</span> <span class="m">4</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">result</span>  <span class="c1"># 5.0</span>
+</span></code></pre></div></p>
+<h3 id="distance_3d">distance_3d</h3>
+<p>Euclidean distance between two 3D points.
+<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-30-1"><a id="__codelineno-30-1" name="__codelineno-30-1" href="#__codelineno-30-1"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">distance_3d</span><span class="p">(</span><span class="m">0</span><span class="p">,</span> <span class="m">0</span><span class="p">,</span> <span class="m">0</span><span class="p">,</span> <span class="m">1</span><span class="p">,</span> <span class="m">1</span><span class="p">,</span> <span class="m">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">result</span>  <span class="c1"># ≈ 1.732</span>
+</span></code></pre></div></p>
+<h3 id="magnitude_2d">magnitude_2d</h3>
+<p>Length of a 2D vector.
+<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-31-1"><a id="__codelineno-31-1" name="__codelineno-31-1" href="#__codelineno-31-1"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">magnitude_2d</span><span class="p">(</span><span class="m">3</span><span class="p">,</span> <span class="m">4</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">result</span>  <span class="c1"># 5.0</span>
+</span></code></pre></div></p>
+<h3 id="magnitude_3d">magnitude_3d</h3>
+<p>Length of a 3D vector.
+<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-32-1"><a id="__codelineno-32-1" name="__codelineno-32-1" href="#__codelineno-32-1"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">magnitude_3d</span><span class="p">(</span><span class="m">1</span><span class="p">,</span> <span class="m">2</span><span class="p">,</span> <span class="m">2</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">result</span>  <span class="c1"># 3.0</span>
+</span></code></pre></div></p>
+<hr />
+<h2 id="power-roots">Power &amp; Roots</h2>
+<h3 id="sqrt">sqrt</h3>
+<p>Square root using Newton's method (10 iterations).
+<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-33-1"><a id="__codelineno-33-1" name="__codelineno-33-1" href="#__codelineno-33-1"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">sqrt</span><span class="p">(</span><span class="m">25</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">result</span>  <span class="c1"># 5.0</span>
+</span><span id="__span-33-2"><a id="__codelineno-33-2" name="__codelineno-33-2" href="#__codelineno-33-2"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">sqrt</span><span class="p">(</span><span class="m">2</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">result</span>   <span class="c1"># ≈ 1.414</span>
+</span></code></pre></div></p>
+<h3 id="inv_sqrt">inv_sqrt</h3>
+<p>Inverse square root: <code>1 / sqrt(x)</code>.
+<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-34-1"><a id="__codelineno-34-1" name="__codelineno-34-1" href="#__codelineno-34-1"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">inv_sqrt</span><span class="p">(</span><span class="m">4</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">result</span>  <span class="c1"># 0.5</span>
+</span></code></pre></div></p>
+<h3 id="fast_inv_sqrt">fast_inv_sqrt</h3>
+<p>Fast inverse square root approximation — one Newton iteration. Use for performance-critical normalization.
+<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-35-1"><a id="__codelineno-35-1" name="__codelineno-35-1" href="#__codelineno-35-1"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">fast_inv_sqrt</span><span class="p">(</span><span class="m">4</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">result</span>  <span class="c1"># ≈ 0.5</span>
+</span></code></pre></div></p>
+<h3 id="pow">pow</h3>
+<p>Power function. Supports integer and fractional exponents.
+<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-36-1"><a id="__codelineno-36-1" name="__codelineno-36-1" href="#__codelineno-36-1"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">pow</span><span class="p">(</span><span class="m">2</span><span class="p">,</span> <span class="m">3</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">result</span>    <span class="c1"># 8.0</span>
+</span><span id="__span-36-2"><a id="__codelineno-36-2" name="__codelineno-36-2" href="#__codelineno-36-2"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">pow</span><span class="p">(</span><span class="m">10</span><span class="p">,</span> <span class="o o-Arithmetic">-</span><span class="m">2</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">result</span>  <span class="c1"># 0.01</span>
+</span><span id="__span-36-3"><a id="__codelineno-36-3" name="__codelineno-36-3" href="#__codelineno-36-3"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">pow</span><span class="p">(</span><span class="m">2</span><span class="p">,</span> <span class="m">0.5</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">result</span>  <span class="c1"># ≈ 1.414</span>
+</span></code></pre></div></p>
+<hr />
+<h2 id="trigonometry">Trigonometry</h2>
+<p>All angles are in <strong>radians</strong> unless the function name contains <code>_angle</code> or <code>_deg</code>.</p>
+<h3 id="sin">sin</h3>
+<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-37-1"><a id="__codelineno-37-1" name="__codelineno-37-1" href="#__codelineno-37-1"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">sin</span><span class="p">(</span><span class="n">math</span><span class="p">.</span><span class="nc">PI</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">result</span>      <span class="c1"># ≈ 0.0</span>
+</span><span id="__span-37-2"><a id="__codelineno-37-2" name="__codelineno-37-2" href="#__codelineno-37-2"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">sin</span><span class="p">(</span><span class="n">math</span><span class="p">.</span><span class="nc">PI</span> <span class="o o-Arithmetic">/</span> <span class="m">2</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">result</span>  <span class="c1"># ≈ 1.0</span>
+</span></code></pre></div>
+<h3 id="cos">cos</h3>
+<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-38-1"><a id="__codelineno-38-1" name="__codelineno-38-1" href="#__codelineno-38-1"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">cos</span><span class="p">(</span><span class="m">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">result</span>        <span class="c1"># ≈ 1.0</span>
+</span><span id="__span-38-2"><a id="__codelineno-38-2" name="__codelineno-38-2" href="#__codelineno-38-2"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">cos</span><span class="p">(</span><span class="n">math</span><span class="p">.</span><span class="nc">PI</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">result</span>  <span class="c1"># ≈ -1.0</span>
+</span></code></pre></div>
+<h3 id="tan">tan</h3>
+<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-39-1"><a id="__codelineno-39-1" name="__codelineno-39-1" href="#__codelineno-39-1"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">tan</span><span class="p">(</span><span class="m">0.785</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">result</span>  <span class="c1"># ≈ 1.0 (PI/4)</span>
+</span></code></pre></div>
+<h3 id="asin-acos-atan">asin, acos, atan</h3>
+<p>Inverse trig functions. Input clamped to <code>[-1, 1]</code> for <code>asin</code>/<code>acos</code>.
+<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-40-1"><a id="__codelineno-40-1" name="__codelineno-40-1" href="#__codelineno-40-1"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">asin</span><span class="p">(</span><span class="m">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">result</span>   <span class="c1"># ≈ 1.5708 (PI/2)</span>
+</span><span id="__span-40-2"><a id="__codelineno-40-2" name="__codelineno-40-2" href="#__codelineno-40-2"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">acos</span><span class="p">(</span><span class="m">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">result</span>   <span class="c1"># ≈ 1.5708 (PI/2)</span>
+</span><span id="__span-40-3"><a id="__codelineno-40-3" name="__codelineno-40-3" href="#__codelineno-40-3"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">atan</span><span class="p">(</span><span class="m">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">result</span>   <span class="c1"># ≈ 0.785  (PI/4)</span>
+</span></code></pre></div></p>
+<h3 id="atan2">atan2</h3>
+<p>Angle in radians from origin to point <code>(x, y)</code>. Essential for "look at" direction.
+<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-41-1"><a id="__codelineno-41-1" name="__codelineno-41-1" href="#__codelineno-41-1"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">atan2</span><span class="p">(</span><span class="m">1</span><span class="p">,</span> <span class="m">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">result</span>  <span class="c1"># ≈ 0.785 (PI/4)</span>
+</span></code></pre></div></p>
+<h3 id="deg_to_rad-rad_to_deg">deg_to_rad / rad_to_deg</h3>
+<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-42-1"><a id="__codelineno-42-1" name="__codelineno-42-1" href="#__codelineno-42-1"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">deg_to_rad</span><span class="p">(</span><span class="m">180</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">result</span>      <span class="c1"># ≈ 3.14159</span>
+</span><span id="__span-42-2"><a id="__codelineno-42-2" name="__codelineno-42-2" href="#__codelineno-42-2"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">rad_to_deg</span><span class="p">(</span><span class="n">math</span><span class="p">.</span><span class="nc">PI</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">result</span>  <span class="c1"># 180.0</span>
+</span></code></pre></div>
+<hr />
+<h2 id="logarithm-exponential">Logarithm &amp; Exponential</h2>
+<h3 id="exp_approx">exp_approx</h3>
+<p>Approximates <code>e^x</code> via Taylor series (10 terms). Accurate for <code>x</code> in <code>[-5, 5]</code>.
+<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-43-1"><a id="__codelineno-43-1" name="__codelineno-43-1" href="#__codelineno-43-1"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">exp_approx</span><span class="p">(</span><span class="m">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">result</span>  <span class="c1"># ≈ 2.718</span>
+</span></code></pre></div></p>
+<h3 id="ln_approx">ln_approx</h3>
+<p>Approximates natural logarithm <code>ln(x)</code> for <code>x &gt; 0</code>.
+<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-44-1"><a id="__codelineno-44-1" name="__codelineno-44-1" href="#__codelineno-44-1"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">ln_approx</span><span class="p">(</span><span class="n">math</span><span class="p">.</span><span class="nc">E</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">result</span>  <span class="c1"># ≈ 1.0</span>
+</span></code></pre></div></p>
+<h3 id="log10">log10</h3>
+<p>Base-10 logarithm.
+<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-45-1"><a id="__codelineno-45-1" name="__codelineno-45-1" href="#__codelineno-45-1"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">log10</span><span class="p">(</span><span class="m">1000</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">result</span>  <span class="c1"># ≈ 3.0</span>
+</span></code></pre></div></p>
+<h3 id="log_base">log_base</h3>
+<p>Logarithm of any base.
+<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-46-1"><a id="__codelineno-46-1" name="__codelineno-46-1" href="#__codelineno-46-1"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">log_base</span><span class="p">(</span><span class="m">8</span><span class="p">,</span> <span class="m">2</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">result</span>  <span class="c1"># ≈ 3.0</span>
+</span></code></pre></div></p>
+<hr />
+<h2 id="angle-operations">Angle Operations</h2>
+<h3 id="delta_angle">delta_angle</h3>
+<p>Shortest rotation between two angles in degrees. Returns value in <code>[-180, 180]</code>.
+<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-47-1"><a id="__codelineno-47-1" name="__codelineno-47-1" href="#__codelineno-47-1"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">delta_angle</span><span class="p">(</span><span class="m">350</span><span class="p">,</span> <span class="m">10</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">result</span>   <span class="c1"># 20.0 (not 340)</span>
+</span><span id="__span-47-2"><a id="__codelineno-47-2" name="__codelineno-47-2" href="#__codelineno-47-2"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">delta_angle</span><span class="p">(</span><span class="m">10</span><span class="p">,</span> <span class="m">350</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">result</span>   <span class="c1"># -20.0</span>
+</span></code></pre></div></p>
+<h3 id="repeat">repeat</h3>
+<p>Wraps a value between <code>0</code> and <code>length</code> (modulo).
+<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-48-1"><a id="__codelineno-48-1" name="__codelineno-48-1" href="#__codelineno-48-1"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">repeat</span><span class="p">(</span><span class="m">370</span><span class="p">,</span> <span class="m">360</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">result</span>   <span class="c1"># 10.0</span>
+</span><span id="__span-48-2"><a id="__codelineno-48-2" name="__codelineno-48-2" href="#__codelineno-48-2"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">repeat</span><span class="p">(</span><span class="o o-Arithmetic">-</span><span class="m">10</span><span class="p">,</span> <span class="m">360</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">result</span>   <span class="c1"># 350.0</span>
+</span></code></pre></div></p>
+<h3 id="ping_pong">ping_pong</h3>
+<p>Value bounces back and forth between <code>0</code> and <code>length</code>.
+<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-49-1"><a id="__codelineno-49-1" name="__codelineno-49-1" href="#__codelineno-49-1"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">ping_pong</span><span class="p">(</span><span class="m">0.5</span><span class="p">,</span> <span class="m">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">result</span>  <span class="c1"># 0.5</span>
+</span><span id="__span-49-2"><a id="__codelineno-49-2" name="__codelineno-49-2" href="#__codelineno-49-2"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">ping_pong</span><span class="p">(</span><span class="m">1.5</span><span class="p">,</span> <span class="m">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">result</span>  <span class="c1"># 0.5</span>
+</span></code></pre></div></p>
+<h3 id="clamp_angle">clamp_angle</h3>
+<p>Clamps an angle (degrees) between min and max, respecting 360° wrap.
+<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-50-1"><a id="__codelineno-50-1" name="__codelineno-50-1" href="#__codelineno-50-1"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">clamp_angle</span><span class="p">(</span><span class="m">270</span><span class="p">,</span> <span class="o o-Arithmetic">-</span><span class="m">45</span><span class="p">,</span> <span class="m">45</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">result</span>  <span class="c1"># 45.0</span>
+</span></code></pre></div></p>
+<hr />
+<h2 id="vector-operations">Vector Operations</h2>
+<h3 id="normalize_2d">normalize_2d</h3>
+<p>Normalizes a 2D vector to magnitude 1. Result in <code>math.out_x</code>, <code>math.out_y</code>.
+<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-51-1"><a id="__codelineno-51-1" name="__codelineno-51-1" href="#__codelineno-51-1"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">normalize_2d</span><span class="p">(</span><span class="m">3</span><span class="p">,</span> <span class="m">4</span><span class="p">)</span>
+</span><span id="__span-51-2"><a id="__codelineno-51-2" name="__codelineno-51-2" href="#__codelineno-51-2"></a><span class="n">math</span><span class="p">.</span><span class="n">out_x</span> <span class="o">-&gt;</span> <span class="n">nx</span>  <span class="c1"># 0.6</span>
+</span><span id="__span-51-3"><a id="__codelineno-51-3" name="__codelineno-51-3" href="#__codelineno-51-3"></a><span class="n">math</span><span class="p">.</span><span class="n">out_y</span> <span class="o">-&gt;</span> <span class="n">ny</span>  <span class="c1"># 0.8</span>
+</span></code></pre></div></p>
+<h3 id="normalize_3d">normalize_3d</h3>
+<p>Normalizes a 3D vector. Result in <code>math.out_x</code>, <code>math.out_y</code>, <code>math.out_z</code>.
+<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-52-1"><a id="__codelineno-52-1" name="__codelineno-52-1" href="#__codelineno-52-1"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">normalize_3d</span><span class="p">(</span><span class="m">1</span><span class="p">,</span> <span class="m">0</span><span class="p">,</span> <span class="m">0</span><span class="p">)</span>
+</span><span id="__span-52-2"><a id="__codelineno-52-2" name="__codelineno-52-2" href="#__codelineno-52-2"></a><span class="n">math</span><span class="p">.</span><span class="n">out_x</span> <span class="o">-&gt;</span> <span class="n">nx</span>  <span class="c1"># 1.0</span>
+</span></code></pre></div></p>
+<h3 id="dot_2d">dot_2d</h3>
+<p>Dot product of two 2D vectors. Positive = same direction, 0 = perpendicular, negative = opposite.
+<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-53-1"><a id="__codelineno-53-1" name="__codelineno-53-1" href="#__codelineno-53-1"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">dot_2d</span><span class="p">(</span><span class="m">1</span><span class="p">,</span> <span class="m">0</span><span class="p">,</span> <span class="m">0</span><span class="p">,</span> <span class="m">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">result</span>  <span class="c1"># 0.0</span>
+</span><span id="__span-53-2"><a id="__codelineno-53-2" name="__codelineno-53-2" href="#__codelineno-53-2"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">dot_2d</span><span class="p">(</span><span class="m">1</span><span class="p">,</span> <span class="m">0</span><span class="p">,</span> <span class="m">1</span><span class="p">,</span> <span class="m">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">result</span>  <span class="c1"># 1.0</span>
+</span></code></pre></div></p>
+<h3 id="dot_3d">dot_3d</h3>
+<p>Dot product of two 3D vectors.
+<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-54-1"><a id="__codelineno-54-1" name="__codelineno-54-1" href="#__codelineno-54-1"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">dot_3d</span><span class="p">(</span><span class="m">1</span><span class="p">,</span> <span class="m">0</span><span class="p">,</span> <span class="m">0</span><span class="p">,</span> <span class="m">1</span><span class="p">,</span> <span class="m">0</span><span class="p">,</span> <span class="m">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">result</span>  <span class="c1"># 1.0</span>
+</span></code></pre></div></p>
+<h3 id="cross_product_2d">cross_product_2d</h3>
+<p>2D cross product (determinant). Positive = B is left of A, negative = right.
+<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-55-1"><a id="__codelineno-55-1" name="__codelineno-55-1" href="#__codelineno-55-1"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">cross_product_2d</span><span class="p">(</span><span class="m">1</span><span class="p">,</span> <span class="m">0</span><span class="p">,</span> <span class="m">0</span><span class="p">,</span> <span class="m">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">result</span>  <span class="c1"># 1.0</span>
+</span></code></pre></div></p>
+<h3 id="cross_product_3d">cross_product_3d</h3>
+<p>3D cross product. Result in <code>math.out_x</code>, <code>math.out_y</code>, <code>math.out_z</code>.
+<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-56-1"><a id="__codelineno-56-1" name="__codelineno-56-1" href="#__codelineno-56-1"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">cross_product_3d</span><span class="p">(</span><span class="m">1</span><span class="p">,</span> <span class="m">0</span><span class="p">,</span> <span class="m">0</span><span class="p">,</span> <span class="m">0</span><span class="p">,</span> <span class="m">1</span><span class="p">,</span> <span class="m">0</span><span class="p">)</span>
+</span><span id="__span-56-2"><a id="__codelineno-56-2" name="__codelineno-56-2" href="#__codelineno-56-2"></a><span class="n">math</span><span class="p">.</span><span class="n">out_x</span> <span class="o">-&gt;</span> <span class="n">cx</span>  <span class="c1"># 0.0</span>
+</span><span id="__span-56-3"><a id="__codelineno-56-3" name="__codelineno-56-3" href="#__codelineno-56-3"></a><span class="n">math</span><span class="p">.</span><span class="n">out_y</span> <span class="o">-&gt;</span> <span class="n">cy</span>  <span class="c1"># 0.0</span>
+</span><span id="__span-56-4"><a id="__codelineno-56-4" name="__codelineno-56-4" href="#__codelineno-56-4"></a><span class="n">math</span><span class="p">.</span><span class="n">out_z</span> <span class="o">-&gt;</span> <span class="n">cz</span>  <span class="c1"># 1.0</span>
+</span></code></pre></div></p>
+<h3 id="project_2d">project_2d</h3>
+<p>Projects vector A onto vector B. Result in <code>math.out_x</code>, <code>math.out_y</code>.
+<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-57-1"><a id="__codelineno-57-1" name="__codelineno-57-1" href="#__codelineno-57-1"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">project_2d</span><span class="p">(</span><span class="m">3</span><span class="p">,</span> <span class="m">4</span><span class="p">,</span> <span class="m">1</span><span class="p">,</span> <span class="m">0</span><span class="p">)</span>
+</span><span id="__span-57-2"><a id="__codelineno-57-2" name="__codelineno-57-2" href="#__codelineno-57-2"></a><span class="n">math</span><span class="p">.</span><span class="n">out_x</span> <span class="o">-&gt;</span> <span class="n">px</span>  <span class="c1"># 3.0</span>
+</span><span id="__span-57-3"><a id="__codelineno-57-3" name="__codelineno-57-3" href="#__codelineno-57-3"></a><span class="n">math</span><span class="p">.</span><span class="n">out_y</span> <span class="o">-&gt;</span> <span class="n">py</span>  <span class="c1"># 0.0</span>
+</span></code></pre></div></p>
+<h3 id="reflect_2d">reflect_2d</h3>
+<p>Reflects a vector off a surface normal. Result in <code>math.out_x</code>, <code>math.out_y</code>.
+<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-58-1"><a id="__codelineno-58-1" name="__codelineno-58-1" href="#__codelineno-58-1"></a><span class="c1"># Bullet bouncing off a horizontal floor (normal = 0, 1)</span>
+</span><span id="__span-58-2"><a id="__codelineno-58-2" name="__codelineno-58-2" href="#__codelineno-58-2"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">reflect_2d</span><span class="p">(</span><span class="m">1</span><span class="p">,</span> <span class="o o-Arithmetic">-</span><span class="m">1</span><span class="p">,</span> <span class="m">0</span><span class="p">,</span> <span class="m">1</span><span class="p">)</span>
+</span><span id="__span-58-3"><a id="__codelineno-58-3" name="__codelineno-58-3" href="#__codelineno-58-3"></a><span class="n">math</span><span class="p">.</span><span class="n">out_x</span> <span class="o">-&gt;</span> <span class="n">rx</span>  <span class="c1"># 1.0</span>
+</span><span id="__span-58-4"><a id="__codelineno-58-4" name="__codelineno-58-4" href="#__codelineno-58-4"></a><span class="n">math</span><span class="p">.</span><span class="n">out_y</span> <span class="o">-&gt;</span> <span class="n">ry</span>  <span class="c1"># 1.0</span>
+</span></code></pre></div></p>
+<h3 id="rotate_vector_2d">rotate_vector_2d</h3>
+<p>Rotates a direction vector by an angle in radians. Result in <code>math.out_x</code>, <code>math.out_y</code>.
+<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-59-1"><a id="__codelineno-59-1" name="__codelineno-59-1" href="#__codelineno-59-1"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">deg_to_rad</span><span class="p">(</span><span class="m">90</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">angle_rad</span>
+</span><span id="__span-59-2"><a id="__codelineno-59-2" name="__codelineno-59-2" href="#__codelineno-59-2"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">rotate_vector_2d</span><span class="p">(</span><span class="m">1</span><span class="p">,</span> <span class="m">0</span><span class="p">,</span> <span class="n">angle_rad</span><span class="p">)</span>
+</span><span id="__span-59-3"><a id="__codelineno-59-3" name="__codelineno-59-3" href="#__codelineno-59-3"></a><span class="n">math</span><span class="p">.</span><span class="n">out_x</span> <span class="o">-&gt;</span> <span class="n">rx</span>  <span class="c1"># ≈ 0.0</span>
+</span><span id="__span-59-4"><a id="__codelineno-59-4" name="__codelineno-59-4" href="#__codelineno-59-4"></a><span class="n">math</span><span class="p">.</span><span class="n">out_y</span> <span class="o">-&gt;</span> <span class="n">ry</span>  <span class="c1"># ≈ 1.0</span>
+</span></code></pre></div></p>
+<h3 id="rotate_point">rotate_point</h3>
+<p>Rotates a point around a center. Result in <code>math.out_x</code>, <code>math.out_y</code>.
+<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-60-1"><a id="__codelineno-60-1" name="__codelineno-60-1" href="#__codelineno-60-1"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">rotate_point</span><span class="p">(</span><span class="m">1</span><span class="p">,</span> <span class="m">0</span><span class="p">,</span> <span class="m">0</span><span class="p">,</span> <span class="m">0</span><span class="p">,</span> <span class="n">math</span><span class="p">.</span><span class="nc">PI</span><span class="p">)</span>
+</span><span id="__span-60-2"><a id="__codelineno-60-2" name="__codelineno-60-2" href="#__codelineno-60-2"></a><span class="n">math</span><span class="p">.</span><span class="n">out_x</span> <span class="o">-&gt;</span> <span class="n">rx</span>  <span class="c1"># ≈ -1.0</span>
+</span><span id="__span-60-3"><a id="__codelineno-60-3" name="__codelineno-60-3" href="#__codelineno-60-3"></a><span class="n">math</span><span class="p">.</span><span class="n">out_y</span> <span class="o">-&gt;</span> <span class="n">ry</span>  <span class="c1"># ≈ 0.0</span>
+</span></code></pre></div></p>
+<h3 id="get_perpendicular_2d">get_perpendicular_2d</h3>
+<p>Returns a vector 90° counter-clockwise. Result in <code>math.out_x</code>, <code>math.out_y</code>.
+<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-61-1"><a id="__codelineno-61-1" name="__codelineno-61-1" href="#__codelineno-61-1"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">get_perpendicular_2d</span><span class="p">(</span><span class="m">1</span><span class="p">,</span> <span class="m">0</span><span class="p">)</span>
+</span><span id="__span-61-2"><a id="__codelineno-61-2" name="__codelineno-61-2" href="#__codelineno-61-2"></a><span class="n">math</span><span class="p">.</span><span class="n">out_x</span> <span class="o">-&gt;</span> <span class="n">px</span>  <span class="c1"># 0.0</span>
+</span><span id="__span-61-3"><a id="__codelineno-61-3" name="__codelineno-61-3" href="#__codelineno-61-3"></a><span class="n">math</span><span class="p">.</span><span class="n">out_y</span> <span class="o">-&gt;</span> <span class="n">py</span>  <span class="c1"># 1.0</span>
+</span></code></pre></div></p>
+<h3 id="smooth_damp">smooth_damp</h3>
+<p>Dampened spring motion. Read <code>math.out_velocity</code> and pass it back next frame.
+<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-62-1"><a id="__codelineno-62-1" name="__codelineno-62-1" href="#__codelineno-62-1"></a><span class="k">event</span> <span class="nf">tick</span><span class="p">(</span><span class="n">dt</span><span class="p">)</span> <span class="p">{</span>
+</span><span id="__span-62-2"><a id="__codelineno-62-2" name="__codelineno-62-2" href="#__codelineno-62-2"></a>  <span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">smooth_damp</span><span class="p">(</span><span class="n">pos_x</span><span class="p">,</span> <span class="n">target_x</span><span class="p">,</span> <span class="n">vel_x</span><span class="p">,</span> <span class="n">smooth_time</span><span class="p">,</span> <span class="n">dt</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pos_x</span>
+</span><span id="__span-62-3"><a id="__codelineno-62-3" name="__codelineno-62-3" href="#__codelineno-62-3"></a>  <span class="n">math</span><span class="p">.</span><span class="n">out_velocity</span> <span class="o">-&gt;</span> <span class="n">vel_x</span>
+</span><span id="__span-62-4"><a id="__codelineno-62-4" name="__codelineno-62-4" href="#__codelineno-62-4"></a><span class="p">}</span>
+</span></code></pre></div></p>
+<hr />
+<h2 id="geometry-collision">Geometry &amp; Collision</h2>
+<h3 id="point_in_rect">point_in_rect</h3>
+<p>Returns <code>1.0</code> if point <code>(px, py)</code> is inside rectangle at <code>(rx, ry)</code> with size <code>(rw, rh)</code>.
+<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-63-1"><a id="__codelineno-63-1" name="__codelineno-63-1" href="#__codelineno-63-1"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">point_in_rect</span><span class="p">(</span><span class="m">5</span><span class="p">,</span> <span class="m">5</span><span class="p">,</span> <span class="m">0</span><span class="p">,</span> <span class="m">0</span><span class="p">,</span> <span class="m">10</span><span class="p">,</span> <span class="m">10</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">result</span>  <span class="c1"># 1.0</span>
+</span><span id="__span-63-2"><a id="__codelineno-63-2" name="__codelineno-63-2" href="#__codelineno-63-2"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">point_in_rect</span><span class="p">(</span><span class="m">15</span><span class="p">,</span> <span class="m">5</span><span class="p">,</span> <span class="m">0</span><span class="p">,</span> <span class="m">0</span><span class="p">,</span> <span class="m">10</span><span class="p">,</span> <span class="m">10</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">result</span>  <span class="c1"># 0.0</span>
+</span></code></pre></div></p>
+<h3 id="circles_intersect">circles_intersect</h3>
+<p>Returns <code>1.0</code> if two circles overlap.
+<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-64-1"><a id="__codelineno-64-1" name="__codelineno-64-1" href="#__codelineno-64-1"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">circles_intersect</span><span class="p">(</span><span class="m">0</span><span class="p">,</span> <span class="m">0</span><span class="p">,</span> <span class="m">5</span><span class="p">,</span> <span class="m">8</span><span class="p">,</span> <span class="m">0</span><span class="p">,</span> <span class="m">5</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">result</span>  <span class="c1"># 1.0</span>
+</span></code></pre></div></p>
+<h3 id="rects_intersect">rects_intersect</h3>
+<p>AABB rectangle overlap check.
+<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-65-1"><a id="__codelineno-65-1" name="__codelineno-65-1" href="#__codelineno-65-1"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">rects_intersect</span><span class="p">(</span><span class="m">0</span><span class="p">,</span> <span class="m">0</span><span class="p">,</span> <span class="m">10</span><span class="p">,</span> <span class="m">10</span><span class="p">,</span> <span class="m">5</span><span class="p">,</span> <span class="m">5</span><span class="p">,</span> <span class="m">10</span><span class="p">,</span> <span class="m">10</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">result</span>  <span class="c1"># 1.0</span>
+</span></code></pre></div></p>
+<h3 id="lines_intersect">lines_intersect</h3>
+<p>Returns <code>1.0</code> if two line segments intersect.
+<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-66-1"><a id="__codelineno-66-1" name="__codelineno-66-1" href="#__codelineno-66-1"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">lines_intersect</span><span class="p">(</span><span class="m">0</span><span class="p">,</span> <span class="m">0</span><span class="p">,</span> <span class="m">10</span><span class="p">,</span> <span class="m">10</span><span class="p">,</span> <span class="m">0</span><span class="p">,</span> <span class="m">10</span><span class="p">,</span> <span class="m">10</span><span class="p">,</span> <span class="m">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">result</span>  <span class="c1"># 1.0</span>
+</span></code></pre></div></p>
+<h3 id="line_intersects_circle">line_intersects_circle</h3>
+<p>Returns <code>1.0</code> if a line segment hits a circle.
+<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-67-1"><a id="__codelineno-67-1" name="__codelineno-67-1" href="#__codelineno-67-1"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">line_intersects_circle</span><span class="p">(</span><span class="m">0</span><span class="p">,</span> <span class="m">0</span><span class="p">,</span> <span class="m">10</span><span class="p">,</span> <span class="m">0</span><span class="p">,</span> <span class="m">5</span><span class="p">,</span> <span class="m">2</span><span class="p">,</span> <span class="m">3</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">result</span>  <span class="c1"># 1.0</span>
+</span></code></pre></div></p>
+<h3 id="point_in_triangle">point_in_triangle</h3>
+<p>Returns <code>1.0</code> if point is inside triangle (barycentric coordinates).
+<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-68-1"><a id="__codelineno-68-1" name="__codelineno-68-1" href="#__codelineno-68-1"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">point_in_triangle</span><span class="p">(</span><span class="m">5</span><span class="p">,</span> <span class="m">5</span><span class="p">,</span> <span class="m">0</span><span class="p">,</span> <span class="m">0</span><span class="p">,</span> <span class="m">10</span><span class="p">,</span> <span class="m">0</span><span class="p">,</span> <span class="m">5</span><span class="p">,</span> <span class="m">10</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">result</span>  <span class="c1"># 1.0</span>
+</span></code></pre></div></p>
+<h3 id="triangle_signed_area">triangle_signed_area</h3>
+<p>Signed area of a triangle. Positive = counter-clockwise vertices.
+<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-69-1"><a id="__codelineno-69-1" name="__codelineno-69-1" href="#__codelineno-69-1"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">triangle_signed_area</span><span class="p">(</span><span class="m">0</span><span class="p">,</span> <span class="m">0</span><span class="p">,</span> <span class="m">10</span><span class="p">,</span> <span class="m">0</span><span class="p">,</span> <span class="m">5</span><span class="p">,</span> <span class="m">5</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">result</span>  <span class="c1"># 25.0</span>
+</span></code></pre></div></p>
+<h3 id="distance_point_to_line">distance_point_to_line</h3>
+<p>Shortest distance from a point to a line segment.
+<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-70-1"><a id="__codelineno-70-1" name="__codelineno-70-1" href="#__codelineno-70-1"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">distance_point_to_line</span><span class="p">(</span><span class="m">5</span><span class="p">,</span> <span class="m">5</span><span class="p">,</span> <span class="m">0</span><span class="p">,</span> <span class="m">0</span><span class="p">,</span> <span class="m">10</span><span class="p">,</span> <span class="m">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">result</span>  <span class="c1"># 5.0</span>
+</span></code></pre></div></p>
+<hr />
+<h2 id="raycasting-ai">Raycasting &amp; AI</h2>
+<h3 id="ray_intersects_circle">ray_intersects_circle</h3>
+<p>Returns distance to hit point, or <code>-1.0</code> on miss.
+<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-71-1"><a id="__codelineno-71-1" name="__codelineno-71-1" href="#__codelineno-71-1"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">ray_intersects_circle</span><span class="p">(</span><span class="m">0</span><span class="p">,</span> <span class="m">0</span><span class="p">,</span> <span class="m">1</span><span class="p">,</span> <span class="m">0</span><span class="p">,</span> <span class="m">5</span><span class="p">,</span> <span class="m">0</span><span class="p">,</span> <span class="m">2</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">result</span>  <span class="c1"># 3.0</span>
+</span></code></pre></div></p>
+<h3 id="is_in_cone">is_in_cone</h3>
+<p>Returns <code>1.0</code> if point is within a vision cone.
+<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-72-1"><a id="__codelineno-72-1" name="__codelineno-72-1" href="#__codelineno-72-1"></a><span class="c1"># Is target at (5, 0) visible from origin, facing right, 90 deg fov, range 10?</span>
+</span><span id="__span-72-2"><a id="__codelineno-72-2" name="__codelineno-72-2" href="#__codelineno-72-2"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">is_in_cone</span><span class="p">(</span><span class="m">5</span><span class="p">,</span> <span class="m">0</span><span class="p">,</span> <span class="m">90</span><span class="p">,</span> <span class="m">10</span><span class="p">,</span> <span class="m">0</span><span class="p">,</span> <span class="m">0</span><span class="p">,</span> <span class="m">1</span><span class="p">,</span> <span class="m">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">result</span>  <span class="c1"># 1.0</span>
+</span></code></pre></div></p>
+<h3 id="look_at_angle">look_at_angle</h3>
+<p>Returns the rotation in degrees to face a target point.
+<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-73-1"><a id="__codelineno-73-1" name="__codelineno-73-1" href="#__codelineno-73-1"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">look_at_angle</span><span class="p">(</span><span class="m">0</span><span class="p">,</span> <span class="m">0</span><span class="p">,</span> <span class="m">1</span><span class="p">,</span> <span class="m">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">result</span>  <span class="c1"># 0.0</span>
+</span><span id="__span-73-2"><a id="__codelineno-73-2" name="__codelineno-73-2" href="#__codelineno-73-2"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">look_at_angle</span><span class="p">(</span><span class="m">0</span><span class="p">,</span> <span class="m">0</span><span class="p">,</span> <span class="m">0</span><span class="p">,</span> <span class="m">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">result</span>  <span class="c1"># 90.0</span>
+</span></code></pre></div></p>
+<hr />
+<h2 id="wave-shapes">Wave Shapes</h2>
+<h3 id="triangle_wave">triangle_wave</h3>
+<p>Linear triangle wave between 0 and 1.
+<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-74-1"><a id="__codelineno-74-1" name="__codelineno-74-1" href="#__codelineno-74-1"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">triangle_wave</span><span class="p">(</span><span class="m">0.25</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">result</span>  <span class="c1"># 0.5</span>
+</span><span id="__span-74-2"><a id="__codelineno-74-2" name="__codelineno-74-2" href="#__codelineno-74-2"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">triangle_wave</span><span class="p">(</span><span class="m">0.5</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">result</span>   <span class="c1"># 1.0</span>
+</span></code></pre></div></p>
+<h3 id="square_wave">square_wave</h3>
+<p>Returns <code>1.0</code> or <code>-1.0</code>. Use for blinking, pulses, or digital logic.
+<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-75-1"><a id="__codelineno-75-1" name="__codelineno-75-1" href="#__codelineno-75-1"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">square_wave</span><span class="p">(</span><span class="m">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">result</span>  <span class="c1"># 1.0</span>
+</span></code></pre></div></p>
+<hr />
+<h2 id="easing-functions">Easing Functions</h2>
+<p>All easing functions take <code>t</code> in <code>[0, 1]</code> and return a remapped value.</p>
+<table>
+<thead>
+<tr>
+<th>Function</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ease_in_quad(t)</code></td>
+<td>Slow start, accelerating</td>
+</tr>
+<tr>
+<td><code>ease_out_quad(t)</code></td>
+<td>Fast start, decelerating</td>
+</tr>
+<tr>
+<td><code>ease_in_out_quad(t)</code></td>
+<td>Slow start and end</td>
+</tr>
+<tr>
+<td><code>ease_in_cubic(t)</code></td>
+<td>Strong slow start</td>
+</tr>
+<tr>
+<td><code>ease_out_cubic(t)</code></td>
+<td>Strong deceleration</td>
+</tr>
+<tr>
+<td><code>ease_in_out_cubic(t)</code></td>
+<td>Very smooth</td>
+</tr>
+<tr>
+<td><code>ease_out_back(t)</code></td>
+<td>Overshoots then settles</td>
+</tr>
+<tr>
+<td><code>ease_in_back(t)</code></td>
+<td>Pulls back before moving</td>
+</tr>
+<tr>
+<td><code>ease_in_out_back(t)</code></td>
+<td>Both ends</td>
+</tr>
+<tr>
+<td><code>ease_out_bounce(t)</code></td>
+<td>Bouncing landing</td>
+</tr>
+<tr>
+<td><code>ease_in_bounce(t)</code></td>
+<td>Bouncing start</td>
+</tr>
+<tr>
+<td><code>ease_in_out_bounce(t)</code></td>
+<td>Bounce both ends</td>
+</tr>
+</tbody>
+</table>
+<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-76-1"><a id="__codelineno-76-1" name="__codelineno-76-1" href="#__codelineno-76-1"></a><span class="k">entity</span> <span class="n">ui</span> <span class="p">{</span>
+</span><span id="__span-76-2"><a id="__codelineno-76-2" name="__codelineno-76-2" href="#__codelineno-76-2"></a>  <span class="k">has</span> <span class="nv">t</span><span class="p">:</span> <span class="m">0.0</span>
+</span><span id="__span-76-3"><a id="__codelineno-76-3" name="__codelineno-76-3" href="#__codelineno-76-3"></a>  <span class="k">event</span> <span class="nf">tick</span><span class="p">(</span><span class="n">dt</span><span class="p">)</span> <span class="p">{</span>
+</span><span id="__span-76-4"><a id="__codelineno-76-4" name="__codelineno-76-4" href="#__codelineno-76-4"></a>    <span class="n">t</span> <span class="o o-Arithmetic">+</span> <span class="n">dt</span> <span class="o o-Arithmetic">/</span> <span class="m">1000</span> <span class="o">-&gt;</span> <span class="n">t</span>
+</span><span id="__span-76-5"><a id="__codelineno-76-5" name="__codelineno-76-5" href="#__codelineno-76-5"></a>    <span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">ease_out_back</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">eased</span>
+</span><span id="__span-76-6"><a id="__codelineno-76-6" name="__codelineno-76-6" href="#__codelineno-76-6"></a>    <span class="k">emit</span> <span class="nb">unity</span><span class="p">(</span><span class="s2">&quot;SetScale&quot;</span><span class="p">,</span> <span class="n">eased</span><span class="p">)</span>
+</span><span id="__span-76-7"><a id="__codelineno-76-7" name="__codelineno-76-7" href="#__codelineno-76-7"></a>  <span class="p">}</span>
+</span><span id="__span-76-8"><a id="__codelineno-76-8" name="__codelineno-76-8" href="#__codelineno-76-8"></a><span class="p">}</span>
+</span></code></pre></div>
+<hr />
+<h2 id="statistics-ratio">Statistics &amp; Ratio</h2>
+<h3 id="average_2-average_3-average_4">average_2 / average_3 / average_4</h3>
+<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-77-1"><a id="__codelineno-77-1" name="__codelineno-77-1" href="#__codelineno-77-1"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">average_2</span><span class="p">(</span><span class="m">10</span><span class="p">,</span> <span class="m">20</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">result</span>          <span class="c1"># 15.0</span>
+</span><span id="__span-77-2"><a id="__codelineno-77-2" name="__codelineno-77-2" href="#__codelineno-77-2"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">average_3</span><span class="p">(</span><span class="m">10</span><span class="p">,</span> <span class="m">20</span><span class="p">,</span> <span class="m">30</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">result</span>      <span class="c1"># 20.0</span>
+</span><span id="__span-77-3"><a id="__codelineno-77-3" name="__codelineno-77-3" href="#__codelineno-77-3"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">average_4</span><span class="p">(</span><span class="m">10</span><span class="p">,</span> <span class="m">20</span><span class="p">,</span> <span class="m">30</span><span class="p">,</span> <span class="m">40</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">result</span>  <span class="c1"># 25.0</span>
+</span></code></pre></div>
+<h3 id="percentage-percent_of-ratio">percentage / percent_of / ratio</h3>
+<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-78-1"><a id="__codelineno-78-1" name="__codelineno-78-1" href="#__codelineno-78-1"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">percentage</span><span class="p">(</span><span class="m">25</span><span class="p">,</span> <span class="m">100</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">result</span>   <span class="c1"># 25.0</span>
+</span><span id="__span-78-2"><a id="__codelineno-78-2" name="__codelineno-78-2" href="#__codelineno-78-2"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">percent_of</span><span class="p">(</span><span class="m">50</span><span class="p">,</span> <span class="m">200</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">result</span>   <span class="c1"># 100.0</span>
+</span><span id="__span-78-3"><a id="__codelineno-78-3" name="__codelineno-78-3" href="#__codelineno-78-3"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">ratio</span><span class="p">(</span><span class="m">3</span><span class="p">,</span> <span class="m">4</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">result</span>           <span class="c1"># 0.75</span>
+</span></code></pre></div>
+<h3 id="in_range-in_range_exclusive">in_range / in_range_exclusive</h3>
+<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-79-1"><a id="__codelineno-79-1" name="__codelineno-79-1" href="#__codelineno-79-1"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">in_range</span><span class="p">(</span><span class="m">5</span><span class="p">,</span> <span class="m">0</span><span class="p">,</span> <span class="m">10</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">result</span>             <span class="c1"># 1.0</span>
+</span><span id="__span-79-2"><a id="__codelineno-79-2" name="__codelineno-79-2" href="#__codelineno-79-2"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">in_range_exclusive</span><span class="p">(</span><span class="m">10</span><span class="p">,</span> <span class="m">0</span><span class="p">,</span> <span class="m">10</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">result</span>  <span class="c1"># 0.0</span>
+</span></code></pre></div>
+<h3 id="approximately-approximately_default">approximately / approximately_default</h3>
+<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-80-1"><a id="__codelineno-80-1" name="__codelineno-80-1" href="#__codelineno-80-1"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">approximately</span><span class="p">(</span><span class="m">0.1</span> <span class="o o-Arithmetic">+</span> <span class="m">0.2</span><span class="p">,</span> <span class="m">0.3</span><span class="p">,</span> <span class="m">0.0001</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">result</span>  <span class="c1"># 1.0</span>
+</span><span id="__span-80-2"><a id="__codelineno-80-2" name="__codelineno-80-2" href="#__codelineno-80-2"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">approximately_default</span><span class="p">(</span><span class="m">0.1</span> <span class="o o-Arithmetic">+</span> <span class="m">0.2</span><span class="p">,</span> <span class="m">0.3</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">result</span>  <span class="c1"># 1.0</span>
+</span></code></pre></div>
+<hr />
+<h2 id="matrix-operations">Matrix Operations</h2>
+<h3 id="3x3-matrices">3x3 Matrices</h3>
+<p>Results write to <code>math.out_m00</code> through <code>math.out_m22</code> (row-major).</p>
+<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-81-1"><a id="__codelineno-81-1" name="__codelineno-81-1" href="#__codelineno-81-1"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">matrix_identity</span><span class="p">()</span>
+</span><span id="__span-81-2"><a id="__codelineno-81-2" name="__codelineno-81-2" href="#__codelineno-81-2"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">matrix_translation</span><span class="p">(</span><span class="m">10</span><span class="p">,</span> <span class="m">5</span><span class="p">)</span>
+</span><span id="__span-81-3"><a id="__codelineno-81-3" name="__codelineno-81-3" href="#__codelineno-81-3"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">matrix_rotation</span><span class="p">(</span><span class="n">math</span><span class="p">.</span><span class="nc">PI</span> <span class="o o-Arithmetic">/</span> <span class="m">4</span><span class="p">)</span>
+</span><span id="__span-81-4"><a id="__codelineno-81-4" name="__codelineno-81-4" href="#__codelineno-81-4"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">matrix_scaling</span><span class="p">(</span><span class="m">2</span><span class="p">,</span> <span class="m">2</span><span class="p">)</span>
+</span></code></pre></div>
+<h3 id="matrix_multiply_point">matrix_multiply_point</h3>
+<p>Transforms a 2D point by a 3x3 matrix. Result in <code>math.out_x</code>, <code>math.out_y</code>.
+<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-82-1"><a id="__codelineno-82-1" name="__codelineno-82-1" href="#__codelineno-82-1"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">matrix_translation</span><span class="p">(</span><span class="m">10</span><span class="p">,</span> <span class="m">5</span><span class="p">)</span>
+</span><span id="__span-82-2"><a id="__codelineno-82-2" name="__codelineno-82-2" href="#__codelineno-82-2"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">matrix_multiply_point</span><span class="p">(</span><span class="m">0</span><span class="p">,</span> <span class="m">0</span><span class="p">,</span> <span class="n">math</span><span class="p">.</span><span class="n">out_m00</span><span class="p">,</span> <span class="n">math</span><span class="p">.</span><span class="n">out_m01</span><span class="p">,</span> <span class="n">math</span><span class="p">.</span><span class="n">out_m02</span><span class="p">,</span> <span class="n">math</span><span class="p">.</span><span class="n">out_m10</span><span class="p">,</span> <span class="n">math</span><span class="p">.</span><span class="n">out_m11</span><span class="p">,</span> <span class="n">math</span><span class="p">.</span><span class="n">out_m12</span><span class="p">)</span>
+</span><span id="__span-82-3"><a id="__codelineno-82-3" name="__codelineno-82-3" href="#__codelineno-82-3"></a><span class="n">math</span><span class="p">.</span><span class="n">out_x</span> <span class="o">-&gt;</span> <span class="n">px</span>  <span class="c1"># 10.0</span>
+</span><span id="__span-82-4"><a id="__codelineno-82-4" name="__codelineno-82-4" href="#__codelineno-82-4"></a><span class="n">math</span><span class="p">.</span><span class="n">out_y</span> <span class="o">-&gt;</span> <span class="n">py</span>  <span class="c1"># 5.0</span>
+</span></code></pre></div></p>
+<h3 id="4x4-projection">4x4 Projection</h3>
+<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-83-1"><a id="__codelineno-83-1" name="__codelineno-83-1" href="#__codelineno-83-1"></a><span class="c1"># fov_rad, aspect, near, far</span>
+</span><span id="__span-83-2"><a id="__codelineno-83-2" name="__codelineno-83-2" href="#__codelineno-83-2"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">matrix_perspective</span><span class="p">(</span><span class="m">1.047</span><span class="p">,</span> <span class="m">1.777</span><span class="p">,</span> <span class="m">0.1</span><span class="p">,</span> <span class="m">1000</span><span class="p">)</span>
+</span><span id="__span-83-3"><a id="__codelineno-83-3" name="__codelineno-83-3" href="#__codelineno-83-3"></a><span class="c1"># Result in math.out_m00 through math.out_m33</span>
+</span></code></pre></div>
+<hr />
+<h2 id="noise-procedural">Noise &amp; Procedural</h2>
+<h3 id="simple_noise">simple_noise</h3>
+<p>Pseudo-random value in <code>[0, 1]</code> from a seed.
+<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-84-1"><a id="__codelineno-84-1" name="__codelineno-84-1" href="#__codelineno-84-1"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">simple_noise</span><span class="p">(</span><span class="m">42</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">result</span>
+</span></code></pre></div></p>
+<h3 id="noise_2d">noise_2d</h3>
+<p>2D pseudo-random noise.
+<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-85-1"><a id="__codelineno-85-1" name="__codelineno-85-1" href="#__codelineno-85-1"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">noise_2d</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">result</span>
+</span></code></pre></div></p>
+<h3 id="fractal_noise">fractal_noise</h3>
+<p>Fractal Brownian Motion (3 octaves) for organic-looking randomness.
+<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-86-1"><a id="__codelineno-86-1" name="__codelineno-86-1" href="#__codelineno-86-1"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">fractal_noise</span><span class="p">(</span><span class="n">seed</span><span class="p">,</span> <span class="m">2.0</span><span class="p">,</span> <span class="m">0.5</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">result</span>
+</span></code></pre></div></p>
+<hr />
+<h2 id="random">Random</h2>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Not cryptographically secure. Use for game variance only.</p>
+</div>
+<h3 id="set_random_seed">set_random_seed</h3>
+<p>Seed the RNG — call with frame delta time for variance each frame.
+<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-87-1"><a id="__codelineno-87-1" name="__codelineno-87-1" href="#__codelineno-87-1"></a><span class="k">event</span> <span class="nf">tick</span><span class="p">(</span><span class="n">dt</span><span class="p">)</span> <span class="p">{</span>
+</span><span id="__span-87-2"><a id="__codelineno-87-2" name="__codelineno-87-2" href="#__codelineno-87-2"></a>  <span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">set_random_seed</span><span class="p">(</span><span class="n">dt</span><span class="p">)</span>
+</span><span id="__span-87-3"><a id="__codelineno-87-3" name="__codelineno-87-3" href="#__codelineno-87-3"></a><span class="p">}</span>
+</span></code></pre></div></p>
+<h3 id="random_1">random</h3>
+<p>Returns a value in <code>[0, 1]</code>.
+<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-88-1"><a id="__codelineno-88-1" name="__codelineno-88-1" href="#__codelineno-88-1"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">random</span> <span class="o">-&gt;</span> <span class="n">result</span>
+</span></code></pre></div></p>
+<h3 id="random_range">random_range</h3>
+<p>Returns a value between <code>min</code> and <code>max</code>.
+<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-89-1"><a id="__codelineno-89-1" name="__codelineno-89-1" href="#__codelineno-89-1"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">random_range</span><span class="p">(</span><span class="m">10</span><span class="p">,</span> <span class="m">20</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">result</span>  <span class="c1"># e.g. 14.537</span>
+</span></code></pre></div></p>
+<hr />
+<h2 id="smoothing">Smoothing</h2>
+<h3 id="low_pass_filter">low_pass_filter</h3>
+<p>Smooths jittery input (mouse, joystick). <code>factor</code> 0.1 = very smooth, 0.9 = very responsive.
+<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-90-1"><a id="__codelineno-90-1" name="__codelineno-90-1" href="#__codelineno-90-1"></a><span class="k">event</span> <span class="nf">tick</span><span class="p">(</span><span class="n">dt</span><span class="p">)</span> <span class="p">{</span>
+</span><span id="__span-90-2"><a id="__codelineno-90-2" name="__codelineno-90-2" href="#__codelineno-90-2"></a>  <span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">low_pass_filter</span><span class="p">(</span><span class="n">current_value</span><span class="p">,</span> <span class="n">target_value</span><span class="p">,</span> <span class="m">0.1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">current_value</span>
+</span><span id="__span-90-3"><a id="__codelineno-90-3" name="__codelineno-90-3" href="#__codelineno-90-3"></a><span class="p">}</span>
+</span></code></pre></div></p>
+<hr />
+<h2 id="physics">Physics</h2>
+<h3 id="gravity_force">gravity_force</h3>
+<p>Newton's universal gravitation.
+<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-91-1"><a id="__codelineno-91-1" name="__codelineno-91-1" href="#__codelineno-91-1"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">gravity_force</span><span class="p">(</span><span class="n">m1</span><span class="p">,</span> <span class="n">m2</span><span class="p">,</span> <span class="n">distance</span><span class="p">,</span> <span class="m">6.674</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">force</span>
+</span></code></pre></div></p>
+<h3 id="air_resistance">air_resistance</h3>
+<p>Drag force opposing velocity.
+<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-92-1"><a id="__codelineno-92-1" name="__codelineno-92-1" href="#__codelineno-92-1"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">air_resistance</span><span class="p">(</span><span class="n">velocity</span><span class="p">,</span> <span class="m">0.1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">drag</span>
+</span></code></pre></div></p>
+<h3 id="resolve_collision">resolve_collision</h3>
+<p>Elastic collision — returns new velocity after impact. <code>e</code> is restitution (0–1).
+<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-93-1"><a id="__codelineno-93-1" name="__codelineno-93-1" href="#__codelineno-93-1"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">resolve_collision</span><span class="p">(</span><span class="n">v1</span><span class="p">,</span> <span class="n">v2</span><span class="p">,</span> <span class="n">m1</span><span class="p">,</span> <span class="n">m2</span><span class="p">,</span> <span class="m">0.8</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">new_v1</span>
+</span></code></pre></div></p>
+<h3 id="pid_update">pid_update</h3>
+<p>PID controller for smooth stabilization.
+<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-94-1"><a id="__codelineno-94-1" name="__codelineno-94-1" href="#__codelineno-94-1"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">pid_update</span><span class="p">(</span><span class="n">error</span><span class="p">,</span> <span class="n">last_error</span><span class="p">,</span> <span class="n">integral</span><span class="p">,</span> <span class="n">kP</span><span class="p">,</span> <span class="n">kI</span><span class="p">,</span> <span class="n">kD</span><span class="p">,</span> <span class="n">dt</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">correction</span>
+</span></code></pre></div></p>
+<hr />
+<h2 id="ai-neural-activations">AI / Neural Activations</h2>
+<h3 id="sigmoid">sigmoid</h3>
+<p>Squashes any value to <code>(0, 1)</code>. Standard for probability outputs.
+<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-95-1"><a id="__codelineno-95-1" name="__codelineno-95-1" href="#__codelineno-95-1"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">sigmoid</span><span class="p">(</span><span class="m">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">result</span>   <span class="c1"># 0.5</span>
+</span><span id="__span-95-2"><a id="__codelineno-95-2" name="__codelineno-95-2" href="#__codelineno-95-2"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">sigmoid</span><span class="p">(</span><span class="m">5</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">result</span>   <span class="c1"># ≈ 0.993</span>
+</span></code></pre></div></p>
+<h3 id="relu">relu</h3>
+<p>Returns <code>x</code> if positive, else <code>0</code>. Core of modern neural networks.
+<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-96-1"><a id="__codelineno-96-1" name="__codelineno-96-1" href="#__codelineno-96-1"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">relu</span><span class="p">(</span><span class="o o-Arithmetic">-</span><span class="m">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">result</span>  <span class="c1"># 0.0</span>
+</span><span id="__span-96-2"><a id="__codelineno-96-2" name="__codelineno-96-2" href="#__codelineno-96-2"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">relu</span><span class="p">(</span><span class="m">3</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">result</span>   <span class="c1"># 3.0</span>
+</span></code></pre></div></p>
+<h3 id="tanh">tanh</h3>
+<p>Squashes any value to <code>(-1, 1)</code>.
+<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-97-1"><a id="__codelineno-97-1" name="__codelineno-97-1" href="#__codelineno-97-1"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">tanh</span><span class="p">(</span><span class="m">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">result</span>   <span class="c1"># 0.0</span>
+</span><span id="__span-97-2"><a id="__codelineno-97-2" name="__codelineno-97-2" href="#__codelineno-97-2"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">tanh</span><span class="p">(</span><span class="m">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">result</span>   <span class="c1"># ≈ 0.762</span>
+</span></code></pre></div></p>
+<hr />
+<h2 id="bezier-curves">Bezier Curves</h2>
+<h3 id="get_bezier_quadratic_2d">get_bezier_quadratic_2d</h3>
+<p>Quadratic bezier — one control point. Result in <code>math.out_x</code>, <code>math.out_y</code>.
+<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-98-1"><a id="__codelineno-98-1" name="__codelineno-98-1" href="#__codelineno-98-1"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">get_bezier_quadratic_2d</span><span class="p">(</span><span class="m">0</span><span class="p">,</span> <span class="m">0</span><span class="p">,</span> <span class="m">50</span><span class="p">,</span> <span class="m">100</span><span class="p">,</span> <span class="m">100</span><span class="p">,</span> <span class="m">0</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
+</span><span id="__span-98-2"><a id="__codelineno-98-2" name="__codelineno-98-2" href="#__codelineno-98-2"></a><span class="n">math</span><span class="p">.</span><span class="n">out_x</span> <span class="o">-&gt;</span> <span class="n">bx</span>
+</span><span id="__span-98-3"><a id="__codelineno-98-3" name="__codelineno-98-3" href="#__codelineno-98-3"></a><span class="n">math</span><span class="p">.</span><span class="n">out_y</span> <span class="o">-&gt;</span> <span class="n">by</span>
+</span></code></pre></div></p>
+<h3 id="get_bezier_cubic_2d">get_bezier_cubic_2d</h3>
+<p>Cubic bezier — two control points. Result in <code>math.out_x</code>, <code>math.out_y</code>.
+<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-99-1"><a id="__codelineno-99-1" name="__codelineno-99-1" href="#__codelineno-99-1"></a><span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">get_bezier_cubic_2d</span><span class="p">(</span><span class="m">0</span><span class="p">,</span> <span class="m">0</span><span class="p">,</span> <span class="m">25</span><span class="p">,</span> <span class="m">100</span><span class="p">,</span> <span class="m">75</span><span class="p">,</span> <span class="m">100</span><span class="p">,</span> <span class="m">100</span><span class="p">,</span> <span class="m">0</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
+</span><span id="__span-99-2"><a id="__codelineno-99-2" name="__codelineno-99-2" href="#__codelineno-99-2"></a><span class="n">math</span><span class="p">.</span><span class="n">out_x</span> <span class="o">-&gt;</span> <span class="n">bx</span>
+</span><span id="__span-99-3"><a id="__codelineno-99-3" name="__codelineno-99-3" href="#__codelineno-99-3"></a><span class="n">math</span><span class="p">.</span><span class="n">out_y</span> <span class="o">-&gt;</span> <span class="n">by</span>
+</span></code></pre></div></p>
+<hr />
+<h2 id="full-example">Full Example</h2>
+<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-100-1"><a id="__codelineno-100-1" name="__codelineno-100-1" href="#__codelineno-100-1"></a><span class="k">import</span> <span class="s2">&quot;math&quot;</span>
+</span><span id="__span-100-2"><a id="__codelineno-100-2" name="__codelineno-100-2" href="#__codelineno-100-2"></a>
+</span><span id="__span-100-3"><a id="__codelineno-100-3" name="__codelineno-100-3" href="#__codelineno-100-3"></a><span class="k">entity</span> <span class="n">player</span> <span class="p">{</span>
+</span><span id="__span-100-4"><a id="__codelineno-100-4" name="__codelineno-100-4" href="#__codelineno-100-4"></a>  <span class="k">has</span> <span class="nv">x</span><span class="p">:</span> <span class="m">0.0</span>
+</span><span id="__span-100-5"><a id="__codelineno-100-5" name="__codelineno-100-5" href="#__codelineno-100-5"></a>  <span class="k">has</span> <span class="nv">y</span><span class="p">:</span> <span class="m">0.0</span>
+</span><span id="__span-100-6"><a id="__codelineno-100-6" name="__codelineno-100-6" href="#__codelineno-100-6"></a>  <span class="k">has</span> <span class="nv">target_x</span><span class="p">:</span> <span class="m">100.0</span>
+</span><span id="__span-100-7"><a id="__codelineno-100-7" name="__codelineno-100-7" href="#__codelineno-100-7"></a>  <span class="k">has</span> <span class="nv">target_y</span><span class="p">:</span> <span class="m">100.0</span>
+</span><span id="__span-100-8"><a id="__codelineno-100-8" name="__codelineno-100-8" href="#__codelineno-100-8"></a>  <span class="k">has</span> <span class="nv">vel_x</span><span class="p">:</span> <span class="m">0.0</span>
+</span><span id="__span-100-9"><a id="__codelineno-100-9" name="__codelineno-100-9" href="#__codelineno-100-9"></a>  <span class="k">has</span> <span class="nv">vel_y</span><span class="p">:</span> <span class="m">0.0</span>
+</span><span id="__span-100-10"><a id="__codelineno-100-10" name="__codelineno-100-10" href="#__codelineno-100-10"></a>  <span class="k">has</span> <span class="nv">hp</span><span class="p">:</span> <span class="m">100.0</span>
+</span><span id="__span-100-11"><a id="__codelineno-100-11" name="__codelineno-100-11" href="#__codelineno-100-11"></a>  <span class="k">has</span> <span class="nv">max_hp</span><span class="p">:</span> <span class="m">100.0</span>
+</span><span id="__span-100-12"><a id="__codelineno-100-12" name="__codelineno-100-12" href="#__codelineno-100-12"></a>
+</span><span id="__span-100-13"><a id="__codelineno-100-13" name="__codelineno-100-13" href="#__codelineno-100-13"></a>  <span class="k">event</span> <span class="nf">tick</span><span class="p">(</span><span class="n">dt</span><span class="p">)</span> <span class="p">{</span>
+</span><span id="__span-100-14"><a id="__codelineno-100-14" name="__codelineno-100-14" href="#__codelineno-100-14"></a>    <span class="c1"># Smooth follow with spring damping</span>
+</span><span id="__span-100-15"><a id="__codelineno-100-15" name="__codelineno-100-15" href="#__codelineno-100-15"></a>    <span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">smooth_damp</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">target_x</span><span class="p">,</span> <span class="n">vel_x</span><span class="p">,</span> <span class="m">0.2</span><span class="p">,</span> <span class="n">dt</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">x</span>
+</span><span id="__span-100-16"><a id="__codelineno-100-16" name="__codelineno-100-16" href="#__codelineno-100-16"></a>    <span class="n">math</span><span class="p">.</span><span class="n">out_velocity</span> <span class="o">-&gt;</span> <span class="n">vel_x</span>
+</span><span id="__span-100-17"><a id="__codelineno-100-17" name="__codelineno-100-17" href="#__codelineno-100-17"></a>    <span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">smooth_damp</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">target_y</span><span class="p">,</span> <span class="n">vel_y</span><span class="p">,</span> <span class="m">0.2</span><span class="p">,</span> <span class="n">dt</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">y</span>
+</span><span id="__span-100-18"><a id="__codelineno-100-18" name="__codelineno-100-18" href="#__codelineno-100-18"></a>    <span class="n">math</span><span class="p">.</span><span class="n">out_velocity</span> <span class="o">-&gt;</span> <span class="n">vel_y</span>
+</span><span id="__span-100-19"><a id="__codelineno-100-19" name="__codelineno-100-19" href="#__codelineno-100-19"></a>
+</span><span id="__span-100-20"><a id="__codelineno-100-20" name="__codelineno-100-20" href="#__codelineno-100-20"></a>    <span class="c1"># Clamp HP just in case</span>
+</span><span id="__span-100-21"><a id="__codelineno-100-21" name="__codelineno-100-21" href="#__codelineno-100-21"></a>    <span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">clamp</span><span class="p">(</span><span class="n">hp</span><span class="p">,</span> <span class="m">0</span><span class="p">,</span> <span class="n">max_hp</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">hp</span>
+</span><span id="__span-100-22"><a id="__codelineno-100-22" name="__codelineno-100-22" href="#__codelineno-100-22"></a>  <span class="p">}</span>
+</span><span id="__span-100-23"><a id="__codelineno-100-23" name="__codelineno-100-23" href="#__codelineno-100-23"></a>
+</span><span id="__span-100-24"><a id="__codelineno-100-24" name="__codelineno-100-24" href="#__codelineno-100-24"></a>  <span class="k">event</span> <span class="nf">damage</span><span class="p">(</span><span class="n">amount</span><span class="p">)</span> <span class="p">{</span>
+</span><span id="__span-100-25"><a id="__codelineno-100-25" name="__codelineno-100-25" href="#__codelineno-100-25"></a>    <span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">max</span><span class="p">(</span><span class="m">0</span><span class="p">,</span> <span class="n">hp</span> <span class="o o-Arithmetic">-</span> <span class="n">amount</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">hp</span>
+</span><span id="__span-100-26"><a id="__codelineno-100-26" name="__codelineno-100-26" href="#__codelineno-100-26"></a>    <span class="k">check</span> <span class="n">hp</span> <span class="o o-Comparison">&lt;=</span> <span class="m">0</span><span class="p">:</span> <span class="k">emit</span> <span class="n">die</span>
+</span><span id="__span-100-27"><a id="__codelineno-100-27" name="__codelineno-100-27" href="#__codelineno-100-27"></a>  <span class="p">}</span>
+</span><span id="__span-100-28"><a id="__codelineno-100-28" name="__codelineno-100-28" href="#__codelineno-100-28"></a>
+</span><span id="__span-100-29"><a id="__codelineno-100-29" name="__codelineno-100-29" href="#__codelineno-100-29"></a>  <span class="k">event</span> <span class="nf">look_at</span><span class="p">(</span><span class="n">tx</span><span class="p">,</span> <span class="n">ty</span><span class="p">)</span> <span class="p">{</span>
+</span><span id="__span-100-30"><a id="__codelineno-100-30" name="__codelineno-100-30" href="#__codelineno-100-30"></a>    <span class="k">emit</span> <span class="n">math</span><span class="p">.</span><span class="n">look_at_angle</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">tx</span><span class="p">,</span> <span class="n">ty</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">angle</span>
+</span><span id="__span-100-31"><a id="__codelineno-100-31" name="__codelineno-100-31" href="#__codelineno-100-31"></a>    <span class="k">emit</span> <span class="nb">unity</span><span class="p">(</span><span class="s2">&quot;SetRotation&quot;</span><span class="p">,</span> <span class="n">angle</span><span class="p">)</span>
+</span><span id="__span-100-32"><a id="__codelineno-100-32" name="__codelineno-100-32" href="#__codelineno-100-32"></a>  <span class="p">}</span>
+</span><span id="__span-100-33"><a id="__codelineno-100-33" name="__codelineno-100-33" href="#__codelineno-100-33"></a><span class="p">}</span>
+</span></code></pre></div>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.tabs", "navigation.sections", "navigation.expand", "navigation.top", "navigation.instant", "navigation.tracking", "search.suggest", "search.highlight", "content.code.copy", "content.code.annotate"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>
