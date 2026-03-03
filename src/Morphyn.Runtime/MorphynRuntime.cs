@@ -804,25 +804,41 @@ namespace Morphyn.Runtime
                     if (entity.Fields.ContainsKey(emitRet.TargetField))
                         entity.Fields[emitRet.TargetField] = MorphynValue.FromObject(syncResult);
                     else
-                        localScope[emitRet.TargetField] = syncResult;
-                    return true;
-                }
+                            localScope[emitRet.TargetField] = syncResult;
+                        return true;
+                    }
 
                 case EmitAction emit:
-                {
-                    var resolvedArgs = RentArgsArray(emit.Arguments.Count);
-                    for (int i = 0; i < emit.Arguments.Count; i++)
                     {
-                        var argExpr = emit.Arguments[i];
-                        try { resolvedArgs[i] = EvaluateExpression(entity, argExpr, localScope, data); }
-                        catch (Exception) when (emit.EventName == "each" && argExpr is VariableExpression ve)
-                        { resolvedArgs[i] = ve.Name; }
+                        var resolvedArgs = RentArgsArray(emit.Arguments.Count);
+                        for (int i = 0; i < emit.Arguments.Count; i++)
+                        {
+                            var argExpr = emit.Arguments[i];
+                            try { resolvedArgs[i] = EvaluateExpression(entity, argExpr, localScope, data); }
+                            catch (Exception) when (emit.EventName == "each" && argExpr is VariableExpression ve)
+                            { resolvedArgs[i] = ve.Name; }
+                        }
+
+                        if (!HandleBuiltinEmit(data, entity, emit, resolvedArgs, localScope))
+                        {
+                            string? targetName = emit.TargetEntityName == "self" ? null : emit.TargetEntityName;
+                            Entity? emitTarget = string.IsNullOrEmpty(targetName)
+                                ? entity
+                                : (data.Entities.TryGetValue(targetName, out var e) ? e : null);
+
+                            if (emitTarget != null)
+                            {
+                                ExecuteSync(entity, emitTarget, emit.EventName, resolvedArgs, data);
+                            }
+                            else
+                            {
+                                HandleEmitRouting(data, entity, emit, resolvedArgs);
+                            }
+                        }
+
+                        ReturnArgsArray(resolvedArgs);
+                        return true;
                     }
-                    if (!HandleBuiltinEmit(data, entity, emit, resolvedArgs, localScope))
-                        HandleEmitRouting(data, entity, emit, resolvedArgs);
-                    ReturnArgsArray(resolvedArgs);
-                    return true;
-                }
 
                 case WhenAction whenAct:
                     if (data.Entities.TryGetValue(whenAct.TargetEntityName, out var wte))
