@@ -136,9 +136,10 @@ namespace Morphyn.Runtime
 
             try
             {
-                foreach (var action in ev.Actions)
+                var actions = ev.Actions;
+                for (int ai = 0; ai < actions.Length; ai++)
                 {
-                    if (!ExecuteAction(data, entity, action, localScope))
+                    if (!ExecuteAction(data, entity, actions[ai], localScope))
                         break;
                 }
             }
@@ -235,131 +236,136 @@ namespace Morphyn.Runtime
         private static bool ExecuteAction(EntityData data, Entity entity, MorphynAction action,
             Dictionary<string, MorphynValue> localScope)
         {
-            switch (action)
+            switch (action.Kind)
             {
-                case SetAction set:
+                case ActionKind.Set:
+                {
+                    var set = Unsafe.As<SetAction>(action);
                     if (entity.Fields.ContainsKey(set.TargetField))
                         entity.Fields[set.TargetField] = EvaluateToValue(entity, set.Expression, localScope, data);
                     else
                         localScope[set.TargetField] = EvaluateToValue(entity, set.Expression, localScope, data);
                     return true;
+                }
 
-                case CheckAction check:
+                case ActionKind.Check:
+                {
+                    var check = Unsafe.As<CheckAction>(action);
+                    var condVal = EvaluateToValue(entity, check.Condition, localScope, data);
+                    bool passed = condVal.Kind switch
                     {
-                        var condVal = EvaluateToValue(entity, check.Condition, localScope, data);
-                        bool passed = condVal.Kind switch
-                        {
-                            MorphynValueKind.Bool   => condVal.BoolVal,
-                            MorphynValueKind.Double => condVal.NumVal != 0,
-                            MorphynValueKind.Null   => false,
-                            _                       => Convert.ToBoolean(condVal.ToObject())
-                        };
-                        if (!passed) return check.InlineAction != null;
-                        if (check.InlineAction != null) return ExecuteAction(data, entity, check.InlineAction, localScope);
-                        return true;
-                    }
-
-                case SetIndexAction setIdx:
-                    {
-                        var newValue = EvaluateToValue(entity, setIdx.ValueExpr, localScope, data);
-                        int index = (int)EvaluateToValue(entity, setIdx.IndexExpr, localScope, data).NumVal - 1;
-
-                        if (entity.Fields.TryGetValue(setIdx.TargetPoolName, out var fv) && fv.ObjVal is MorphynPool pool)
-                        {
-                            if (index >= 0 && index < pool.Values.Count) pool.Values[index] = newValue;
-                            else throw new Exception($"Index {index + 1} out of bounds for pool '{setIdx.TargetPoolName}'");
-                        }
-                        else throw new Exception($"Target '{setIdx.TargetPoolName}' is not a pool or not found.");
-                        return true;
-                    }
-
-                case BlockAction block:
-                    foreach (var sub in block.Actions)
-                        if (!ExecuteAction(data, entity, sub, localScope)) return false;
+                        MorphynValueKind.Bool   => condVal.BoolVal,
+                        MorphynValueKind.Double => condVal.NumVal != 0,
+                        MorphynValueKind.Null   => false,
+                        _                       => Convert.ToBoolean(condVal.ToObject())
+                    };
+                    if (!passed) return check.InlineAction != null;
+                    if (check.InlineAction != null) return ExecuteAction(data, entity, check.InlineAction, localScope);
                     return true;
+                }
 
-                case EmitWithReturnIndexAction emitRetIdx:
+                case ActionKind.SetIndex:
+                {
+                    var setIdx = Unsafe.As<SetIndexAction>(action);
+                    var newValue = EvaluateToValue(entity, setIdx.ValueExpr, localScope, data);
+                    int index = (int)EvaluateToValue(entity, setIdx.IndexExpr, localScope, data).NumVal - 1;
+                    if (entity.Fields.TryGetValue(setIdx.TargetPoolName, out var fv) && fv.ObjVal is MorphynPool pool)
                     {
-                        var target = SyncEngine.ResolveTarget(data, entity, emitRetIdx.TargetEntityName);
-                        var resolvedArgs = ObjectPools.RentArgsArray(emitRetIdx.Arguments.Count);
-                        for (int i = 0; i < emitRetIdx.Arguments.Count; i++)
-                            resolvedArgs[i] = EvaluateToValue(entity, emitRetIdx.Arguments[i], localScope, data);
-
-                        object? syncResult = ExecuteSync(entity, target, emitRetIdx.EventName, resolvedArgs, data);
-                        ObjectPools.ReturnArgsArray(resolvedArgs);
-
-                        int poolIndex = (int)EvaluateToValue(entity, emitRetIdx.IndexExpr, localScope, data).NumVal - 1;
-                        if (entity.Fields.TryGetValue(emitRetIdx.TargetPoolName, out var pv) && pv.ObjVal is MorphynPool pool)
-                        {
-                            if (poolIndex >= 0 && poolIndex < pool.Values.Count) pool.Values[poolIndex] = MorphynValue.FromObject(syncResult);
-                            else throw new Exception($"Index {poolIndex + 1} out of bounds for pool '{emitRetIdx.TargetPoolName}'");
-                        }
-                        else throw new Exception($"Target '{emitRetIdx.TargetPoolName}' is not a pool or not found.");
-                        return true;
+                        if (index >= 0 && index < pool.Values.Count) pool.Values[index] = newValue;
+                        else throw new Exception($"Index {index + 1} out of bounds for pool '{setIdx.TargetPoolName}'");
                     }
+                    else throw new Exception($"Target '{setIdx.TargetPoolName}' is not a pool or not found.");
+                    return true;
+                }
 
-                case EmitWithReturnAction emitRet:
+                case ActionKind.Block:
+                {
+                    var blockActions = Unsafe.As<BlockAction>(action).Actions;
+                    for (int bi = 0; bi < blockActions.Length; bi++)
+                        if (!ExecuteAction(data, entity, blockActions[bi], localScope)) return false;
+                    return true;
+                }
+
+                case ActionKind.EmitWithReturnIndex:
+                {
+                    var emitRetIdx = Unsafe.As<EmitWithReturnIndexAction>(action);
+                    var target = SyncEngine.ResolveTarget(data, entity, emitRetIdx.TargetEntityName);
+                    var resolvedArgs = ObjectPools.RentArgsArray(emitRetIdx.Arguments.Count);
+                    for (int i = 0; i < emitRetIdx.Arguments.Count; i++)
+                        resolvedArgs[i] = EvaluateToValue(entity, emitRetIdx.Arguments[i], localScope, data);
+                    object? syncResult = ExecuteSync(entity, target, emitRetIdx.EventName, resolvedArgs, data);
+                    ObjectPools.ReturnArgsArray(resolvedArgs);
+                    int poolIndex = (int)EvaluateToValue(entity, emitRetIdx.IndexExpr, localScope, data).NumVal - 1;
+                    if (entity.Fields.TryGetValue(emitRetIdx.TargetPoolName, out var pv) && pv.ObjVal is MorphynPool pool2)
                     {
-                        var target = SyncEngine.ResolveTarget(data, entity, emitRet.TargetEntityName);
-                        var resolvedArgs = ObjectPools.RentArgsArray(emitRet.Arguments.Count);
-                        for (int i = 0; i < emitRet.Arguments.Count; i++)
-                            resolvedArgs[i] = EvaluateToValue(entity, emitRet.Arguments[i], localScope, data);
+                        if (poolIndex >= 0 && poolIndex < pool2.Values.Count) pool2.Values[poolIndex] = MorphynValue.FromObject(syncResult);
+                        else throw new Exception($"Index {poolIndex + 1} out of bounds for pool '{emitRetIdx.TargetPoolName}'");
+                    }
+                    else throw new Exception($"Target '{emitRetIdx.TargetPoolName}' is not a pool or not found.");
+                    return true;
+                }
 
-                        object? syncResult = ExecuteSync(entity, target, emitRet.EventName, resolvedArgs, data);
-                        ObjectPools.ReturnArgsArray(resolvedArgs);
+                case ActionKind.EmitWithReturn:
+                {
+                    var emitRet = Unsafe.As<EmitWithReturnAction>(action);
+                    var target = SyncEngine.ResolveTarget(data, entity, emitRet.TargetEntityName);
+                    var resolvedArgs = ObjectPools.RentArgsArray(emitRet.Arguments.Count);
+                    for (int i = 0; i < emitRet.Arguments.Count; i++)
+                        resolvedArgs[i] = EvaluateToValue(entity, emitRet.Arguments[i], localScope, data);
+                    object? syncResult = ExecuteSync(entity, target, emitRet.EventName, resolvedArgs, data);
+                    ObjectPools.ReturnArgsArray(resolvedArgs);
+                    if (entity.Fields.ContainsKey(emitRet.TargetField))
+                        entity.Fields[emitRet.TargetField] = MorphynValue.FromObject(syncResult);
+                    else
+                        localScope[emitRet.TargetField] = MorphynValue.FromObject(syncResult);
+                    return true;
+                }
 
-                        if (entity.Fields.ContainsKey(emitRet.TargetField))
-                            entity.Fields[emitRet.TargetField] = MorphynValue.FromObject(syncResult);
+                case ActionKind.Emit:
+                {
+                    var emit = Unsafe.As<EmitAction>(action);
+                    var resolvedArgs = ObjectPools.RentArgsArray(emit.Arguments.Count);
+                    for (int i = 0; i < emit.Arguments.Count; i++)
+                    {
+                        var argExpr = emit.Arguments[i];
+                        try { resolvedArgs[i] = EvaluateToValue(entity, argExpr, localScope, data); }
+                        catch (Exception) when (emit.EventName == "each" && argExpr.Kind == ExprKind.Variable)
+                        { resolvedArgs[i] = MorphynValue.FromObject(Unsafe.As<VariableExpression>(argExpr).Name); }
+                    }
+                    if (!Builtins.HandleBuiltinEmit(data, entity, emit, resolvedArgs, localScope))
+                    {
+                        string? targetName = emit.TargetEntityName == "self" ? null : emit.TargetEntityName;
+                        Entity? emitTarget = string.IsNullOrEmpty(targetName)
+                            ? entity
+                            : (data.Entities.TryGetValue(targetName, out var e) ? e : null);
+                        if (emitTarget != null)
+                            ExecuteSync(entity, emitTarget, emit.EventName, resolvedArgs, data);
                         else
-                            localScope[emitRet.TargetField] = MorphynValue.FromObject(syncResult);
-                        return true;
+                            HandleEmitRouting(data, entity, emit, resolvedArgs);
                     }
+                    ObjectPools.ReturnArgsArray(resolvedArgs);
+                    return true;
+                }
 
-                case EmitAction emit:
-                    {
-                        var resolvedArgs = ObjectPools.RentArgsArray(emit.Arguments.Count);
-                        for (int i = 0; i < emit.Arguments.Count; i++)
-                        {
-                            var argExpr = emit.Arguments[i];
-                            try { resolvedArgs[i] = EvaluateToValue(entity, argExpr, localScope, data); }
-                            catch (Exception) when (emit.EventName == "each" && argExpr is VariableExpression ve)
-                            { resolvedArgs[i] = MorphynValue.FromObject(ve.Name); }
-                        }
-
-                        if (!Builtins.HandleBuiltinEmit(data, entity, emit, resolvedArgs, localScope))
-                        {
-                            string? targetName = emit.TargetEntityName == "self" ? null : emit.TargetEntityName;
-                            Entity? emitTarget = string.IsNullOrEmpty(targetName)
-                                ? entity
-                                : (data.Entities.TryGetValue(targetName, out var e) ? e : null);
-
-                            if (emitTarget != null)
-                            {
-                                ExecuteSync(entity, emitTarget, emit.EventName, resolvedArgs, data);
-                            }
-                            else
-                            {
-                                HandleEmitRouting(data, entity, emit, resolvedArgs);
-                            }
-                        }
-
-                        ObjectPools.ReturnArgsArray(resolvedArgs);
-                        return true;
-                    }
-
-                case WhenAction whenAct:
+                case ActionKind.When:
+                {
+                    var whenAct = Unsafe.As<WhenAction>(action);
                     if (data.Entities.TryGetValue(whenAct.TargetEntityName, out var wte))
                         Subscriptions.Subscribe(entity, wte, whenAct.TargetEventName, whenAct.HandlerEventName, whenAct.HandlerArgs);
                     else
                         Console.WriteLine($"[Subscription Error] Entity '{whenAct.TargetEntityName}' not found.");
                     return true;
+                }
 
-                case UnwhenAction unwhenAct:
+                case ActionKind.Unwhen:
+                {
+                    var unwhenAct = Unsafe.As<UnwhenAction>(action);
                     if (data.Entities.TryGetValue(unwhenAct.TargetEntityName, out var ute))
                         Subscriptions.Unsubscribe(entity, ute, unwhenAct.TargetEventName, unwhenAct.HandlerEventName);
                     else
                         Console.WriteLine($"[Subscription Error] Entity '{unwhenAct.TargetEntityName}' not found.");
                     return true;
+                }
 
                 default:
                     return true;

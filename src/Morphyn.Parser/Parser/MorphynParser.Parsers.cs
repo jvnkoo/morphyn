@@ -313,7 +313,7 @@ namespace Morphyn.Parser
             from leftBrace in Token.EqualTo(MorphynToken.LeftBrace)
             from actions in Parse.Ref(() => ActionParser).Many()
             from rightBrace in Token.EqualTo(MorphynToken.RightBrace)
-            select (MorphynAction)new BlockAction { Actions = actions.ToList() };
+            select (MorphynAction)new BlockAction { Actions = actions };
 
         // Parse any action
         private static TokenListParser<MorphynToken, MorphynAction> ActionParser =>
@@ -333,7 +333,7 @@ namespace Morphyn.Parser
             {
                 Name = eventName,
                 Parameters = parameters.ToList(),
-                Actions = actions.ToList()
+                Actions = actions
             };
 
         // Parse entity: entity Name { fields... events... }

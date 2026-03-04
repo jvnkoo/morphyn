@@ -39,6 +39,7 @@ namespace Morphyn.Runtime
     // Injected into the parent frame's queue immediately after the child frame is pushed.
     internal sealed class _PoolIndexWriteAction : MorphynAction
     {
+        public _PoolIndexWriteAction() => Kind = ActionKind.PoolIndexWrite;
         public MorphynExpression IndexExpr = null!;
         public string TargetPoolName = null!;
         public Entity CapturedEntity = null!;
@@ -58,10 +59,10 @@ namespace Morphyn.Runtime
 
         // Flattens an action list into an ActionItem queue, inlining BlockAction children
         // so the main loop never needs to recurse into blocks.
-        public static void EnqueueActions(Queue<ActionItem> queue, IList<MorphynAction> actions,
+        public static void EnqueueActions(Queue<ActionItem> queue, MorphynAction[] actions,
             Entity entity, Dictionary<string, MorphynValue> scope)
         {
-            for (int i = 0; i < actions.Count; i++)
+            for (int i = 0; i < actions.Length; i++)
             {
                 var action = actions[i];
                 if (action is BlockAction block)
@@ -165,10 +166,11 @@ namespace Morphyn.Runtime
             var entity = item.Entity;
             var scope = item.Scope;
 
-            switch (item.Action)
+            switch (item.Action.Kind)
             {
-                case SetAction set:
+                case ActionKind.Set:
                 {
+                    var set = Unsafe.As<SetAction>(item.Action);
                     if (entity.Fields.ContainsKey(set.TargetField))
                     {
                         var mv = EvaluateToValue(entity, set.Expression, scope, data);
@@ -184,8 +186,9 @@ namespace Morphyn.Runtime
                     return true;
                 }
 
-                case CheckAction check:
+                case ActionKind.Check:
                 {
+                    var check = Unsafe.As<CheckAction>(item.Action);
                     var condVal = EvaluateToValue(entity, check.Condition, scope, data);
                     bool passed = condVal.Kind switch
                     {
@@ -202,8 +205,8 @@ namespace Morphyn.Runtime
                     {
                         // Inline action executes immediately — flatten and prepend to front of queue
                         var tmp = new Queue<ActionItem>();
-                        if (check.InlineAction is BlockAction inlineBlock)
-                            EnqueueActions(tmp, inlineBlock.Actions, entity, scope);
+                        if (check.InlineAction.Kind == ActionKind.Block)
+                            EnqueueActions(tmp, Unsafe.As<BlockAction>(check.InlineAction).Actions, entity, scope);
                         else
                             tmp.Enqueue(new ActionItem { Action = check.InlineAction, Entity = entity, Scope = scope });
 
@@ -216,8 +219,9 @@ namespace Morphyn.Runtime
                     return true;
                 }
 
-                case SetIndexAction setIdx:
+                case ActionKind.SetIndex:
                 {
+                    var setIdx = Unsafe.As<SetIndexAction>(item.Action);
                     var newValue = EvaluateToValue(entity, setIdx.ValueExpr, scope, data);
                     int index = (int)EvaluateToValue(entity, setIdx.IndexExpr, scope, data).NumVal - 1;
 
@@ -235,8 +239,9 @@ namespace Morphyn.Runtime
                     return true;
                 }
 
-                case EmitWithReturnAction emitRet:
+                case ActionKind.EmitWithReturn:
                 {
+                    var emitRet = Unsafe.As<EmitWithReturnAction>(item.Action);
                     var target = ResolveTarget(data, entity, emitRet.TargetEntityName);
 
                     if (!target.EventCache.TryGetValue(emitRet.EventName, out var nextEv))
@@ -269,8 +274,9 @@ namespace Morphyn.Runtime
                     return true;
                 }
 
-                case EmitWithReturnIndexAction emitRetIdx:
+                case ActionKind.EmitWithReturnIndex:
                 {
+                    var emitRetIdx = Unsafe.As<EmitWithReturnIndexAction>(item.Action);
                     var target = ResolveTarget(data, entity, emitRetIdx.TargetEntityName);
 
                     if (!target.EventCache.TryGetValue(emitRetIdx.EventName, out var nextEv))
@@ -321,8 +327,9 @@ namespace Morphyn.Runtime
                     return true;
                 }
 
-                case _PoolIndexWriteAction poolWrite:
+                case ActionKind.PoolIndexWrite:
                 {
+                    var poolWrite = Unsafe.As<_PoolIndexWriteAction>(item.Action);
                     int poolIndex = (int)EvaluateToValue(
                         poolWrite.CapturedEntity, poolWrite.IndexExpr, poolWrite.CapturedScope, data).NumVal - 1;
 
@@ -340,15 +347,16 @@ namespace Morphyn.Runtime
                     return true;
                 }
 
-                case EmitAction emit:
+                case ActionKind.Emit:
                 {
+                    var emit = Unsafe.As<EmitAction>(item.Action);
                     var resolvedArgs = ObjectPools.RentArgsArray(emit.Arguments.Count);
                     for (int i = 0; i < emit.Arguments.Count; i++)
                     {
                         var argExpr = emit.Arguments[i];
                         try { resolvedArgs[i] = EvaluateToValue(entity, argExpr, scope, data); }
-                        catch (Exception) when (emit.EventName == "each" && argExpr is VariableExpression ve)
-                        { resolvedArgs[i] = MorphynValue.FromObject(ve.Name); }
+                        catch (Exception) when (emit.EventName == "each" && argExpr.Kind == ExprKind.Variable)
+                        { resolvedArgs[i] = MorphynValue.FromObject(Unsafe.As<VariableExpression>(argExpr).Name); }
                     }
 
                     if (!Builtins.HandleBuiltinEmit(data, entity, emit, resolvedArgs, scope))
@@ -358,8 +366,9 @@ namespace Morphyn.Runtime
                     return true;
                 }
 
-                case WhenAction whenAct:
+                case ActionKind.When:
                 {
+                    var whenAct = Unsafe.As<WhenAction>(item.Action);
                     if (data.Entities.TryGetValue(whenAct.TargetEntityName, out var te))
                         Subscriptions.Subscribe(entity, te, whenAct.TargetEventName, whenAct.HandlerEventName, whenAct.HandlerArgs);
                     else
@@ -367,8 +376,9 @@ namespace Morphyn.Runtime
                     return true;
                 }
 
-                case UnwhenAction unwhenAct:
+                case ActionKind.Unwhen:
                 {
+                    var unwhenAct = Unsafe.As<UnwhenAction>(item.Action);
                     if (data.Entities.TryGetValue(unwhenAct.TargetEntityName, out var te))
                         Subscriptions.Unsubscribe(entity, te, unwhenAct.TargetEventName, unwhenAct.HandlerEventName);
                     else

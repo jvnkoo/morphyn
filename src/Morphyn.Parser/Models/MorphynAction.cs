@@ -2,13 +2,25 @@ using System.Collections.Generic;
 
 namespace Morphyn.Parser
 {
+    public enum ActionKind : byte
+    {
+        Emit, EmitWithReturn, EmitWithReturnIndex,
+        When, Unwhen,
+        Check, Set, SetIndex, Block,
+        PoolIndexWrite
+    }
+
     /// <summary>
     /// Base class for all actions.
     /// </summary>
-    public abstract class MorphynAction { }
+    public abstract class MorphynAction
+    {
+        public ActionKind Kind;
+    }
 
     public class EmitAction : MorphynAction
     {
+        public EmitAction() => Kind = ActionKind.Emit;
         public string? TargetEntityName { get; init; }
         public required string EventName { get; init; }
         public List<MorphynExpression> Arguments { get; init; } = new();
@@ -16,6 +28,7 @@ namespace Morphyn.Parser
 
     public class EmitWithReturnAction : MorphynAction
     {
+        public EmitWithReturnAction() => Kind = ActionKind.EmitWithReturn;
         public string? TargetEntityName { get; init; }
         public required string EventName { get; init; }
         public List<MorphynExpression> Arguments { get; init; } = new();
@@ -24,6 +37,7 @@ namespace Morphyn.Parser
 
     public class EmitWithReturnIndexAction : MorphynAction
     {
+        public EmitWithReturnIndexAction() => Kind = ActionKind.EmitWithReturnIndex;
         public string? TargetEntityName { get; init; }
         public required string EventName { get; init; }
         public List<MorphynExpression> Arguments { get; init; } = new();
@@ -39,6 +53,7 @@ namespace Morphyn.Parser
     /// </summary>
     public class WhenAction : MorphynAction
     {
+        public WhenAction() => Kind = ActionKind.When;
         public required string TargetEntityName { get; init; }
         public required string TargetEventName { get; init; }
         public required string HandlerEventName { get; init; }
@@ -51,6 +66,7 @@ namespace Morphyn.Parser
     /// </summary>
     public class UnwhenAction : MorphynAction
     {
+        public UnwhenAction() => Kind = ActionKind.Unwhen;
         public required string TargetEntityName { get; init; }
         public required string TargetEventName { get; init; }
         public required string HandlerEventName { get; init; }
@@ -59,6 +75,7 @@ namespace Morphyn.Parser
 
     public class CheckAction : MorphynAction
     {
+        public CheckAction() => Kind = ActionKind.Check;
         public required MorphynExpression Condition { get; set; }
         public MorphynExpression Left { get; set; } = null!;
         public string Operator { get; set; } = null!;
@@ -68,12 +85,14 @@ namespace Morphyn.Parser
 
     public class SetAction : MorphynAction
     {
+        public SetAction() => Kind = ActionKind.Set;
         public MorphynExpression Expression = null!;
         public required string TargetField { get; set; }
     }
 
     public class SetIndexAction : MorphynAction
     {
+        public SetIndexAction() => Kind = ActionKind.SetIndex;
         public required string TargetPoolName { get; set; }
         public required MorphynExpression IndexExpr { get; set; }
         public required MorphynExpression ValueExpr { get; set; }
@@ -81,6 +100,7 @@ namespace Morphyn.Parser
 
     public class BlockAction : MorphynAction
     {
-        public List<MorphynAction> Actions { get; set; } = new();
+        public BlockAction() => Kind = ActionKind.Block;
+        public MorphynAction[] Actions { get; set; } = System.Array.Empty<MorphynAction>();
     }
 }

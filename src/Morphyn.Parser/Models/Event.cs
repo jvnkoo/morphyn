@@ -9,6 +9,6 @@ namespace Morphyn.Parser
     {
         public required string Name { get; set; }
         public List<string> Parameters { get; set; } = new List<string>();
-        public List<MorphynAction> Actions { get; set; } = new List<MorphynAction>();
+        public MorphynAction[] Actions { get; set; } = System.Array.Empty<MorphynAction>();
     }
 }
