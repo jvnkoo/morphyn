@@ -7,10 +7,10 @@ namespace Morphyn.Parser
     {
         public readonly Entity Target;
         public readonly string EventName;
-        public readonly object?[] Args;
+        public readonly MorphynValue[] Args;
         public readonly int ArgCount;
 
-        public PendingEvent(Entity target, string eventName, object?[] args, int argCount)
+        public PendingEvent(Entity target, string eventName, MorphynValue[] args, int argCount)
         {
             Target = target;
             EventName = eventName;

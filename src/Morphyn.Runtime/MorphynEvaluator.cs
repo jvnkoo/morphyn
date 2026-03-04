@@ -13,7 +13,7 @@ namespace Morphyn.Runtime
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static object? EvaluateExpression(Entity entity, MorphynExpression expr,
-            Dictionary<string, object?> localScope, EntityData data)
+            Dictionary<string, MorphynValue> localScope, EntityData data)
         {
             switch (expr)
             {
@@ -22,7 +22,7 @@ namespace Morphyn.Runtime
 
                 case VariableExpression v:
                     if (localScope.TryGetValue(v.Name, out var argVal))
-                        return argVal;
+                        return argVal.ToObject();
                     if (entity.Fields.TryGetValue(v.Name, out var fieldVal))
                         return fieldVal.ToObject();
                     throw new Exception($"Variable '{v.Name}' not found in '{entity.Name}'");
@@ -49,7 +49,7 @@ namespace Morphyn.Runtime
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static MorphynValue EvaluateToValue(Entity entity, MorphynExpression expr,
-            Dictionary<string, object?> localScope, EntityData data)
+            Dictionary<string, MorphynValue> localScope, EntityData data)
         {
             switch (expr)
             {
@@ -58,7 +58,7 @@ namespace Morphyn.Runtime
 
                 case VariableExpression v:
                     if (localScope.TryGetValue(v.Name, out var argVal))
-                        return MorphynValue.FromObject(argVal);
+                        return argVal;
                     if (entity.Fields.TryGetValue(v.Name, out var fieldVal))
                         return fieldVal;
                     throw new Exception($"Variable '{v.Name}' not found in '{entity.Name}'");
@@ -78,7 +78,7 @@ namespace Morphyn.Runtime
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static bool EvaluateLogic(Entity entity, BinaryLogicExpression b, Dictionary<string, object?> localScope, EntityData data)
+        private static bool EvaluateLogic(Entity entity, BinaryLogicExpression b, Dictionary<string, MorphynValue> localScope, EntityData data)
         {
             var left = EvaluateExpression(entity, b.Left, localScope, data);
             if (left == null) return false;
@@ -103,7 +103,7 @@ namespace Morphyn.Runtime
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static bool EvaluateUnary(Entity entity, UnaryLogicExpression u, Dictionary<string, object?> localScope, EntityData data)
+        private static bool EvaluateUnary(Entity entity, UnaryLogicExpression u, Dictionary<string, MorphynValue> localScope, EntityData data)
         {
             var val = EvaluateExpression(entity, u.Inner, localScope, data);
             if (val == null) return true;
@@ -130,7 +130,7 @@ namespace Morphyn.Runtime
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static object? GetFromPool(Entity entity, IndexAccessExpression idx, Dictionary<string, object?> localScope, EntityData data)
+        private static object? GetFromPool(Entity entity, IndexAccessExpression idx, Dictionary<string, MorphynValue> localScope, EntityData data)
         {
             MorphynPool? pool = null;
 
@@ -140,7 +140,7 @@ namespace Morphyn.Runtime
             if (pool == null)
             {
                 if (localScope.TryGetValue(idx.TargetName, out var scopeVal))
-                    pool = scopeVal as MorphynPool;
+                    pool = scopeVal.ObjVal as MorphynPool;
             }
 
             if (pool == null)
@@ -159,7 +159,7 @@ namespace Morphyn.Runtime
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static object EvaluateBinaryFast(Entity entity, BinaryExpression b, Dictionary<string, object?> localScope, EntityData data)
+        private static object EvaluateBinaryFast(Entity entity, BinaryExpression b, Dictionary<string, MorphynValue> localScope, EntityData data)
         {
             if (TryGetDouble(entity, b.Left, localScope, data, out double lFast) &&
                 TryGetDouble(entity, b.Right, localScope, data, out double rFast))
@@ -185,7 +185,7 @@ namespace Morphyn.Runtime
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static MorphynValue EvaluateBinaryToValue(Entity entity, BinaryExpression b, Dictionary<string, object?> localScope, EntityData data)
+        private static MorphynValue EvaluateBinaryToValue(Entity entity, BinaryExpression b, Dictionary<string, MorphynValue> localScope, EntityData data)
         {
             if (TryGetDouble(entity, b.Left, localScope, data, out double l) &&
                 TryGetDouble(entity, b.Right, localScope, data, out double r))
@@ -212,7 +212,7 @@ namespace Morphyn.Runtime
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static bool TryGetDouble(Entity entity, MorphynExpression expr,
-            Dictionary<string, object?> localScope, EntityData data, out double result)
+            Dictionary<string, MorphynValue> localScope, EntityData data, out double result)
         {
             if (expr is LiteralExpression lit)
             {
@@ -227,9 +227,9 @@ namespace Morphyn.Runtime
                     result = fv.NumVal;
                     return true;
                 }
-                if (localScope.TryGetValue(v.Name, out var sv) && sv is double sd)
+                if (localScope.TryGetValue(v.Name, out var sv) && sv.Kind == MorphynValueKind.Double)
                 {
-                    result = sd;
+                    result = sv.NumVal;
                     return true;
                 }
                 result = 0;
@@ -259,7 +259,7 @@ namespace Morphyn.Runtime
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static object EvaluateBinary(Entity entity, BinaryExpression b, Dictionary<string, object?> localScope, EntityData data)
+        private static object EvaluateBinary(Entity entity, BinaryExpression b, Dictionary<string, MorphynValue> localScope, EntityData data)
         {
             var leftObj = EvaluateExpression(entity, b.Left, localScope, data);
             var rightObj = EvaluateExpression(entity, b.Right, localScope, data);

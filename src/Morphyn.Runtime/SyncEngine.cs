@@ -13,7 +13,7 @@ namespace Morphyn.Runtime
     {
         public MorphynAction Action;
         public Entity Entity;
-        public Dictionary<string, object?> Scope;
+        public Dictionary<string, MorphynValue> Scope;
         // Non-null only for EmitWithReturnAction: field to write result into when child completes
         public string? ReturnField;
         // True = write result into entity.Fields[ReturnField], false = write into Scope[ReturnField]
@@ -27,11 +27,11 @@ namespace Morphyn.Runtime
     {
         public Entity Entity = null!;
         public Event Event = null!;
-        public Dictionary<string, object?> Scope = null!;
+        public Dictionary<string, MorphynValue> Scope = null!;
         public Queue<ActionItem> ActionQueue = null!;
         // Where to write lastAssigned when this frame finishes (into parent scope or entity field)
         public string? ReturnField;
-        public Dictionary<string, object?>? ParentScope;
+        public Dictionary<string, MorphynValue>? ParentScope;
         public Entity? ParentEntity;
     }
 
@@ -42,7 +42,7 @@ namespace Morphyn.Runtime
         public MorphynExpression IndexExpr = null!;
         public string TargetPoolName = null!;
         public Entity CapturedEntity = null!;
-        public Dictionary<string, object?> CapturedScope = null!;
+        public Dictionary<string, MorphynValue> CapturedScope = null!;
     }
 
     internal static class SyncEngine
@@ -59,7 +59,7 @@ namespace Morphyn.Runtime
         // Flattens an action list into an ActionItem queue, inlining BlockAction children
         // so the main loop never needs to recurse into blocks.
         public static void EnqueueActions(Queue<ActionItem> queue, IList<MorphynAction> actions,
-            Entity entity, Dictionary<string, object?> scope)
+            Entity entity, Dictionary<string, MorphynValue> scope)
         {
             for (int i = 0; i < actions.Count; i++)
             {
@@ -74,7 +74,7 @@ namespace Morphyn.Runtime
         // Fully iterative sync execution. The C# call stack depth is O(1) regardless of how deeply
         // Morphyn events recurse into each other — all frames live on the heap-allocated callStack.
         public static object? ExecuteSync(Entity callerEntity, Entity targetEntity,
-            string eventName, object?[] args, EntityData data,
+            string eventName, MorphynValue[] args, EntityData data,
             bool wasInSyncContext, Queue<PendingEvent> syncSideEffectQueue, Queue<PendingEvent> eventQueue)
         {
             if (!targetEntity.EventCache.TryGetValue(eventName, out var firstEv))
@@ -126,7 +126,7 @@ namespace Morphyn.Runtime
                             if (frame.ParentEntity != null)
                                 frame.ParentEntity.Fields[frame.ReturnField] = MorphynValue.FromObject(lastAssigned);
                             else if (frame.ParentScope != null)
-                                frame.ParentScope[frame.ReturnField] = lastAssigned;
+                                frame.ParentScope[frame.ReturnField] = MorphynValue.FromObject(lastAssigned);
                         }
                         continue;
                     }
@@ -177,16 +177,23 @@ namespace Morphyn.Runtime
                     }
                     else
                     {
-                        object? value = EvaluateExpression(entity, set.Expression, scope, data);
-                        scope[set.TargetField] = value;
-                        lastAssigned = value;
+                        var mv = EvaluateToValue(entity, set.Expression, scope, data);
+                        scope[set.TargetField] = mv;
+                        lastAssigned = mv.ToObject();
                     }
                     return true;
                 }
 
                 case CheckAction check:
                 {
-                    bool passed = Convert.ToBoolean(EvaluateExpression(entity, check.Condition, scope, data));
+                    var condVal = EvaluateToValue(entity, check.Condition, scope, data);
+                    bool passed = condVal.Kind switch
+                    {
+                        MorphynValueKind.Bool   => condVal.BoolVal,
+                        MorphynValueKind.Double => condVal.NumVal != 0,
+                        MorphynValueKind.Null   => false,
+                        _                       => Convert.ToBoolean(condVal.ToObject())
+                    };
 
                     if (!passed)
                         return check.InlineAction != null; // false = stop frame; true = continue (no-op)
@@ -211,8 +218,8 @@ namespace Morphyn.Runtime
 
                 case SetIndexAction setIdx:
                 {
-                    object? newValue = EvaluateExpression(entity, setIdx.ValueExpr, scope, data);
-                    int index = Convert.ToInt32(EvaluateExpression(entity, setIdx.IndexExpr, scope, data)) - 1;
+                    var newValue = EvaluateToValue(entity, setIdx.ValueExpr, scope, data);
+                    int index = (int)EvaluateToValue(entity, setIdx.IndexExpr, scope, data).NumVal - 1;
 
                     if (entity.Fields.TryGetValue(setIdx.TargetPoolName, out var fv) && fv.ObjVal is MorphynPool pool)
                     {
@@ -224,7 +231,7 @@ namespace Morphyn.Runtime
                     else
                         throw new Exception($"Target '{setIdx.TargetPoolName}' is not a pool or not found.");
 
-                    lastAssigned = newValue;
+                    lastAssigned = newValue.ToObject();
                     return true;
                 }
 
@@ -237,11 +244,11 @@ namespace Morphyn.Runtime
 
                     var resolvedArgs = ObjectPools.RentArgsArray(emitRet.Arguments.Count);
                     for (int i = 0; i < emitRet.Arguments.Count; i++)
-                        resolvedArgs[i] = EvaluateExpression(entity, emitRet.Arguments[i], scope, data);
+                        resolvedArgs[i] = EvaluateToValue(entity, emitRet.Arguments[i], scope, data);
 
                     var nextScope = ObjectPools.RentScope(nextEv.Parameters.Count);
                     for (int k = 0; k < nextEv.Parameters.Count; k++)
-                        nextScope[nextEv.Parameters[k]] = k < resolvedArgs.Length ? resolvedArgs[k] : null;
+                        nextScope[nextEv.Parameters[k]] = k < resolvedArgs.Length ? resolvedArgs[k] : MorphynValue.Null;
                     ObjectPools.ReturnArgsArray(resolvedArgs);
 
                     bool isEntityField = entity.Fields.ContainsKey(emitRet.TargetField);
@@ -271,14 +278,13 @@ namespace Morphyn.Runtime
 
                     var resolvedArgs = ObjectPools.RentArgsArray(emitRetIdx.Arguments.Count);
                     for (int i = 0; i < emitRetIdx.Arguments.Count; i++)
-                        resolvedArgs[i] = EvaluateExpression(entity, emitRetIdx.Arguments[i], scope, data);
+                        resolvedArgs[i] = EvaluateToValue(entity, emitRetIdx.Arguments[i], scope, data);
 
                     var nextScope = ObjectPools.RentScope(nextEv.Parameters.Count);
                     for (int k = 0; k < nextEv.Parameters.Count; k++)
-                        nextScope[nextEv.Parameters[k]] = k < resolvedArgs.Length ? resolvedArgs[k] : null;
+                        nextScope[nextEv.Parameters[k]] = k < resolvedArgs.Length ? resolvedArgs[k] : MorphynValue.Null;
                     ObjectPools.ReturnArgsArray(resolvedArgs);
 
-                    // Capture index/pool info for the post-call write-back action
                     var capturedIdxExpr = emitRetIdx.IndexExpr;
                     var capturedPoolName = emitRetIdx.TargetPoolName;
                     var capturedEntity = entity;
@@ -317,8 +323,8 @@ namespace Morphyn.Runtime
 
                 case _PoolIndexWriteAction poolWrite:
                 {
-                    int poolIndex = Convert.ToInt32(EvaluateExpression(
-                        poolWrite.CapturedEntity, poolWrite.IndexExpr, poolWrite.CapturedScope, data)) - 1;
+                    int poolIndex = (int)EvaluateToValue(
+                        poolWrite.CapturedEntity, poolWrite.IndexExpr, poolWrite.CapturedScope, data).NumVal - 1;
 
                     if (poolWrite.CapturedEntity.Fields.TryGetValue(poolWrite.TargetPoolName, out var pv)
                         && pv.ObjVal is MorphynPool pool)
@@ -340,9 +346,9 @@ namespace Morphyn.Runtime
                     for (int i = 0; i < emit.Arguments.Count; i++)
                     {
                         var argExpr = emit.Arguments[i];
-                        try { resolvedArgs[i] = EvaluateExpression(entity, argExpr, scope, data); }
+                        try { resolvedArgs[i] = EvaluateToValue(entity, argExpr, scope, data); }
                         catch (Exception) when (emit.EventName == "each" && argExpr is VariableExpression ve)
-                        { resolvedArgs[i] = ve.Name; }
+                        { resolvedArgs[i] = MorphynValue.FromObject(ve.Name); }
                     }
 
                     if (!Builtins.HandleBuiltinEmit(data, entity, emit, resolvedArgs, scope))
