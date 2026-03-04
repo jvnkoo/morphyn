@@ -6,13 +6,13 @@ namespace Morphyn.Parser
 {
     public enum MorphynValueKind : byte { Null, Double, Bool, String, Object }
 
-    [StructLayout(LayoutKind.Auto)]
+    [StructLayout(LayoutKind.Explicit)]
     public struct MorphynValue
     {
-        public MorphynValueKind Kind;
-        public double NumVal;
-        public bool BoolVal;
-        public object? ObjVal;
+        [FieldOffset(0)] public MorphynValueKind Kind;
+        [FieldOffset(8)] public double NumVal;
+        [FieldOffset(8)] public bool BoolVal;
+        [FieldOffset(16)] public object? ObjVal;
 
         public static readonly MorphynValue Null = new() { Kind = MorphynValueKind.Null };
 
