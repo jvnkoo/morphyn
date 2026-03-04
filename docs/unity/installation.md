@@ -11,11 +11,14 @@
 
 Done.
 
+---
+
 ## Quick Start Example
 
 ### Step 1: Create Config File
 
 Create `player.morph` in your Assets folder:
+
 ```morphyn
 entity Player {
   has hp: 100
@@ -31,19 +34,19 @@ entity Player {
 ```
 
 ### Step 2: Use in C#
+
 ```cs
 using UnityEngine;
-using Morphyn.Unity;
 
 public class PlayerController : MonoBehaviour
 {
+    private MorphynController _morphyn;
+
     void Start()
     {
-        // Read values
-        double hp = System.Convert.ToDouble(
-            MorphynController.Instance.GetField("Player", "hp")
-        );
+        _morphyn = MorphynController.Instance;
 
+        float hp = _morphyn.GetFloat("Player", "hp");
         Debug.Log($"Player HP: {hp}");
     }
 
@@ -51,8 +54,7 @@ public class PlayerController : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.L))
         {
-            // Trigger event
-            MorphynController.Instance.Emit("Player", "level_up");
+            _morphyn.Emit("Player", "level_up");
         }
     }
 }
@@ -65,6 +67,8 @@ public class PlayerController : MonoBehaviour
 3. Change `has hp: 100` to `has hp: 999`
 4. Save
 5. **HP updates instantly in running game!**
+
+---
 
 ## Next Steps
 

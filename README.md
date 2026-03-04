@@ -76,7 +76,7 @@ entity Enemy {
 **3.** Use in C#:
 ```csharp
 MorphynController.Instance.Emit("Enemy", "take_damage", 25);
-bool isAlive = Convert.ToBoolean(MorphynController.Instance.GetField("Enemy", "alive"));
+bool isAlive = MorphynController.Instance.GetBool("Enemy", "alive");
 ```
 
 **4.** Add `MorphynController` to your scene, drag in the `.morph` files, check **Enable Hot Reload**, press Play.
