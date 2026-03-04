@@ -39,34 +39,31 @@ public class MorphynController : MonoBehaviour
             return _instance;
         }
     }
-    
+
     [Header("Morphyn Scripts")]
     [Tooltip("Add ALL your .morph files here")]
     [SerializeField] private MorphynScriptEntry[] morphynScripts;
-    
+
     [Header("Settings")]
     [SerializeField] private bool runOnStart = true;
     [SerializeField] private bool enableTick = true;
     [SerializeField] private bool enableHotReload = false;
     [SerializeField] private bool autoSave = false;
     [SerializeField] private string saveFolder = "MorphynData";
-    
+
     private EntityData _context;
     private float _lastTime;
     private List<FileSystemWatcher> _watchers = new();
     private bool _needsReload = false;
     private string _cachedSavePath;
-    
+
     // Optimization: Pre-cache tick entities and reuse tick args buffer
     private List<Entity> _tickEntities = new();
-    private readonly object?[] _tickArgsBuffer = new object?[] { 0.0 };
-    private object?[] _internalArgsBuffer = new object?[8];
-    private object?[] _syncArgsBuffer = new object?[4];
+    private readonly MorphynValue[] _tickArgsBuffer = new MorphynValue[] { MorphynValue.FromDouble(0.0) };
+    private MorphynValue[] _internalArgsBuffer = new MorphynValue[8];
+    private MorphynValue[] _syncArgsBuffer = new MorphynValue[4];
 
-    private static readonly Dictionary<string, string> _stdlibPaths = new()
-    {
-        { "math",   "MorphynStdLib/math"   },
-    };
+    private const string StdlibResourcesPath = "MorphynStdLib";
 
     public EntityData Context => _context;
 
@@ -132,10 +129,9 @@ public class MorphynController : MonoBehaviour
 #endif
             }
 
-
             _context = MorphynParser.ParseFile(combinedCode);
             Debug.Log($"[Morphyn] Loaded {_context.Entities.Count} entities");
-            
+
             foreach (var entity in _context.Entities.Values)
             {
                 entity.BuildCache();
@@ -144,9 +140,9 @@ public class MorphynController : MonoBehaviour
                     MorphynRuntime.Send(entity, "init");
                 }
             }
-            
+
             MorphynRuntime.RunFullCycle(_context);
-            
+
             _tickEntities.Clear();
             foreach (var entity in _context.Entities.Values)
             {
@@ -155,7 +151,7 @@ public class MorphynController : MonoBehaviour
                     _tickEntities.Add(entity);
                 }
             }
-            
+
             _lastTime = Time.time;
         }
         catch (Exception ex)
@@ -173,7 +169,7 @@ public class MorphynController : MonoBehaviour
             var entry = morphynScripts[i];
             if (entry.saveMode == SaveMode.Auto && entry.script != null)
             {
-                string entityName = entry.script.name; 
+                string entityName = entry.script.name;
                 if (_context.Entities.ContainsKey(entityName))
                 {
                     LoadState(entityName);
@@ -185,7 +181,7 @@ public class MorphynController : MonoBehaviour
     public void SaveStateByPolicy()
     {
         if (_context == null) return;
-        
+
         bool directoryChecked = false;
 
         for (int i = 0; i < morphynScripts.Length; i++)
@@ -201,7 +197,7 @@ public class MorphynController : MonoBehaviour
                         if (!Directory.Exists(_cachedSavePath)) Directory.CreateDirectory(_cachedSavePath);
                         directoryChecked = true;
                     }
-                    
+
                     string filePath = Path.Combine(_cachedSavePath, $"{entityName}.morph");
                     MorphynSerializer.SaveEntity(entity, filePath);
                 }
@@ -226,7 +222,7 @@ public class MorphynController : MonoBehaviour
         {
             Debug.LogWarning($"[Morphyn] Import not found: {absolutePath}");
             return "";
-        }   
+        }
 
         string content = File.ReadAllText(absolutePath);
         string[] lines = content.Split('\n');
@@ -263,7 +259,7 @@ public class MorphynController : MonoBehaviour
                     continue; // Skip adding the import line itself
                 }
             }
-            
+
             finalContent.Add(line);
         }
 
@@ -308,13 +304,27 @@ public class MorphynController : MonoBehaviour
     {
         string name = Path.GetFileNameWithoutExtension(importName);
 
-        if (_stdlibPaths.TryGetValue(name, out var resourcePath))
+#if UNITY_EDITOR
+        // In Editor: find the file anywhere in the project by name
+        var guids = UnityEditor.AssetDatabase.FindAssets($"{name} t:TextAsset");
+        foreach (var guid in guids)
         {
-            var asset = Resources.Load<TextAsset>(resourcePath);
-            if (asset != null) return asset.text;
-            Debug.LogWarning($"[Morphyn] Stdlib '{name}' not found at Resources/{resourcePath}");
+            string assetPath = UnityEditor.AssetDatabase.GUIDToAssetPath(guid);
+            if (Path.GetFileNameWithoutExtension(assetPath) == name)
+            {
+                var asset = UnityEditor.AssetDatabase.LoadAssetAtPath<TextAsset>(assetPath);
+                if (asset != null) return asset.text;
+            }
         }
+        Debug.LogWarning($"[Morphyn] Stdlib '{name}' not found anywhere in project.");
         return null;
+#else
+        // In builds: load from Resources/MorphynStdLib/ (auto-copied by MorphynBuildProcessor)
+        var runtimeAsset = Resources.Load<TextAsset>($"{StdlibResourcesPath}/{name}");
+        if (runtimeAsset != null) return runtimeAsset.text;
+        Debug.LogWarning($"[Morphyn] Stdlib '{name}' not found in Resources/{StdlibResourcesPath}/.");
+        return null;
+#endif
     }
 
     void SetupHotReload()
@@ -324,22 +334,22 @@ public class MorphynController : MonoBehaviour
         {
             var entry = morphynScripts[i];
             if (entry.script == null) continue;
-            
+
             try
             {
                 string scriptPath = UnityEditor.AssetDatabase.GetAssetPath(entry.script);
                 if (string.IsNullOrEmpty(scriptPath)) continue;
-                
+
                 string fullPath = Path.GetFullPath(scriptPath);
                 string directory = Path.GetDirectoryName(fullPath);
                 string fileName = Path.GetFileName(fullPath);
-                
+
                 var watcher = new FileSystemWatcher(directory)
                 {
                     Filter = fileName,
                     NotifyFilter = NotifyFilters.LastWrite
                 };
-                
+
                 watcher.Changed += (s, e) => { _needsReload = true; };
                 watcher.EnableRaisingEvents = true;
                 _watchers.Add(watcher);
@@ -355,7 +365,7 @@ public class MorphynController : MonoBehaviour
     void Update()
     {
         if (_context == null) return;
-        
+
         try
         {
             if (_needsReload && enableHotReload)
@@ -363,22 +373,22 @@ public class MorphynController : MonoBehaviour
                 ReloadLogic();
                 _needsReload = false;
             }
-            
+
             if (enableTick)
             {
                 float currentTime = Time.time;
                 double dt = (currentTime - _lastTime) * 1000f;
                 _lastTime = currentTime;
-                
+
                 // Optimization: Use pre-cached tick entities and buffer
-                _tickArgsBuffer[0] = (double)dt;
-                
+                _tickArgsBuffer[0] = MorphynValue.FromDouble(dt);
+
                 int tickCount = _tickEntities.Count;
                 for (int i = 0; i < tickCount; i++)
                 {
                     MorphynRuntime.Send(_tickEntities[i], "tick", _tickArgsBuffer);
                 }
-                
+
                 MorphynRuntime.RunFullCycle(_context);
                 MorphynRuntime.GarbageCollect(_context);
             }
@@ -395,14 +405,14 @@ public class MorphynController : MonoBehaviour
         try
         {
             UnityEditor.AssetDatabase.Refresh();
-            
+
             string combinedCode = "";
             for (int i = 0; i < morphynScripts.Length; i++)
             {
                 var entry = morphynScripts[i];
                 if (entry.script != null) combinedCode += entry.script.text + "\n";
             }
-            
+
             EntityData newData = MorphynParser.ParseFile(combinedCode);
 
             foreach (var newEntry in newData.Entities)
@@ -423,7 +433,7 @@ public class MorphynController : MonoBehaviour
                     {
                         MorphynRuntime.Send(newEntity, "init");
                     }
-                    
+
                     // Optimization: Add new tick entities to cache
                     if (newEntity.Events.Any(e => e.Name == "tick"))
                     {
@@ -431,7 +441,7 @@ public class MorphynController : MonoBehaviour
                     }
                 }
             }
-            
+
             MorphynRuntime.RunFullCycle(_context);
         }
         catch (Exception ex)
@@ -441,30 +451,92 @@ public class MorphynController : MonoBehaviour
 #endif
     }
 
-    public object? GetField(string entityName, string fieldName)
+    public MorphynValue GetField(string entityName, string fieldName)
     {
         if (_context != null && _context.Entities.TryGetValue(entityName, out var entity))
             if (entity.Fields.TryGetValue(fieldName, out var value))
-                return value.ToObject(); // MorphynValue → object?
-        return null;
+                return value;
+        return MorphynValue.Null;
     }
 
-    public void SetField(string entityName, string fieldName, object? value)
+    public void SetField(string entityName, string fieldName, MorphynValue value)
     {
         if (_context != null && _context.Entities.TryGetValue(entityName, out var entity))
-            entity.Fields[fieldName] = MorphynValue.FromObject(value); // object? → MorphynValue
+            entity.Fields[fieldName] = value;
     }
 
-    public Dictionary<string, object?> GetAllFields(string entityName)
+    public void SetField(string entityName, string fieldName, bool value)   => SetField(entityName, fieldName, MorphynValue.FromBool(value));
+    public void SetField(string entityName, string fieldName, double value) => SetField(entityName, fieldName, MorphynValue.FromDouble(value));
+    public void SetField(string entityName, string fieldName, float value)  => SetField(entityName, fieldName, MorphynValue.FromDouble(value));
+    public void SetField(string entityName, string fieldName, string value) => SetField(entityName, fieldName, MorphynValue.FromObject(value));
+
+    public Dictionary<string, MorphynValue> GetAllFields(string entityName)
     {
         if (_context != null && _context.Entities.TryGetValue(entityName, out var entity))
         {
-            var result = new Dictionary<string, object?>(entity.Fields.Count);
-            foreach (var kvp in entity.Fields)
-                result[kvp.Key] = kvp.Value.ToObject();
-            return result;
+            return new Dictionary<string, MorphynValue>(entity.Fields);
         }
-        return new Dictionary<string, object?>();
+        return new Dictionary<string, MorphynValue>();
+    }
+
+    public bool GetBool(string entityName, string fieldName, bool defaultValue = false)
+    {
+        var v = GetField(entityName, fieldName);
+        return v.IsNull ? defaultValue : System.Convert.ToBoolean(v.ToObject());
+    }
+
+    public float GetFloat(string entityName, string fieldName, float defaultValue = 0f)
+    {
+        var v = GetField(entityName, fieldName);
+        return v.IsNull ? defaultValue : System.Convert.ToSingle(v.ToObject());
+    }
+
+    public double GetDouble(string entityName, string fieldName, double defaultValue = 0.0)
+    {
+        var v = GetField(entityName, fieldName);
+        return v.IsNull ? defaultValue : System.Convert.ToDouble(v.ToObject());
+    }
+
+    public string GetString(string entityName, string fieldName, string defaultValue = "")
+    {
+        var v = GetField(entityName, fieldName);
+        return v.IsNull ? defaultValue : v.ToObject()?.ToString() ?? defaultValue;
+    }
+
+    /// <summary>
+    /// Get a field value as-is. Returns whatever is stored: double, bool, string, MorphynPool or null.
+    /// Use when you don't know the type ahead of time.
+    /// </summary>
+    public object? Get(string entityName, string fieldName, object? defaultValue = null)
+    {
+        var v = GetField(entityName, fieldName);
+        return v.IsNull ? defaultValue : v.ToObject();
+    }
+
+    /// <summary>
+    /// Get a field value automatically converted to the requested type T.
+    /// Supports: bool, float, double, int, string, object.
+    /// Example: _morphyn.Get&lt;float&gt;("PlayerSettings", "speed", 1f)
+    /// </summary>
+    public T Get<T>(string entityName, string fieldName, T defaultValue = default)
+    {
+        var v = GetField(entityName, fieldName);
+        if (v.IsNull) return defaultValue;
+        object? raw = v.ToObject();
+        if (raw == null) return defaultValue;
+        try
+        {
+            if (typeof(T) == typeof(bool))   return (T)(object)System.Convert.ToBoolean(raw);
+            if (typeof(T) == typeof(float))  return (T)(object)System.Convert.ToSingle(raw);
+            if (typeof(T) == typeof(double)) return (T)(object)System.Convert.ToDouble(raw);
+            if (typeof(T) == typeof(int))    return (T)(object)System.Convert.ToInt32(raw);
+            if (typeof(T) == typeof(string)) return (T)(object)(raw.ToString() ?? "");
+            return (T)raw;
+        }
+        catch
+        {
+            return defaultValue;
+        }
     }
 
     public void Emit(string entityName, string eventName, params object[] args)
@@ -473,25 +545,27 @@ public class MorphynController : MonoBehaviour
         {
             // Optimization: Reuse buffer to avoid List allocation
             if (args.Length > _internalArgsBuffer.Length)
-                _internalArgsBuffer = new object?[args.Length];
+                _internalArgsBuffer = new MorphynValue[args.Length];
             for (int i = 0; i < args.Length; i++)
-                _internalArgsBuffer[i] = args[i];
+                _internalArgsBuffer[i] = MorphynValue.FromObject(args[i]);
 
             MorphynRuntime.Send(entity, eventName, _internalArgsBuffer);
             MorphynRuntime.RunFullCycle(_context);
         }
     }
 
-    public object? EmitSync(string entityName, string eventName, object? arg0 = null)
+    public MorphynValue EmitSync(string entityName, string eventName, params MorphynValue[] args)
     {
         if (_context != null && _context.Entities.TryGetValue(entityName, out var entity))
-        {
-            _syncArgsBuffer[0] = arg0;
-            return MorphynRuntime.ExecuteSync(null, entity, eventName,
-                arg0 != null ? _syncArgsBuffer : Array.Empty<object?>(), _context);
-        }
-        return null;
+            return MorphynValue.FromObject(MorphynRuntime.ExecuteSync(null, entity, eventName,
+                args.Length > 0 ? args : Array.Empty<MorphynValue>(), _context));
+        return MorphynValue.Null;
     }
+
+    public MorphynValue EmitSync(string entityName, string eventName, bool arg)    => EmitSync(entityName, eventName, MorphynValue.FromBool(arg));
+    public MorphynValue EmitSync(string entityName, string eventName, double arg)  => EmitSync(entityName, eventName, MorphynValue.FromDouble(arg));
+    public MorphynValue EmitSync(string entityName, string eventName, float arg)   => EmitSync(entityName, eventName, MorphynValue.FromDouble(arg));
+    public MorphynValue EmitSync(string entityName, string eventName, string arg)  => EmitSync(entityName, eventName, MorphynValue.FromObject(arg));
 
     /// <summary>
     /// Subscribe a Morphyn entity to another entity's event.
@@ -546,14 +620,24 @@ public class MorphynController : MonoBehaviour
         MorphynRuntime.Unsubscribe(subscriber, target, targetEvent, handlerEvent);
     }
 
-    public void On(string entityName, string eventName, Action<object?[]> handler)
+    public void On(string entityName, string eventName, Action<MorphynValue[]> handler)
     {
-        UnityBridge.Instance.AddListener(entityName, eventName, handler);
+        // Wrap MorphynValue[] handler to match UnityBridge's Action<object?[]> signature
+        UnityBridge.Instance.AddListener(entityName, eventName, args =>
+        {
+            var morphArgs = new MorphynValue[args.Length];
+            for (int i = 0; i < args.Length; i++)
+                morphArgs[i] = MorphynValue.FromObject(args[i]);
+            handler(morphArgs);
+        });
     }
 
-    public void Off(string entityName, string eventName, Action<object?[]> handler)
+    public void Off(string entityName, string eventName, Action<MorphynValue[]> handler)
     {
-        UnityBridge.Instance.RemoveListener(entityName, eventName, handler);
+        // Note: wrapping creates a new delegate instance, so Off cannot match by reference.
+        // To support Off correctly, callers should manage the wrapper themselves,
+        // or use UnityBridge.Instance directly with Action<object?[]>.
+        Debug.LogWarning("[Morphyn] Off() cannot remove a wrapped handler by reference. Use UnityBridge.Instance.RemoveListener directly with Action<object?[]> if removal is required.");
     }
 
     public void SaveState()
@@ -584,7 +668,7 @@ public class MorphynController : MonoBehaviour
         {
             Debug.Log($"[Morphyn]: {string.Join(" ", args)}");
         });
-        
+
         UnityBridge.Instance.RegisterCallback("Move", args =>
         {
             if (args.Length >= 3)
@@ -595,7 +679,7 @@ public class MorphynController : MonoBehaviour
                 transform.position += new Vector3(x, y, z);
             }
         });
-        
+
         UnityBridge.Instance.RegisterCallback("Rotate", args =>
         {
             if (args.Length >= 1)
@@ -614,7 +698,7 @@ public class MorphynController : MonoBehaviour
             _watchers[i].Dispose();
         }
         _watchers.Clear();
-        
+
         MorphynRuntime.UnityCallback = null;
         UnityBridge.Instance.ClearCallbacks();
     }
