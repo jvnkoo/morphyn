@@ -84,6 +84,20 @@ bool isAlive = Convert.ToBoolean(MorphynController.Instance.GetField("Enemy", "a
 Full docs at [jvnkoo.github.io/morphyn](https://jvnkoo.github.io/morphyn).
 
 ---
+## Performance
+
+Morphyn is built with a **Zero-Allocation** core. It uses a custom iterative sync engine, object pooling, and a tagged union value system (`MorphynValue`) to ensure that high-frequency events don't trigger the Garbage Collector.
+
+### Benchmark Results
+Executed on **.NET 10 (RyuJIT x86-64-v3)** / **Intel Core i5-10400H**.
+
+| Method | Mean | StdErr | Ratio | Min | Max | Allocated |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| **Native C# Logic** | 0.88 ns | 0.007 ns | 1.00 | 0.84 ns | 0.93 ns | **0 B** |
+| **Morphyn Single Tick** | **655.22 ns** | 1.627 ns | 741.54 | 648.95 ns | 670.42 ns | **0 B** |
+| **Morphyn + GC Run** | **682.79 ns** | 3.349 ns | 772.75 | 659.09 ns | 716.10 ns | **0 B** |
+
+---
 ## Why not Lua?
 
 The Unity bridges are a mess. MoonSharp hasn’t been updated in years, and newer alternatives like NLua and xLua bring their own baggage - NLua often trips over AOT constraints, while xLua’s power comes at the cost of high complexity. Getting either to work with hot reload and state preservation is a project in itself.
