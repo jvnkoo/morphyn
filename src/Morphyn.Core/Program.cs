@@ -2,7 +2,7 @@
 using System.IO;
 using System.Collections.Generic;
 using System.Linq;
-using BenchmarkDotNet.Running; 
+using BenchmarkDotNet.Running;
 using Morphyn.Parser;
 using Morphyn.Runtime;
 
@@ -77,7 +77,7 @@ namespace Morphyn.Core
 
                 Console.WriteLine("\n--- Starting Runtime ---");
 
-                MorphynRuntime.RunFullCycle(context);
+                // MorphynRuntime.RunFullCycle(context);
 
                 Console.WriteLine("\n--- Engine Pulse Started (Press Ctrl+C to stop) ---");
 
@@ -86,12 +86,27 @@ namespace Morphyn.Core
 
                 using var watcher = new FileSystemWatcher(directory ?? Environment.CurrentDirectory)
                 {
-                    Filter = "*.morphyn",
-                    NotifyFilter = NotifyFilters.LastWrite
+                    Filter = "*.*",
+                    NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.FileName | NotifyFilters.Size | NotifyFilters.Attributes,
+                    IncludeSubdirectories = false
                 };
 
                 bool needsReload = false;
-                watcher.Changed += (s, e) => needsReload = true;
+                FileSystemEventHandler handler = (s, e) =>
+                {
+                    string changedExt = Path.GetExtension(e.FullPath).ToLower();
+                    if (ValidExtensions.Contains(changedExt))
+                    {
+                        Console.WriteLine($"[Watcher Debug] Event: {e.ChangeType} on {e.Name}");
+                        needsReload = true;
+                    }
+                };
+
+                watcher.Changed += handler;
+                watcher.Created += handler;
+                watcher.Deleted += handler;
+                watcher.Renamed += (s, e) => handler(s, e); // Для RenamedEventArgs
+
                 watcher.EnableRaisingEvents = true;
 
                 // Pre-collect entities with tick handlers
@@ -109,9 +124,12 @@ namespace Morphyn.Core
                 {
                     if (needsReload)
                     {
-                        System.Threading.Thread.Sleep(50);
-                        ReloadLogic(path, context, tickEntities);
                         needsReload = false;
+                        System.Threading.Thread.Sleep(100);
+
+                        // MorphynRuntime.ClearQueue();
+
+                        ReloadLogic(path, context, tickEntities);
                         stopwatch.Restart();
                         lastFrameTime = 0;
                     }
@@ -120,17 +138,22 @@ namespace Morphyn.Core
                     double dtMs = currentFrameTime - lastFrameTime;
                     lastFrameTime = currentFrameTime;
 
-                    // Update buffer without new allocations
                     TickArgsBuffer[0] = MorphynValue.FromDouble(dtMs);
 
-                    int tickCount = tickEntities.Count;
-                    for (int i = 0; i < tickCount; i++)
+                    for (int i = 0; i < tickEntities.Count; i++)
                     {
-                        // Now passes object?[] which matches the optimized Send(Entity, string, object?[]?)
                         MorphynRuntime.Send(tickEntities[i], "tick", TickArgsBuffer);
                     }
 
-                    MorphynRuntime.RunFullCycle(context);
+                    if (MorphynRuntime.PendingEventsCount > 0)
+                    {
+                        MorphynRuntime.RunPartial(context, 5000);
+                    }
+                    else
+                    {
+                        System.Threading.Thread.Sleep(1);
+                    }
+
                     MorphynRuntime.GarbageCollect(context);
                 }
             }
@@ -176,6 +199,15 @@ namespace Morphyn.Core
 
                 EntityData newData = MorphynParser.ParseFile(code);
 
+                var removedNames = currentData.Entities.Keys.Except(newData.Entities.Keys).ToList();
+                foreach (var name in removedNames)
+                {
+                    var ent = currentData.Entities[name];
+                    tickEntities.Remove(ent);
+                    currentData.Entities.Remove(name);
+                    Console.WriteLine($"[Hot Reload] Entity removed: {name}");
+                }
+
                 foreach (var newEntry in newData.Entities)
                 {
                     string name = newEntry.Key;
@@ -185,6 +217,27 @@ namespace Morphyn.Core
                     {
                         existingEntity.Events = newEntity.Events;
                         existingEntity.BuildCache();
+
+                        // if (existingEntity.Events.Any(e => e.Name == "init"))
+                        // {
+                        //     MorphynRuntime.Send(existingEntity, "init");
+                        // }
+
+                        foreach (var field in newEntity.Fields)
+                        {
+                            if (!existingEntity.Fields.ContainsKey(field.Key))
+                            {
+                                existingEntity.Fields[field.Key] = field.Value;
+                                Console.WriteLine($"[Hot Reload] New field '{field.Key}' added to {name}");
+                            }
+                        }
+
+                        bool hasTick = existingEntity.Events.Any(e => e.Name == "tick");
+                        bool isInTickList = tickEntities.Contains(existingEntity);
+
+                        if (hasTick && !isInTickList) tickEntities.Add(existingEntity);
+                        else if (!hasTick && isInTickList) tickEntities.Remove(existingEntity);
+
                         Console.WriteLine($"[Hot Reload] Logic updated: {name}");
                     }
                     else
@@ -194,14 +247,10 @@ namespace Morphyn.Core
                         Console.WriteLine($"[Hot Reload] New entity spawned: {name}");
 
                         if (newEntity.Events.Any(e => e.Name == "init"))
-                        {
                             MorphynRuntime.Send(newEntity, "init");
-                        }
 
                         if (newEntity.Events.Any(e => e.Name == "tick"))
-                        {
                             tickEntities.Add(newEntity);
-                        }
                     }
                 }
             }
@@ -262,7 +311,7 @@ namespace Morphyn.Core
                                 throw new Exception("Morphyn parsing failed. See context above.");
                             }
                         }
-                        continue; 
+                        continue;
                     }
                 }
                 finalContent.Add(line);
