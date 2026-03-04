@@ -1284,10 +1284,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#saveload" class="md-nav__link">
+  <a href="#save-load" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Save/Load
+        Save / Load
       
     </span>
   </a>
@@ -1329,10 +1329,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#3-use-for-configs-not-gameplay-code" class="md-nav__link">
+  <a href="#3-use-for-configs-and-logic-not-complex-gameplay-systems" class="md-nav__link">
     <span class="md-ellipsis">
       
-        3. Use for configs, not gameplay code
+        3. Use for configs and logic, not complex gameplay systems
       
     </span>
   </a>
@@ -1887,10 +1887,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#saveload" class="md-nav__link">
+  <a href="#save-load" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Save/Load
+        Save / Load
       
     </span>
   </a>
@@ -1932,10 +1932,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#3-use-for-configs-not-gameplay-code" class="md-nav__link">
+  <a href="#3-use-for-configs-and-logic-not-complex-gameplay-systems" class="md-nav__link">
     <span class="md-ellipsis">
       
-        3. Use for configs, not gameplay code
+        3. Use for configs and logic, not complex gameplay systems
       
     </span>
   </a>
@@ -2052,7 +2052,7 @@
 
 <h1 id="unity-api-reference">Unity API Reference</h1>
 <h2 id="morphyncontroller">MorphynController</h2>
-<p>The main component that loads and runs .morph files.</p>
+<p>The main component that loads and runs <code>.morph</code> files.</p>
 <h3 id="settings">Settings</h3>
 <table>
 <thead>
@@ -2064,15 +2064,15 @@
 <tbody>
 <tr>
 <td><strong>Morphyn Scripts</strong></td>
-<td>Drag .morph files here</td>
+<td>Drag <code>.morph</code> files here</td>
 </tr>
 <tr>
 <td><strong>Run On Start</strong></td>
-<td>Auto-load on Start()</td>
+<td>Auto-load on <code>Start()</code></td>
 </tr>
 <tr>
 <td><strong>Enable Tick</strong></td>
-<td>Send tick(dt) every frame</td>
+<td>Send <code>tick(dt)</code> every frame</td>
 </tr>
 <tr>
 <td><strong>Enable Hot Reload</strong></td>
@@ -2090,34 +2090,62 @@
 </table>
 <h3 id="api-methods">API Methods</h3>
 <div class="language-cs highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">MorphynController</span><span class="w"> </span><span class="n">morphyn</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">MorphynController</span><span class="p">.</span><span class="n">Instance</span><span class="p">;</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="c1">// Get value</span>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="kt">object</span><span class="w"> </span><span class="n">hp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">morphyn</span><span class="p">.</span><span class="n">GetField</span><span class="p">(</span><span class="s">&quot;Player&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;hp&quot;</span><span class="p">);</span>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="kt">double</span><span class="w"> </span><span class="n">hpValue</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">System</span><span class="p">.</span><span class="n">Convert</span><span class="p">.</span><span class="n">ToDouble</span><span class="p">(</span><span class="n">hp</span><span class="p">);</span>
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="c1">// Set value</span>
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="n">morphyn</span><span class="p">.</span><span class="n">SetField</span><span class="p">(</span><span class="s">&quot;Player&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;hp&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">50</span><span class="p">);</span>
-</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="c1">// Trigger event</span>
-</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="n">morphyn</span><span class="p">.</span><span class="n">Emit</span><span class="p">(</span><span class="s">&quot;Player&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;damage&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">25</span><span class="p">);</span>
-</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="c1">// Trigger event which returns a value</span>
-</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="kt">object?</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">morphyn</span><span class="p">.</span><span class="n">EmitSync</span><span class="p">(</span><span class="s">&quot;Player&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;damage&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">25</span><span class="p">);</span>
-</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="c1">// Subscribe entity to another entity&#39;s event</span>
-</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="n">morphyn</span><span class="p">.</span><span class="n">Subscribe</span><span class="p">(</span><span class="s">&quot;Logger&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Player&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;death&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;onPlayerDeath&quot;</span><span class="p">);</span>
-</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="c1">// Unsubscribe</span>
-</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a><span class="n">morphyn</span><span class="p">.</span><span class="n">Unsubscribe</span><span class="p">(</span><span class="s">&quot;Logger&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Player&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;death&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;onPlayerDeath&quot;</span><span class="p">);</span>
-</span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a><span class="c1">// Subscribe C# method to a Morphyn event</span>
-</span><span id="__span-0-16"><a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a><span class="n">morphyn</span><span class="p">.</span><span class="n">On</span><span class="p">(</span><span class="s">&quot;Player&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;death&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">args</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">Debug</span><span class="p">.</span><span class="n">Log</span><span class="p">(</span><span class="s">&quot;Player died!&quot;</span><span class="p">));</span>
-</span><span id="__span-0-17"><a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a><span class="c1">// Unsubscribe C# method</span>
-</span><span id="__span-0-18"><a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a><span class="n">morphyn</span><span class="p">.</span><span class="n">Off</span><span class="p">(</span><span class="s">&quot;Player&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;death&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">myHandler</span><span class="p">);</span>
-</span><span id="__span-0-19"><a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a><span class="c1">// Save/Load</span>
-</span><span id="__span-0-20"><a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a><span class="n">morphyn</span><span class="p">.</span><span class="n">SaveState</span><span class="p">();</span>
-</span><span id="__span-0-21"><a id="__codelineno-0-21" name="__codelineno-0-21" href="#__codelineno-0-21"></a><span class="n">morphyn</span><span class="p">.</span><span class="n">LoadState</span><span class="p">(</span><span class="s">&quot;Player&quot;</span><span class="p">);</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="c1">// Get field — typed helpers</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="kt">float</span><span class="w"> </span><span class="n">hp</span><span class="w">        </span><span class="o">=</span><span class="w"> </span><span class="n">morphyn</span><span class="p">.</span><span class="n">GetFloat</span><span class="p">(</span><span class="s">&quot;Player&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;hp&quot;</span><span class="p">);</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="kt">bool</span><span class="w"> </span><span class="n">alive</span><span class="w">      </span><span class="o">=</span><span class="w"> </span><span class="n">morphyn</span><span class="p">.</span><span class="n">GetBool</span><span class="p">(</span><span class="s">&quot;Player&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;alive&quot;</span><span class="p">);</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="kt">double</span><span class="w"> </span><span class="n">speed</span><span class="w">    </span><span class="o">=</span><span class="w"> </span><span class="n">morphyn</span><span class="p">.</span><span class="n">GetDouble</span><span class="p">(</span><span class="s">&quot;Player&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;speed&quot;</span><span class="p">);</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="kt">string</span><span class="w"> </span><span class="n">nickname</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">morphyn</span><span class="p">.</span><span class="n">GetString</span><span class="p">(</span><span class="s">&quot;Player&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;nickname&quot;</span><span class="p">);</span>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="c1">// Get field — generic (auto-converts to T)</span>
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="kt">float</span><span class="w"> </span><span class="n">hp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">morphyn</span><span class="p">.</span><span class="n">Get</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="p">(</span><span class="s">&quot;Player&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;hp&quot;</span><span class="p">);</span>
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="kt">bool</span><span class="w"> </span><span class="n">alive</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">morphyn</span><span class="p">.</span><span class="n">Get</span><span class="o">&lt;</span><span class="kt">bool</span><span class="o">&gt;</span><span class="p">(</span><span class="s">&quot;Player&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;alive&quot;</span><span class="p">);</span>
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>
+</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="c1">// Get field — dynamic (returns whatever is stored: double, bool, string, MorphynPool or null)</span>
+</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a><span class="kt">object</span><span class="w"> </span><span class="n">val</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">morphyn</span><span class="p">.</span><span class="n">Get</span><span class="p">(</span><span class="s">&quot;Player&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;hp&quot;</span><span class="p">);</span>
+</span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a>
+</span><span id="__span-0-16"><a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a><span class="c1">// Get raw MorphynValue</span>
+</span><span id="__span-0-17"><a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a><span class="n">MorphynValue</span><span class="w"> </span><span class="n">raw</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">morphyn</span><span class="p">.</span><span class="n">GetField</span><span class="p">(</span><span class="s">&quot;Player&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;hp&quot;</span><span class="p">);</span>
+</span><span id="__span-0-18"><a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a>
+</span><span id="__span-0-19"><a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a><span class="c1">// Set field — accepts bool, float, double, string or MorphynValue directly</span>
+</span><span id="__span-0-20"><a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a><span class="n">morphyn</span><span class="p">.</span><span class="n">SetField</span><span class="p">(</span><span class="s">&quot;Player&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;hp&quot;</span><span class="p">,</span><span class="w"> </span><span class="mf">50.0</span><span class="p">);</span>
+</span><span id="__span-0-21"><a id="__codelineno-0-21" name="__codelineno-0-21" href="#__codelineno-0-21"></a><span class="n">morphyn</span><span class="p">.</span><span class="n">SetField</span><span class="p">(</span><span class="s">&quot;Player&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;alive&quot;</span><span class="p">,</span><span class="w"> </span><span class="k">true</span><span class="p">);</span>
+</span><span id="__span-0-22"><a id="__codelineno-0-22" name="__codelineno-0-22" href="#__codelineno-0-22"></a><span class="n">morphyn</span><span class="p">.</span><span class="n">SetField</span><span class="p">(</span><span class="s">&quot;Player&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;name&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Hero&quot;</span><span class="p">);</span>
+</span><span id="__span-0-23"><a id="__codelineno-0-23" name="__codelineno-0-23" href="#__codelineno-0-23"></a>
+</span><span id="__span-0-24"><a id="__codelineno-0-24" name="__codelineno-0-24" href="#__codelineno-0-24"></a><span class="c1">// Get all fields</span>
+</span><span id="__span-0-25"><a id="__codelineno-0-25" name="__codelineno-0-25" href="#__codelineno-0-25"></a><span class="n">Dictionary</span><span class="o">&lt;</span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="n">MorphynValue</span><span class="o">&gt;</span><span class="w"> </span><span class="n">fields</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">morphyn</span><span class="p">.</span><span class="n">GetAllFields</span><span class="p">(</span><span class="s">&quot;Player&quot;</span><span class="p">);</span>
+</span><span id="__span-0-26"><a id="__codelineno-0-26" name="__codelineno-0-26" href="#__codelineno-0-26"></a>
+</span><span id="__span-0-27"><a id="__codelineno-0-27" name="__codelineno-0-27" href="#__codelineno-0-27"></a><span class="c1">// Trigger event</span>
+</span><span id="__span-0-28"><a id="__codelineno-0-28" name="__codelineno-0-28" href="#__codelineno-0-28"></a><span class="n">morphyn</span><span class="p">.</span><span class="n">Emit</span><span class="p">(</span><span class="s">&quot;Player&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;damage&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">25</span><span class="p">);</span>
+</span><span id="__span-0-29"><a id="__codelineno-0-29" name="__codelineno-0-29" href="#__codelineno-0-29"></a>
+</span><span id="__span-0-30"><a id="__codelineno-0-30" name="__codelineno-0-30" href="#__codelineno-0-30"></a><span class="c1">// Trigger event and get return value</span>
+</span><span id="__span-0-31"><a id="__codelineno-0-31" name="__codelineno-0-31" href="#__codelineno-0-31"></a><span class="n">MorphynValue</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">morphyn</span><span class="p">.</span><span class="n">EmitSync</span><span class="p">(</span><span class="s">&quot;Player&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;calculate&quot;</span><span class="p">,</span><span class="w"> </span><span class="mf">25.0</span><span class="p">,</span><span class="w"> </span><span class="mf">10.0</span><span class="p">);</span>
+</span><span id="__span-0-32"><a id="__codelineno-0-32" name="__codelineno-0-32" href="#__codelineno-0-32"></a><span class="kt">float</span><span class="w"> </span><span class="k">value</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">morphyn</span><span class="p">.</span><span class="n">Get</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="p">(</span><span class="s">&quot;Player&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;output&quot;</span><span class="p">);</span>
+</span><span id="__span-0-33"><a id="__codelineno-0-33" name="__codelineno-0-33" href="#__codelineno-0-33"></a>
+</span><span id="__span-0-34"><a id="__codelineno-0-34" name="__codelineno-0-34" href="#__codelineno-0-34"></a><span class="c1">// Subscribe Morphyn entity to another entity&#39;s event</span>
+</span><span id="__span-0-35"><a id="__codelineno-0-35" name="__codelineno-0-35" href="#__codelineno-0-35"></a><span class="n">morphyn</span><span class="p">.</span><span class="n">Subscribe</span><span class="p">(</span><span class="s">&quot;Logger&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Player&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;death&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;onPlayerDeath&quot;</span><span class="p">);</span>
+</span><span id="__span-0-36"><a id="__codelineno-0-36" name="__codelineno-0-36" href="#__codelineno-0-36"></a>
+</span><span id="__span-0-37"><a id="__codelineno-0-37" name="__codelineno-0-37" href="#__codelineno-0-37"></a><span class="c1">// Unsubscribe</span>
+</span><span id="__span-0-38"><a id="__codelineno-0-38" name="__codelineno-0-38" href="#__codelineno-0-38"></a><span class="n">morphyn</span><span class="p">.</span><span class="n">Unsubscribe</span><span class="p">(</span><span class="s">&quot;Logger&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Player&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;death&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;onPlayerDeath&quot;</span><span class="p">);</span>
+</span><span id="__span-0-39"><a id="__codelineno-0-39" name="__codelineno-0-39" href="#__codelineno-0-39"></a>
+</span><span id="__span-0-40"><a id="__codelineno-0-40" name="__codelineno-0-40" href="#__codelineno-0-40"></a><span class="c1">// Subscribe C# method to a Morphyn event</span>
+</span><span id="__span-0-41"><a id="__codelineno-0-41" name="__codelineno-0-41" href="#__codelineno-0-41"></a><span class="n">morphyn</span><span class="p">.</span><span class="n">On</span><span class="p">(</span><span class="s">&quot;Player&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;death&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">args</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">Debug</span><span class="p">.</span><span class="n">Log</span><span class="p">(</span><span class="s">&quot;Player died!&quot;</span><span class="p">));</span>
+</span><span id="__span-0-42"><a id="__codelineno-0-42" name="__codelineno-0-42" href="#__codelineno-0-42"></a>
+</span><span id="__span-0-43"><a id="__codelineno-0-43" name="__codelineno-0-43" href="#__codelineno-0-43"></a><span class="c1">// Unsubscribe C# method</span>
+</span><span id="__span-0-44"><a id="__codelineno-0-44" name="__codelineno-0-44" href="#__codelineno-0-44"></a><span class="n">morphyn</span><span class="p">.</span><span class="n">Off</span><span class="p">(</span><span class="s">&quot;Player&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;death&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">myHandler</span><span class="p">);</span>
+</span><span id="__span-0-45"><a id="__codelineno-0-45" name="__codelineno-0-45" href="#__codelineno-0-45"></a>
+</span><span id="__span-0-46"><a id="__codelineno-0-46" name="__codelineno-0-46" href="#__codelineno-0-46"></a><span class="c1">// Save / Load</span>
+</span><span id="__span-0-47"><a id="__codelineno-0-47" name="__codelineno-0-47" href="#__codelineno-0-47"></a><span class="n">morphyn</span><span class="p">.</span><span class="n">SaveState</span><span class="p">();</span>
+</span><span id="__span-0-48"><a id="__codelineno-0-48" name="__codelineno-0-48" href="#__codelineno-0-48"></a><span class="n">morphyn</span><span class="p">.</span><span class="n">LoadState</span><span class="p">(</span><span class="s">&quot;Player&quot;</span><span class="p">);</span>
 </span></code></pre></div>
+<hr />
 <h2 id="c-listeners">C# Listeners</h2>
 <p>Subscribe any C# method directly to a Morphyn entity event using <code>On</code> and <code>Off</code>.</p>
 <h3 id="on">On</h3>
 <div class="language-cs highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="n">MorphynController</span><span class="p">.</span><span class="n">Instance</span><span class="p">.</span><span class="n">On</span><span class="p">(</span><span class="n">entityName</span><span class="p">,</span><span class="w"> </span><span class="n">eventName</span><span class="p">,</span><span class="w"> </span><span class="n">handler</span><span class="p">);</span>
 </span></code></pre></div>
 <p>The handler receives the same arguments the event was fired with as <code>object?[]</code>.</p>
-<p><strong>Example:</strong>
+<p><strong>Example:</strong></p>
 <div class="language-cs highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="k">void</span><span class="w"> </span><span class="nf">Start</span><span class="p">()</span>
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="p">{</span>
 </span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">    </span><span class="n">MorphynController</span><span class="p">.</span><span class="n">Instance</span><span class="p">.</span><span class="n">On</span><span class="p">(</span><span class="s">&quot;Player&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;death&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">OnPlayerDeath</span><span class="p">);</span>
@@ -2138,7 +2166,7 @@
 </span><span id="__span-2-18"><a id="__codelineno-2-18" name="__codelineno-2-18" href="#__codelineno-2-18"></a><span class="w">    </span><span class="c1">// Always unsubscribe to avoid memory leaks</span>
 </span><span id="__span-2-19"><a id="__codelineno-2-19" name="__codelineno-2-19" href="#__codelineno-2-19"></a><span class="w">    </span><span class="n">MorphynController</span><span class="p">.</span><span class="n">Instance</span><span class="p">.</span><span class="n">Off</span><span class="p">(</span><span class="s">&quot;Player&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;death&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">OnPlayerDeath</span><span class="p">);</span>
 </span><span id="__span-2-20"><a id="__codelineno-2-20" name="__codelineno-2-20" href="#__codelineno-2-20"></a><span class="p">}</span>
-</span></code></pre></div></p>
+</span></code></pre></div>
 <h3 id="off">Off</h3>
 <div class="language-cs highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="n">MorphynController</span><span class="p">.</span><span class="n">Instance</span><span class="p">.</span><span class="n">Off</span><span class="p">(</span><span class="n">entityName</span><span class="p">,</span><span class="w"> </span><span class="n">eventName</span><span class="p">,</span><span class="w"> </span><span class="n">handler</span><span class="p">);</span>
 </span></code></pre></div>
@@ -2181,58 +2209,58 @@
 </span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="c1">// Morphyn entity reacts to Morphyn event</span>
 </span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="n">morphyn</span><span class="p">.</span><span class="n">Subscribe</span><span class="p">(</span><span class="s">&quot;Logger&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Enemy&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;death&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;onEnemyDeath&quot;</span><span class="p">);</span>
 </span></code></pre></div>
+<hr />
 <h2 id="event-subscriptions-from-c">Event Subscriptions from C</h2>
 <p>You can manage Morphyn entity subscriptions directly from C# using <code>Subscribe</code> and <code>Unsubscribe</code>.</p>
 <h3 id="subscribe">Subscribe</h3>
 <div class="language-cs highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1">// subscriberEntity will receive handlerEvent when targetEntity fires targetEvent</span>
 </span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="n">morphyn</span><span class="p">.</span><span class="n">Subscribe</span><span class="p">(</span><span class="n">subscriberEntityName</span><span class="p">,</span><span class="w"> </span><span class="n">targetEntityName</span><span class="p">,</span><span class="w"> </span><span class="n">targetEvent</span><span class="p">,</span><span class="w"> </span><span class="n">handlerEvent</span><span class="p">);</span>
 </span></code></pre></div>
-<p><strong>Example — Logger reacts to Player death:</strong>
+<p><strong>Example — Logger reacts to Player death:</strong></p>
 <div class="language-cs highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="n">MorphynController</span><span class="p">.</span><span class="n">Instance</span><span class="p">.</span><span class="n">Subscribe</span><span class="p">(</span><span class="s">&quot;Logger&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Player&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;death&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;onPlayerDeath&quot;</span><span class="p">);</span>
 </span></code></pre></div>
-This is equivalent to writing inside a <code>.morph</code> file:
+<p>This is equivalent to writing inside a <code>.morph</code> file:</p>
 <div class="language-morphyn highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="n">when</span> <span class="nc">Player</span><span class="p">.</span><span class="n">death</span> <span class="p">:</span> <span class="n">onPlayerDeath</span>
-</span></code></pre></div></p>
+</span></code></pre></div>
 <h3 id="unsubscribe">Unsubscribe</h3>
 <div class="language-cs highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="n">morphyn</span><span class="p">.</span><span class="n">Unsubscribe</span><span class="p">(</span><span class="n">subscriberEntityName</span><span class="p">,</span><span class="w"> </span><span class="n">targetEntityName</span><span class="p">,</span><span class="w"> </span><span class="n">targetEvent</span><span class="p">,</span><span class="w"> </span><span class="n">handlerEvent</span><span class="p">);</span>
 </span></code></pre></div>
-<p><strong>Example — remove subscription at runtime:</strong>
-<div class="language-cs highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="c1">// Player died for the first time — stop logging further deaths</span>
-</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="n">MorphynController</span><span class="p">.</span><span class="n">Instance</span><span class="p">.</span><span class="n">Unsubscribe</span><span class="p">(</span><span class="s">&quot;Logger&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Player&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;death&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;onPlayerDeath&quot;</span><span class="p">);</span>
-</span></code></pre></div></p>
+<p><strong>Example:</strong></p>
+<div class="language-cs highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="n">MorphynController</span><span class="p">.</span><span class="n">Instance</span><span class="p">.</span><span class="n">Unsubscribe</span><span class="p">(</span><span class="s">&quot;Logger&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Player&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;death&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;onPlayerDeath&quot;</span><span class="p">);</span>
+</span></code></pre></div>
 <h3 id="full-example">Full Example</h3>
-<p><strong>logger.morph:</strong>
+<p><strong>logger.morph:</strong></p>
 <div class="language-morphyn highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="k">entity</span> <span class="nc">Logger</span> <span class="p">{</span>
 </span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>  <span class="k">has</span> <span class="nb">count</span><span class="p">:</span> <span class="m">0</span>
-</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>  <span class="k">event</span> <span class="nf">onPlayerDeath</span> <span class="p">{</span>
-</span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a>    <span class="nb">count</span> <span class="o o-Arithmetic">+</span> <span class="m">1</span> <span class="o">-&gt;</span> <span class="nb">count</span>
-</span><span id="__span-10-5"><a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a>    <span class="k">emit</span> <span class="nb">unity</span><span class="p">(</span><span class="s2">&quot;Log&quot;</span><span class="p">,</span> <span class="s2">&quot;Player died! Total deaths:&quot;</span><span class="p">,</span> <span class="nb">count</span><span class="p">)</span>
-</span><span id="__span-10-6"><a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a>  <span class="p">}</span>
-</span><span id="__span-10-7"><a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a>  <span class="k">event</span> <span class="nf">onPlayerLevelUp</span><span class="p">(</span><span class="n">level</span><span class="p">)</span> <span class="p">{</span>
-</span><span id="__span-10-8"><a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a>    <span class="k">emit</span> <span class="nb">unity</span><span class="p">(</span><span class="s2">&quot;Log&quot;</span><span class="p">,</span> <span class="s2">&quot;Player reached level:&quot;</span><span class="p">,</span> <span class="n">level</span><span class="p">)</span>
-</span><span id="__span-10-9"><a id="__codelineno-10-9" name="__codelineno-10-9" href="#__codelineno-10-9"></a>  <span class="p">}</span>
-</span><span id="__span-10-10"><a id="__codelineno-10-10" name="__codelineno-10-10" href="#__codelineno-10-10"></a><span class="p">}</span>
-</span></code></pre></div></p>
-<p><strong>GameManager.cs:</strong>
+</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>
+</span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a>  <span class="k">event</span> <span class="nf">onPlayerDeath</span> <span class="p">{</span>
+</span><span id="__span-10-5"><a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a>    <span class="nb">count</span> <span class="o o-Arithmetic">+</span> <span class="m">1</span> <span class="o">-&gt;</span> <span class="nb">count</span>
+</span><span id="__span-10-6"><a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a>    <span class="k">emit</span> <span class="nb">unity</span><span class="p">(</span><span class="s2">&quot;Log&quot;</span><span class="p">,</span> <span class="s2">&quot;Player died! Total deaths:&quot;</span><span class="p">,</span> <span class="nb">count</span><span class="p">)</span>
+</span><span id="__span-10-7"><a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a>  <span class="p">}</span>
+</span><span id="__span-10-8"><a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a>
+</span><span id="__span-10-9"><a id="__codelineno-10-9" name="__codelineno-10-9" href="#__codelineno-10-9"></a>  <span class="k">event</span> <span class="nf">onPlayerLevelUp</span><span class="p">(</span><span class="n">level</span><span class="p">)</span> <span class="p">{</span>
+</span><span id="__span-10-10"><a id="__codelineno-10-10" name="__codelineno-10-10" href="#__codelineno-10-10"></a>    <span class="k">emit</span> <span class="nb">unity</span><span class="p">(</span><span class="s2">&quot;Log&quot;</span><span class="p">,</span> <span class="s2">&quot;Player reached level:&quot;</span><span class="p">,</span> <span class="n">level</span><span class="p">)</span>
+</span><span id="__span-10-11"><a id="__codelineno-10-11" name="__codelineno-10-11" href="#__codelineno-10-11"></a>  <span class="p">}</span>
+</span><span id="__span-10-12"><a id="__codelineno-10-12" name="__codelineno-10-12" href="#__codelineno-10-12"></a><span class="p">}</span>
+</span></code></pre></div>
+<p><strong>GameManager.cs:</strong></p>
 <div class="language-cs highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="k">using</span><span class="w"> </span><span class="nn">UnityEngine</span><span class="p">;</span>
-</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="k">public</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">GameManager</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">MonoBehaviour</span>
-</span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a><span class="p">{</span>
-</span><span id="__span-11-4"><a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a><span class="w">    </span><span class="k">void</span><span class="w"> </span><span class="nf">Start</span><span class="p">()</span>
-</span><span id="__span-11-5"><a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a><span class="w">    </span><span class="p">{</span>
-</span><span id="__span-11-6"><a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a><span class="w">        </span><span class="kt">var</span><span class="w"> </span><span class="n">morphyn</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">MorphynController</span><span class="p">.</span><span class="n">Instance</span><span class="p">;</span>
-</span><span id="__span-11-7"><a id="__codelineno-11-7" name="__codelineno-11-7" href="#__codelineno-11-7"></a>
-</span><span id="__span-11-8"><a id="__codelineno-11-8" name="__codelineno-11-8" href="#__codelineno-11-8"></a><span class="w">        </span><span class="c1">// Subscribe Logger to Player events from C#</span>
-</span><span id="__span-11-9"><a id="__codelineno-11-9" name="__codelineno-11-9" href="#__codelineno-11-9"></a><span class="w">        </span><span class="n">morphyn</span><span class="p">.</span><span class="n">Subscribe</span><span class="p">(</span><span class="s">&quot;Logger&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Player&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;death&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;onPlayerDeath&quot;</span><span class="p">);</span>
-</span><span id="__span-11-10"><a id="__codelineno-11-10" name="__codelineno-11-10" href="#__codelineno-11-10"></a><span class="w">        </span><span class="n">morphyn</span><span class="p">.</span><span class="n">Subscribe</span><span class="p">(</span><span class="s">&quot;Logger&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Player&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;levelUp&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;onPlayerLevelUp&quot;</span><span class="p">);</span>
-</span><span id="__span-11-11"><a id="__codelineno-11-11" name="__codelineno-11-11" href="#__codelineno-11-11"></a><span class="w">    </span><span class="p">}</span>
-</span><span id="__span-11-12"><a id="__codelineno-11-12" name="__codelineno-11-12" href="#__codelineno-11-12"></a>
-</span><span id="__span-11-13"><a id="__codelineno-11-13" name="__codelineno-11-13" href="#__codelineno-11-13"></a><span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="k">void</span><span class="w"> </span><span class="nf">OnBossFightEnd</span><span class="p">()</span>
-</span><span id="__span-11-14"><a id="__codelineno-11-14" name="__codelineno-11-14" href="#__codelineno-11-14"></a><span class="w">    </span><span class="p">{</span>
-</span><span id="__span-11-15"><a id="__codelineno-11-15" name="__codelineno-11-15" href="#__codelineno-11-15"></a><span class="w">        </span><span class="c1">// Stop logging deaths after boss fight ends</span>
-</span><span id="__span-11-16"><a id="__codelineno-11-16" name="__codelineno-11-16" href="#__codelineno-11-16"></a><span class="w">        </span><span class="n">MorphynController</span><span class="p">.</span><span class="n">Instance</span><span class="p">.</span><span class="n">Unsubscribe</span><span class="p">(</span><span class="s">&quot;Logger&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Player&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;death&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;onPlayerDeath&quot;</span><span class="p">);</span>
-</span><span id="__span-11-17"><a id="__codelineno-11-17" name="__codelineno-11-17" href="#__codelineno-11-17"></a><span class="w">    </span><span class="p">}</span>
-</span><span id="__span-11-18"><a id="__codelineno-11-18" name="__codelineno-11-18" href="#__codelineno-11-18"></a><span class="p">}</span>
-</span></code></pre></div></p>
+</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>
+</span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a><span class="k">public</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">GameManager</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">MonoBehaviour</span>
+</span><span id="__span-11-4"><a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a><span class="p">{</span>
+</span><span id="__span-11-5"><a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a><span class="w">    </span><span class="k">void</span><span class="w"> </span><span class="nf">Start</span><span class="p">()</span>
+</span><span id="__span-11-6"><a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a><span class="w">    </span><span class="p">{</span>
+</span><span id="__span-11-7"><a id="__codelineno-11-7" name="__codelineno-11-7" href="#__codelineno-11-7"></a><span class="w">        </span><span class="kt">var</span><span class="w"> </span><span class="n">morphyn</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">MorphynController</span><span class="p">.</span><span class="n">Instance</span><span class="p">;</span>
+</span><span id="__span-11-8"><a id="__codelineno-11-8" name="__codelineno-11-8" href="#__codelineno-11-8"></a><span class="w">        </span><span class="n">morphyn</span><span class="p">.</span><span class="n">Subscribe</span><span class="p">(</span><span class="s">&quot;Logger&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Player&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;death&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;onPlayerDeath&quot;</span><span class="p">);</span>
+</span><span id="__span-11-9"><a id="__codelineno-11-9" name="__codelineno-11-9" href="#__codelineno-11-9"></a><span class="w">        </span><span class="n">morphyn</span><span class="p">.</span><span class="n">Subscribe</span><span class="p">(</span><span class="s">&quot;Logger&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Player&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;levelUp&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;onPlayerLevelUp&quot;</span><span class="p">);</span>
+</span><span id="__span-11-10"><a id="__codelineno-11-10" name="__codelineno-11-10" href="#__codelineno-11-10"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-11-11"><a id="__codelineno-11-11" name="__codelineno-11-11" href="#__codelineno-11-11"></a>
+</span><span id="__span-11-12"><a id="__codelineno-11-12" name="__codelineno-11-12" href="#__codelineno-11-12"></a><span class="w">    </span><span class="k">public</span><span class="w"> </span><span class="k">void</span><span class="w"> </span><span class="nf">OnBossFightEnd</span><span class="p">()</span>
+</span><span id="__span-11-13"><a id="__codelineno-11-13" name="__codelineno-11-13" href="#__codelineno-11-13"></a><span class="w">    </span><span class="p">{</span>
+</span><span id="__span-11-14"><a id="__codelineno-11-14" name="__codelineno-11-14" href="#__codelineno-11-14"></a><span class="w">        </span><span class="n">MorphynController</span><span class="p">.</span><span class="n">Instance</span><span class="p">.</span><span class="n">Unsubscribe</span><span class="p">(</span><span class="s">&quot;Logger&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Player&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;death&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;onPlayerDeath&quot;</span><span class="p">);</span>
+</span><span id="__span-11-15"><a id="__codelineno-11-15" name="__codelineno-11-15" href="#__codelineno-11-15"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-11-16"><a id="__codelineno-11-16" name="__codelineno-11-16" href="#__codelineno-11-16"></a><span class="p">}</span>
+</span></code></pre></div>
 <h3 id="notes">Notes</h3>
 <ul>
 <li>Subscriptions set from C# behave exactly like <code>when</code>/<code>unwhen</code> inside <code>.morph</code> files</li>
@@ -2240,75 +2268,83 @@ This is equivalent to writing inside a <code>.morph</code> file:
 <li>Duplicate subscriptions are ignored</li>
 <li>Dead entities are cleaned up automatically during garbage collection</li>
 </ul>
+<hr />
 <h2 id="unity-bridge">Unity Bridge</h2>
-<p>Call Unity functions from .morph files.</p>
+<p>Call Unity functions from <code>.morph</code> files.</p>
 <h3 id="setup">Setup</h3>
 <div class="language-cs highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="k">using</span><span class="w"> </span><span class="nn">UnityEngine</span><span class="p">;</span>
 </span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="k">using</span><span class="w"> </span><span class="nn">Morphyn.Unity</span><span class="p">;</span>
-</span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a><span class="k">public</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">GameManager</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">MonoBehaviour</span>
-</span><span id="__span-12-4"><a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a><span class="p">{</span>
-</span><span id="__span-12-5"><a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a><span class="w">    </span><span class="k">void</span><span class="w"> </span><span class="nf">Start</span><span class="p">()</span>
-</span><span id="__span-12-6"><a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a><span class="w">    </span><span class="p">{</span>
-</span><span id="__span-12-7"><a id="__codelineno-12-7" name="__codelineno-12-7" href="#__codelineno-12-7"></a><span class="w">        </span><span class="c1">// Register callback BEFORE MorphynController.Start()</span>
-</span><span id="__span-12-8"><a id="__codelineno-12-8" name="__codelineno-12-8" href="#__codelineno-12-8"></a><span class="w">        </span><span class="n">UnityBridge</span><span class="p">.</span><span class="n">Instance</span><span class="p">.</span><span class="n">RegisterCallback</span><span class="p">(</span><span class="s">&quot;PlaySound&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">args</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-12-9"><a id="__codelineno-12-9" name="__codelineno-12-9" href="#__codelineno-12-9"></a><span class="w">            </span><span class="kt">string</span><span class="w"> </span><span class="n">soundName</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">?.</span><span class="n">ToString</span><span class="p">()</span><span class="w"> </span><span class="o">??</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p">;</span>
-</span><span id="__span-12-10"><a id="__codelineno-12-10" name="__codelineno-12-10" href="#__codelineno-12-10"></a><span class="w">            </span><span class="n">AudioSource</span><span class="p">.</span><span class="n">PlayOneShot</span><span class="p">(</span><span class="n">Resources</span><span class="p">.</span><span class="n">Load</span><span class="o">&lt;</span><span class="n">AudioClip</span><span class="o">&gt;</span><span class="p">(</span><span class="n">soundName</span><span class="p">));</span>
-</span><span id="__span-12-11"><a id="__codelineno-12-11" name="__codelineno-12-11" href="#__codelineno-12-11"></a><span class="w">        </span><span class="p">});</span>
-</span><span id="__span-12-12"><a id="__codelineno-12-12" name="__codelineno-12-12" href="#__codelineno-12-12"></a><span class="w">        </span><span class="n">UnityBridge</span><span class="p">.</span><span class="n">Instance</span><span class="p">.</span><span class="n">RegisterCallback</span><span class="p">(</span><span class="s">&quot;ShowMessage&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">args</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-12-13"><a id="__codelineno-12-13" name="__codelineno-12-13" href="#__codelineno-12-13"></a><span class="w">            </span><span class="n">Debug</span><span class="p">.</span><span class="n">Log</span><span class="p">(</span><span class="s">$&quot;Message: {string.Join(&quot;</span><span class="w"> </span><span class="s">&quot;, args)}&quot;</span><span class="p">);</span>
-</span><span id="__span-12-14"><a id="__codelineno-12-14" name="__codelineno-12-14" href="#__codelineno-12-14"></a><span class="w">        </span><span class="p">});</span>
-</span><span id="__span-12-15"><a id="__codelineno-12-15" name="__codelineno-12-15" href="#__codelineno-12-15"></a><span class="w">    </span><span class="p">}</span>
-</span><span id="__span-12-16"><a id="__codelineno-12-16" name="__codelineno-12-16" href="#__codelineno-12-16"></a><span class="p">}</span>
+</span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a>
+</span><span id="__span-12-4"><a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a><span class="k">public</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">GameManager</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">MonoBehaviour</span>
+</span><span id="__span-12-5"><a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a><span class="p">{</span>
+</span><span id="__span-12-6"><a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a><span class="w">    </span><span class="k">void</span><span class="w"> </span><span class="nf">Start</span><span class="p">()</span>
+</span><span id="__span-12-7"><a id="__codelineno-12-7" name="__codelineno-12-7" href="#__codelineno-12-7"></a><span class="w">    </span><span class="p">{</span>
+</span><span id="__span-12-8"><a id="__codelineno-12-8" name="__codelineno-12-8" href="#__codelineno-12-8"></a><span class="w">        </span><span class="c1">// Register callbacks BEFORE MorphynController.Start()</span>
+</span><span id="__span-12-9"><a id="__codelineno-12-9" name="__codelineno-12-9" href="#__codelineno-12-9"></a><span class="w">        </span><span class="n">UnityBridge</span><span class="p">.</span><span class="n">Instance</span><span class="p">.</span><span class="n">RegisterCallback</span><span class="p">(</span><span class="s">&quot;PlaySound&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">args</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-12-10"><a id="__codelineno-12-10" name="__codelineno-12-10" href="#__codelineno-12-10"></a><span class="w">            </span><span class="kt">string</span><span class="w"> </span><span class="n">soundName</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">?.</span><span class="n">ToString</span><span class="p">()</span><span class="w"> </span><span class="o">??</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p">;</span>
+</span><span id="__span-12-11"><a id="__codelineno-12-11" name="__codelineno-12-11" href="#__codelineno-12-11"></a><span class="w">            </span><span class="n">AudioSource</span><span class="p">.</span><span class="n">PlayOneShot</span><span class="p">(</span><span class="n">Resources</span><span class="p">.</span><span class="n">Load</span><span class="o">&lt;</span><span class="n">AudioClip</span><span class="o">&gt;</span><span class="p">(</span><span class="n">soundName</span><span class="p">));</span>
+</span><span id="__span-12-12"><a id="__codelineno-12-12" name="__codelineno-12-12" href="#__codelineno-12-12"></a><span class="w">        </span><span class="p">});</span>
+</span><span id="__span-12-13"><a id="__codelineno-12-13" name="__codelineno-12-13" href="#__codelineno-12-13"></a>
+</span><span id="__span-12-14"><a id="__codelineno-12-14" name="__codelineno-12-14" href="#__codelineno-12-14"></a><span class="w">        </span><span class="n">UnityBridge</span><span class="p">.</span><span class="n">Instance</span><span class="p">.</span><span class="n">RegisterCallback</span><span class="p">(</span><span class="s">&quot;ShowMessage&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">args</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-12-15"><a id="__codelineno-12-15" name="__codelineno-12-15" href="#__codelineno-12-15"></a><span class="w">            </span><span class="n">Debug</span><span class="p">.</span><span class="n">Log</span><span class="p">(</span><span class="s">$&quot;Message: {string.Join(&quot;</span><span class="w"> </span><span class="s">&quot;, args)}&quot;</span><span class="p">);</span>
+</span><span id="__span-12-16"><a id="__codelineno-12-16" name="__codelineno-12-16" href="#__codelineno-12-16"></a><span class="w">        </span><span class="p">});</span>
+</span><span id="__span-12-17"><a id="__codelineno-12-17" name="__codelineno-12-17" href="#__codelineno-12-17"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-12-18"><a id="__codelineno-12-18" name="__codelineno-12-18" href="#__codelineno-12-18"></a><span class="p">}</span>
 </span></code></pre></div>
 <h3 id="calling-from-morphyn">Calling from Morphyn</h3>
 <div class="language-morphyn highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="k">entity</span> <span class="nc">Enemy</span> <span class="p">{</span>
 </span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>  <span class="k">has</span> <span class="nv">hp</span><span class="p">:</span> <span class="m">50</span>
-</span><span id="__span-13-3"><a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a>  <span class="k">event</span> <span class="nf">damage</span><span class="p">(</span><span class="n">amount</span><span class="p">)</span> <span class="p">{</span>
-</span><span id="__span-13-4"><a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a>    <span class="n">hp</span> <span class="o o-Arithmetic">-</span> <span class="n">amount</span> <span class="o">-&gt;</span> <span class="n">hp</span>
-</span><span id="__span-13-5"><a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a>    <span class="k">emit</span> <span class="nb">unity</span><span class="p">(</span><span class="s2">&quot;PlaySound&quot;</span><span class="p">,</span> <span class="s2">&quot;hit&quot;</span><span class="p">)</span>
-</span><span id="__span-13-6"><a id="__codelineno-13-6" name="__codelineno-13-6" href="#__codelineno-13-6"></a>    <span class="k">check</span> <span class="n">hp</span> <span class="o o-Comparison">&lt;=</span> <span class="m">0</span><span class="p">:</span> <span class="p">{</span>
-</span><span id="__span-13-7"><a id="__codelineno-13-7" name="__codelineno-13-7" href="#__codelineno-13-7"></a>      <span class="k">emit</span> <span class="nb">unity</span><span class="p">(</span><span class="s2">&quot;PlaySound&quot;</span><span class="p">,</span> <span class="s2">&quot;explosion&quot;</span><span class="p">)</span>
-</span><span id="__span-13-8"><a id="__codelineno-13-8" name="__codelineno-13-8" href="#__codelineno-13-8"></a>      <span class="k">emit</span> <span class="nb">unity</span><span class="p">(</span><span class="s2">&quot;ShowMessage&quot;</span><span class="p">,</span> <span class="s2">&quot;Enemy destroyed!&quot;</span><span class="p">)</span>
-</span><span id="__span-13-9"><a id="__codelineno-13-9" name="__codelineno-13-9" href="#__codelineno-13-9"></a>    <span class="p">}</span>
-</span><span id="__span-13-10"><a id="__codelineno-13-10" name="__codelineno-13-10" href="#__codelineno-13-10"></a>  <span class="p">}</span>
-</span><span id="__span-13-11"><a id="__codelineno-13-11" name="__codelineno-13-11" href="#__codelineno-13-11"></a><span class="p">}</span>
+</span><span id="__span-13-3"><a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a>
+</span><span id="__span-13-4"><a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a>  <span class="k">event</span> <span class="nf">damage</span><span class="p">(</span><span class="n">amount</span><span class="p">)</span> <span class="p">{</span>
+</span><span id="__span-13-5"><a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a>    <span class="n">hp</span> <span class="o o-Arithmetic">-</span> <span class="n">amount</span> <span class="o">-&gt;</span> <span class="n">hp</span>
+</span><span id="__span-13-6"><a id="__codelineno-13-6" name="__codelineno-13-6" href="#__codelineno-13-6"></a>    <span class="k">emit</span> <span class="nb">unity</span><span class="p">(</span><span class="s2">&quot;PlaySound&quot;</span><span class="p">,</span> <span class="s2">&quot;hit&quot;</span><span class="p">)</span>
+</span><span id="__span-13-7"><a id="__codelineno-13-7" name="__codelineno-13-7" href="#__codelineno-13-7"></a>    <span class="k">check</span> <span class="n">hp</span> <span class="o o-Comparison">&lt;=</span> <span class="m">0</span><span class="p">:</span> <span class="p">{</span>
+</span><span id="__span-13-8"><a id="__codelineno-13-8" name="__codelineno-13-8" href="#__codelineno-13-8"></a>      <span class="k">emit</span> <span class="nb">unity</span><span class="p">(</span><span class="s2">&quot;PlaySound&quot;</span><span class="p">,</span> <span class="s2">&quot;explosion&quot;</span><span class="p">)</span>
+</span><span id="__span-13-9"><a id="__codelineno-13-9" name="__codelineno-13-9" href="#__codelineno-13-9"></a>      <span class="k">emit</span> <span class="nb">unity</span><span class="p">(</span><span class="s2">&quot;ShowMessage&quot;</span><span class="p">,</span> <span class="s2">&quot;Enemy destroyed!&quot;</span><span class="p">)</span>
+</span><span id="__span-13-10"><a id="__codelineno-13-10" name="__codelineno-13-10" href="#__codelineno-13-10"></a>    <span class="p">}</span>
+</span><span id="__span-13-11"><a id="__codelineno-13-11" name="__codelineno-13-11" href="#__codelineno-13-11"></a>  <span class="p">}</span>
+</span><span id="__span-13-12"><a id="__codelineno-13-12" name="__codelineno-13-12" href="#__codelineno-13-12"></a><span class="p">}</span>
 </span></code></pre></div>
 <h3 id="built-in-callbacks">Built-in Callbacks</h3>
-<p>MorphynController includes these by default:
-<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="k">emit</span> <span class="nb">unity</span><span class="p">(</span><span class="s2">&quot;Log&quot;</span><span class="p">,</span> <span class="s2">&quot;Hello&quot;</span><span class="p">,</span> <span class="s2">&quot;World&quot;</span><span class="p">)</span>     <span class="c1"># Debug.Log</span>
-</span><span id="__span-14-2"><a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a><span class="k">emit</span> <span class="nb">unity</span><span class="p">(</span><span class="s2">&quot;Move&quot;</span><span class="p">,</span> <span class="m">1</span><span class="p">,</span> <span class="m">0</span><span class="p">,</span> <span class="m">0</span><span class="p">)</span>             <span class="c1"># Move controller transform</span>
-</span><span id="__span-14-3"><a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a><span class="k">emit</span> <span class="nb">unity</span><span class="p">(</span><span class="s2">&quot;Rotate&quot;</span><span class="p">,</span> <span class="m">45</span><span class="p">)</span>                <span class="c1"># Rotate controller</span>
-</span></code></pre></div></p>
+<p>MorphynController registers these automatically:</p>
+<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="k">emit</span> <span class="nb">unity</span><span class="p">(</span><span class="s2">&quot;Log&quot;</span><span class="p">,</span> <span class="s2">&quot;Hello&quot;</span><span class="p">,</span> <span class="s2">&quot;World&quot;</span><span class="p">)</span>   <span class="c1"># Debug.Log</span>
+</span><span id="__span-14-2"><a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a><span class="k">emit</span> <span class="nb">unity</span><span class="p">(</span><span class="s2">&quot;Move&quot;</span><span class="p">,</span> <span class="m">1</span><span class="p">,</span> <span class="m">0</span><span class="p">,</span> <span class="m">0</span><span class="p">)</span>           <span class="c1"># moves MorphynController&#39;s transform</span>
+</span><span id="__span-14-3"><a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a><span class="k">emit</span> <span class="nb">unity</span><span class="p">(</span><span class="s2">&quot;Rotate&quot;</span><span class="p">,</span> <span class="m">45</span><span class="p">)</span>              <span class="c1"># rotates MorphynController&#39;s transform</span>
+</span></code></pre></div>
+<hr />
 <h2 id="hot-reload">Hot Reload</h2>
-<p>Edit .morph files during Play mode - changes apply instantly.
-<strong>Enable:</strong> Check <code>Enable Hot Reload</code> on MorphynController
-<strong>Example:</strong>
-1. Start Play mode
-2. Open player.morph
-3. Change <code>has damage: 10</code> to <code>has damage: 999</code>
-4. Save file
-5. Damage updates immediately - no restart needed</p>
-<h2 id="saveload">Save/Load</h2>
-<p>Morphyn saves entity state as readable .morph files.
+<p>Edit <code>.morph</code> files during Play mode — changes apply instantly.</p>
+<p><strong>Enable:</strong> Check <code>Enable Hot Reload</code> on MorphynController.</p>
+<ol>
+<li>Start Play mode</li>
+<li>Open <code>player.morph</code></li>
+<li>Change <code>has damage: 10</code> to <code>has damage: 999</code></li>
+<li>Save</li>
+<li>Damage updates immediately — no restart needed</li>
+</ol>
+<hr />
+<h2 id="save-load">Save / Load</h2>
+<p>Morphyn saves entity state as readable <code>.morph</code> files.</p>
 <div class="language-cs highlight"><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="c1">// Save all entities</span>
 </span><span id="__span-15-2"><a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a><span class="n">MorphynController</span><span class="p">.</span><span class="n">Instance</span><span class="p">.</span><span class="n">SaveState</span><span class="p">();</span>
 </span><span id="__span-15-3"><a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a><span class="c1">// Saved to: Application.persistentDataPath/MorphynData/</span>
-</span><span id="__span-15-4"><a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a><span class="c1">// Load single entity</span>
-</span><span id="__span-15-5"><a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a><span class="n">MorphynController</span><span class="p">.</span><span class="n">Instance</span><span class="p">.</span><span class="n">LoadState</span><span class="p">(</span><span class="s">&quot;Player&quot;</span><span class="p">);</span>
-</span><span id="__span-15-6"><a id="__codelineno-15-6" name="__codelineno-15-6" href="#__codelineno-15-6"></a><span class="c1">// Auto-save on quit</span>
-</span><span id="__span-15-7"><a id="__codelineno-15-7" name="__codelineno-15-7" href="#__codelineno-15-7"></a><span class="n">MorphynController</span><span class="p">.</span><span class="n">Instance</span><span class="p">.</span><span class="n">autoSave</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">true</span><span class="p">;</span>
+</span><span id="__span-15-4"><a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a>
+</span><span id="__span-15-5"><a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a><span class="c1">// Load single entity</span>
+</span><span id="__span-15-6"><a id="__codelineno-15-6" name="__codelineno-15-6" href="#__codelineno-15-6"></a><span class="n">MorphynController</span><span class="p">.</span><span class="n">Instance</span><span class="p">.</span><span class="n">LoadState</span><span class="p">(</span><span class="s">&quot;Player&quot;</span><span class="p">);</span>
+</span><span id="__span-15-7"><a id="__codelineno-15-7" name="__codelineno-15-7" href="#__codelineno-15-7"></a>
+</span><span id="__span-15-8"><a id="__codelineno-15-8" name="__codelineno-15-8" href="#__codelineno-15-8"></a><span class="c1">// Auto-save on quit — set in Inspector</span>
 </span></code></pre></div>
-<strong>Saved file example:</strong>
+<p><strong>Saved file example:</strong></p>
 <div class="language-morphyn highlight"><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="k">entity</span> <span class="nc">Player</span> <span class="p">{</span>
 </span><span id="__span-16-2"><a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a>  <span class="k">has</span> <span class="nv">hp</span><span class="p">:</span> <span class="m">75</span>
 </span><span id="__span-16-3"><a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a>  <span class="k">has</span> <span class="nv">level</span><span class="p">:</span> <span class="m">5</span>
 </span><span id="__span-16-4"><a id="__codelineno-16-4" name="__codelineno-16-4" href="#__codelineno-16-4"></a>  <span class="k">has</span> <span class="nv">gold</span><span class="p">:</span> <span class="m">230</span>
 </span><span id="__span-16-5"><a id="__codelineno-16-5" name="__codelineno-16-5" href="#__codelineno-16-5"></a><span class="p">}</span>
-</span></code></pre></div></p>
+</span></code></pre></div>
+<hr />
 <h2 id="best-practices">Best Practices</h2>
 <h3 id="1-one-morphyncontroller-per-scene">1. One MorphynController per scene</h3>
-<div class="language-cs highlight"><pre><span></span><code><span id="__span-17-1"><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="c1">// Singleton - only one instance exists</span>
-</span><span id="__span-17-2"><a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a><span class="n">MorphynController</span><span class="p">.</span><span class="n">Instance</span>
+<div class="language-cs highlight"><pre><span></span><code><span id="__span-17-1"><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="n">MorphynController</span><span class="p">.</span><span class="n">Instance</span><span class="w"> </span><span class="c1">// singleton — only one instance exists</span>
 </span></code></pre></div>
 <h3 id="2-register-callbacks-early">2. Register callbacks early</h3>
 <div class="language-cs highlight"><pre><span></span><code><span id="__span-18-1"><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a><span class="na">[DefaultExecutionOrder(-100)]</span>
@@ -2320,50 +2356,47 @@ This is equivalent to writing inside a <code>.morph</code> file:
 </span><span id="__span-18-7"><a id="__codelineno-18-7" name="__codelineno-18-7" href="#__codelineno-18-7"></a><span class="w">    </span><span class="p">}</span>
 </span><span id="__span-18-8"><a id="__codelineno-18-8" name="__codelineno-18-8" href="#__codelineno-18-8"></a><span class="p">}</span>
 </span></code></pre></div>
-<h3 id="3-use-for-configs-not-gameplay-code">3. Use for configs, not gameplay code</h3>
-<div class="language-cs highlight"><pre><span></span><code><span id="__span-19-1"><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a><span class="c1">// GOOD - config with logic</span>
+<h3 id="3-use-for-configs-and-logic-not-complex-gameplay-systems">3. Use for configs and logic, not complex gameplay systems</h3>
+<div class="language-cs highlight"><pre><span></span><code><span id="__span-19-1"><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a><span class="c1">// GOOD</span>
 </span><span id="__span-19-2"><a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a><span class="n">entity</span><span class="w"> </span><span class="n">ShopPrices</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">has</span><span class="w"> </span><span class="n">swordCost</span><span class="p">:</span><span class="w"> </span><span class="mi">100</span><span class="w"> </span><span class="p">}</span>
-</span><span id="__span-19-3"><a id="__codelineno-19-3" name="__codelineno-19-3" href="#__codelineno-19-3"></a><span class="c1">// BAD - complex gameplay</span>
-</span><span id="__span-19-4"><a id="__codelineno-19-4" name="__codelineno-19-4" href="#__codelineno-19-4"></a><span class="n">entity</span><span class="w"> </span><span class="n">ComplexAI</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="cm">/* don&#39;t do this */</span><span class="w"> </span><span class="p">}</span>
+</span><span id="__span-19-3"><a id="__codelineno-19-3" name="__codelineno-19-3" href="#__codelineno-19-3"></a>
+</span><span id="__span-19-4"><a id="__codelineno-19-4" name="__codelineno-19-4" href="#__codelineno-19-4"></a><span class="c1">// BAD</span>
+</span><span id="__span-19-5"><a id="__codelineno-19-5" name="__codelineno-19-5" href="#__codelineno-19-5"></a><span class="n">entity</span><span class="w"> </span><span class="n">ComplexAI</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="cm">/* keep heavy simulation in C# */</span><span class="w"> </span><span class="p">}</span>
 </span></code></pre></div>
+<hr />
 <h2 id="troubleshooting">Troubleshooting</h2>
 <h3 id="morphyncontroller-not-found">"MorphynController not found"</h3>
 <div class="language-cs highlight"><pre><span></span><code><span id="__span-20-1"><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">MorphynController</span><span class="p">.</span><span class="n">Instance</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="k">null</span><span class="p">)</span>
-</span><span id="__span-20-2"><a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a><span class="p">{</span>
-</span><span id="__span-20-3"><a id="__codelineno-20-3" name="__codelineno-20-3" href="#__codelineno-20-3"></a><span class="w">    </span><span class="n">Debug</span><span class="p">.</span><span class="n">LogError</span><span class="p">(</span><span class="s">&quot;Add MorphynController to scene!&quot;</span><span class="p">);</span>
-</span><span id="__span-20-4"><a id="__codelineno-20-4" name="__codelineno-20-4" href="#__codelineno-20-4"></a><span class="p">}</span>
+</span><span id="__span-20-2"><a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a><span class="w">    </span><span class="n">Debug</span><span class="p">.</span><span class="n">LogError</span><span class="p">(</span><span class="s">&quot;Add MorphynController to scene!&quot;</span><span class="p">);</span>
 </span></code></pre></div>
 <h3 id="callback-not-found">"Callback not found"</h3>
 <ul>
-<li>Register callbacks in Awake(), not Start()</li>
-<li>Register BEFORE MorphynController loads scripts</li>
+<li>Register callbacks in <code>Awake()</code>, not <code>Start()</code></li>
+<li>Register <strong>before</strong> MorphynController loads scripts</li>
 </ul>
 <h3 id="hot-reload-not-working">Hot reload not working</h3>
 <ul>
-<li>Editor only (not in builds)</li>
-<li>File must be in Assets folder</li>
-<li>Check <code>Enable Hot Reload</code> is enabled</li>
+<li>Editor only — not available in builds</li>
+<li>File must be inside the <code>Assets</code> folder</li>
+<li>Check <code>Enable Hot Reload</code> is ticked</li>
 </ul>
 <h3 id="values-not-updating">Values not updating</h3>
-<div class="language-cs highlight"><pre><span></span><code><span id="__span-21-1"><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a><span class="c1">// After changing values, read again</span>
-</span><span id="__span-21-2"><a id="__codelineno-21-2" name="__codelineno-21-2" href="#__codelineno-21-2"></a><span class="n">morphyn</span><span class="p">.</span><span class="n">SetField</span><span class="p">(</span><span class="s">&quot;Player&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;hp&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">50</span><span class="p">);</span>
-</span><span id="__span-21-3"><a id="__codelineno-21-3" name="__codelineno-21-3" href="#__codelineno-21-3"></a><span class="kt">double</span><span class="w"> </span><span class="n">hp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">System</span><span class="p">.</span><span class="n">Convert</span><span class="p">.</span><span class="n">ToDouble</span><span class="p">(</span><span class="n">morphyn</span><span class="p">.</span><span class="n">GetField</span><span class="p">(</span><span class="s">&quot;Player&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;hp&quot;</span><span class="p">));</span><span class="w"> </span><span class="c1">// 50</span>
+<div class="language-cs highlight"><pre><span></span><code><span id="__span-21-1"><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a><span class="n">morphyn</span><span class="p">.</span><span class="n">SetField</span><span class="p">(</span><span class="s">&quot;Player&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;hp&quot;</span><span class="p">,</span><span class="w"> </span><span class="mf">50.0</span><span class="p">);</span>
+</span><span id="__span-21-2"><a id="__codelineno-21-2" name="__codelineno-21-2" href="#__codelineno-21-2"></a><span class="kt">float</span><span class="w"> </span><span class="n">hp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">morphyn</span><span class="p">.</span><span class="n">GetFloat</span><span class="p">(</span><span class="s">&quot;Player&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;hp&quot;</span><span class="p">);</span><span class="w"> </span><span class="c1">// 50</span>
 </span></code></pre></div>
 <h3 id="subscribe-warning-entity-not-found">Subscribe warning: entity not found</h3>
-<div class="language-cs highlight"><pre><span></span><code><span id="__span-22-1"><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a><span class="c1">// Make sure LoadAndRun() has been called before subscribing</span>
-</span><span id="__span-22-2"><a id="__codelineno-22-2" name="__codelineno-22-2" href="#__codelineno-22-2"></a><span class="c1">// Safe to call from Start() or later</span>
+<div class="language-cs highlight"><pre><span></span><code><span id="__span-22-1"><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a><span class="c1">// MorphynController.Start() calls LoadAndRun() automatically if runOnStart is true</span>
+</span><span id="__span-22-2"><a id="__codelineno-22-2" name="__codelineno-22-2" href="#__codelineno-22-2"></a><span class="c1">// Safe to subscribe from Start() or later</span>
 </span><span id="__span-22-3"><a id="__codelineno-22-3" name="__codelineno-22-3" href="#__codelineno-22-3"></a><span class="k">void</span><span class="w"> </span><span class="nf">Start</span><span class="p">()</span>
 </span><span id="__span-22-4"><a id="__codelineno-22-4" name="__codelineno-22-4" href="#__codelineno-22-4"></a><span class="p">{</span>
-</span><span id="__span-22-5"><a id="__codelineno-22-5" name="__codelineno-22-5" href="#__codelineno-22-5"></a><span class="w">    </span><span class="c1">// MorphynController.Start() runs LoadAndRun() automatically if runOnStart is true</span>
-</span><span id="__span-22-6"><a id="__codelineno-22-6" name="__codelineno-22-6" href="#__codelineno-22-6"></a><span class="w">    </span><span class="n">MorphynController</span><span class="p">.</span><span class="n">Instance</span><span class="p">.</span><span class="n">Subscribe</span><span class="p">(</span><span class="s">&quot;Logger&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Player&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;death&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;onPlayerDeath&quot;</span><span class="p">);</span>
-</span><span id="__span-22-7"><a id="__codelineno-22-7" name="__codelineno-22-7" href="#__codelineno-22-7"></a><span class="p">}</span>
+</span><span id="__span-22-5"><a id="__codelineno-22-5" name="__codelineno-22-5" href="#__codelineno-22-5"></a><span class="w">    </span><span class="n">MorphynController</span><span class="p">.</span><span class="n">Instance</span><span class="p">.</span><span class="n">Subscribe</span><span class="p">(</span><span class="s">&quot;Logger&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Player&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;death&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;onPlayerDeath&quot;</span><span class="p">);</span>
+</span><span id="__span-22-6"><a id="__codelineno-22-6" name="__codelineno-22-6" href="#__codelineno-22-6"></a><span class="p">}</span>
 </span></code></pre></div>
 <h3 id="c-listener-called-after-object-destroyed">C# listener called after object destroyed</h3>
-<div class="language-cs highlight"><pre><span></span><code><span id="__span-23-1"><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a><span class="c1">// Always unsubscribe in OnDestroy</span>
-</span><span id="__span-23-2"><a id="__codelineno-23-2" name="__codelineno-23-2" href="#__codelineno-23-2"></a><span class="k">void</span><span class="w"> </span><span class="nf">OnDestroy</span><span class="p">()</span>
-</span><span id="__span-23-3"><a id="__codelineno-23-3" name="__codelineno-23-3" href="#__codelineno-23-3"></a><span class="p">{</span>
-</span><span id="__span-23-4"><a id="__codelineno-23-4" name="__codelineno-23-4" href="#__codelineno-23-4"></a><span class="w">    </span><span class="n">MorphynController</span><span class="p">.</span><span class="n">Instance</span><span class="p">.</span><span class="n">Off</span><span class="p">(</span><span class="s">&quot;Player&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;death&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">myHandler</span><span class="p">);</span>
-</span><span id="__span-23-5"><a id="__codelineno-23-5" name="__codelineno-23-5" href="#__codelineno-23-5"></a><span class="p">}</span>
+<div class="language-cs highlight"><pre><span></span><code><span id="__span-23-1"><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a><span class="k">void</span><span class="w"> </span><span class="nf">OnDestroy</span><span class="p">()</span>
+</span><span id="__span-23-2"><a id="__codelineno-23-2" name="__codelineno-23-2" href="#__codelineno-23-2"></a><span class="p">{</span>
+</span><span id="__span-23-3"><a id="__codelineno-23-3" name="__codelineno-23-3" href="#__codelineno-23-3"></a><span class="w">    </span><span class="n">MorphynController</span><span class="p">.</span><span class="n">Instance</span><span class="p">.</span><span class="n">Off</span><span class="p">(</span><span class="s">&quot;Player&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;death&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">myHandler</span><span class="p">);</span>
+</span><span id="__span-23-4"><a id="__codelineno-23-4" name="__codelineno-23-4" href="#__codelineno-23-4"></a><span class="p">}</span>
 </span></code></pre></div>
 
 
