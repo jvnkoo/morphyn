@@ -14,4 +14,9 @@
         <ProjectReference Include="..\Morphyn.Runtime\Morphyn.Runtime.csproj" />
         <EmbeddedResource Include="stdlib\math.morph" />
     </ItemGroup>
+
+
+    <ItemGroup>
+      <PackageReference Include="BenchmarkDotNet" Version="0.15.8" />
+    </ItemGroup>
 </Project>

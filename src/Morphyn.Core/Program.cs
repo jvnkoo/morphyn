@@ -1,12 +1,13 @@
 ﻿using System;
 using System.IO;
+using System.Collections.Generic;
+using System.Linq;
+using BenchmarkDotNet.Running; 
 using Morphyn.Parser;
 using Morphyn.Runtime;
 
 namespace Morphyn.Core
 {
-    using System.Collections.Generic;
-    using System.Linq;
 
     // Main entry point for Morphyn language interpreter
     class Program
@@ -22,7 +23,7 @@ namespace Morphyn.Core
         };
 
         // CHANGED: Use array instead of List to match new MorphynRuntime.Send signature (Zero-alloc)
-        private static readonly object?[] TickArgsBuffer = new object?[] { 0.0 };
+        private static readonly MorphynValue[] TickArgsBuffer = new MorphynValue[] { MorphynValue.FromDouble(0.0) };
 
         static void Main(string[] args)
         {
@@ -33,9 +34,10 @@ namespace Morphyn.Core
             }
 
             // ── Benchmark mode ────────────────────────────────────────────
-            if (Benchmark.IsBenchmarkMode(args))
+            if (BenchmarkUtils.IsBenchmarkMode(args))
             {
-                Benchmark.Run(args);
+                Console.WriteLine("--- Launching Benchmark ---");
+                BenchmarkRunner.Run<MorphynBenchmarks>();
                 return;
             }
 
@@ -119,7 +121,7 @@ namespace Morphyn.Core
                     lastFrameTime = currentFrameTime;
 
                     // Update buffer without new allocations
-                    TickArgsBuffer[0] = dtMs;
+                    TickArgsBuffer[0] = MorphynValue.FromDouble(dtMs);
 
                     int tickCount = tickEntities.Count;
                     for (int i = 0; i < tickCount; i++)
@@ -284,5 +286,10 @@ namespace Morphyn.Core
             }
             return null;
         }
+    }
+
+    public static class BenchmarkUtils
+    {
+        public static bool IsBenchmarkMode(string[] args) => args.Contains("--bench");
     }
 }
