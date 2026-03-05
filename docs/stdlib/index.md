@@ -8,8 +8,6 @@ entity game {
     emit math.lerp(0, 100, 0.5) -> mid  # 50.0
   }
 }
-` ``
-[Standard Library →](stdlib/index.md)
 ```
 
-Папку назвать `stdlib` — коротко, понятно, индустриальный стандарт (Python, Rust, Go все используют это слово). `lib` тоже ок, но `stdlib` сразу говорит "это встроенное, не твоё".
+[Standard Library →](stdlib/index.md)
