@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using Morphyn.Parser;
 
 namespace Morphyn.Runtime
@@ -58,6 +59,17 @@ namespace Morphyn.Runtime
                     return true;
                 case "clear":
                     pool.Values.Clear();
+                    return true;
+                case "sort":
+                    pool.Values.Sort();
+                    return true;
+                case "reverse":
+                    pool.Values.Reverse();
+                    return true;
+                case "contains":
+                    return pool.Values.Contains(args[0]);
+                case "shuffle":
+                    pool.Values = pool.Values.OrderBy(x => Guid.NewGuid()).ToList();
                     return true;
                 default:
                     return false;

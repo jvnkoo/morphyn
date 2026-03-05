@@ -90,3 +90,23 @@ enemies.at[i] -> current_enemy
 ```morphyn
 new_value -> pool.at[index]
 ```
+
+### Sort pool
+```morphyn
+emit pool.sort
+```
+
+### Reverse pool
+```morphyn
+emit pool.reverse
+```
+
+### Check if pool contains argument
+```morphyn
+emit pool.contains(value) -> bool
+```
+
+### Shuffle pool
+```morphyn
+emit pool.shuffle
+```
