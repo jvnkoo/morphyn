@@ -31,16 +31,42 @@
       "${1:value} + ${2:delta} -> ${1:value}"
     ]
   },
-  "Subscribe": {
+  "Subscribe to event": {
     "prefix": "when",
     "body": [
       "when ${1:Entity}.${2:event} : ${3:handler}"
     ]
   },
-  "Unsubscribe": {
+  "Unsubscribe from event": {
     "prefix": "unwhen",
     "body": [
       "unwhen ${1:Entity}.${2:event} : ${3:handler}"
+    ]
+  },
+  "Watch field (self)": {
+    "prefix": "watch",
+    "body": [
+      "watch ${1:fieldName} : ${2:onChanged}"
+    ]
+  },
+  "Watch field (other entity)": {
+    "prefix": "watche",
+    "body": [
+      "watch ${1:Entity}.${2:fieldName} : ${3:onChanged}"
+    ]
+  },
+  "Unwatch field": {
+    "prefix": "unwatch",
+    "body": [
+      "unwatch ${1:Entity}.${2:fieldName} : ${3:onChanged}"
+    ]
+  },
+  "Watch handler": {
+    "prefix": "onchanged",
+    "body": [
+      "event ${1:onChanged}(old, new) {",
+      "\t${0}",
+      "}"
     ]
   }
 }
