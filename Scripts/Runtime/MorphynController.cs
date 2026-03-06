@@ -249,7 +249,7 @@ public class MorphynController : MonoBehaviour
                     }
                     else
                     {
-                        // Fallback: попробовать стандартную библиотеку
+                        // Fallback: try standard library
                         string? stdlib = TryLoadStdlib(relativePath);
                         if (stdlib != null)
                             finalContent.Add(stdlib);
@@ -620,7 +620,7 @@ public class MorphynController : MonoBehaviour
         MorphynRuntime.Unsubscribe(subscriber, target, targetEvent, handlerEvent);
     }
 
-    public void On(string entityName, string eventName, Action<MorphynValue[]> handler)
+    public void When(string entityName, string eventName, Action<MorphynValue[]> handler)
     {
         // Wrap MorphynValue[] handler to match UnityBridge's Action<object?[]> signature
         UnityBridge.Instance.AddListener(entityName, eventName, args =>
@@ -632,12 +632,66 @@ public class MorphynController : MonoBehaviour
         });
     }
 
-    public void Off(string entityName, string eventName, Action<MorphynValue[]> handler)
+    public void Unwhen(string entityName, string eventName, Action<MorphynValue[]> handler)
     {
         // Note: wrapping creates a new delegate instance, so Off cannot match by reference.
         // To support Off correctly, callers should manage the wrapper themselves,
         // or use UnityBridge.Instance directly with Action<object?[]>.
         Debug.LogWarning("[Morphyn] Off() cannot remove a wrapped handler by reference. Use UnityBridge.Instance.RemoveListener directly with Action<object?[]> if removal is required.");
+    }
+
+    /// <summary>
+    /// Subscribe to changes of a specific field on a Morphyn entity.
+    /// Callback receives (oldValue, newValue) as MorphynValue.
+    /// Called immediately after the field is written (before next tick).
+    /// </summary>
+    /// <param name="entityName">Name of the entity owning the field</param>
+    /// <param name="fieldName">Name of the field to watch</param>
+    /// <param name="callback">Callback invoked with (oldValue, newValue)</param>
+    public void Watch(string entityName, string fieldName,
+        Action<MorphynValue, MorphynValue> callback)
+    {
+        Subscriptions.AddUnityFieldCallback(entityName, fieldName, callback);
+    }
+
+    /// <summary>
+    /// Subscribe to changes of a specific field, with auto-conversion to type T.
+    /// Supports: bool, float, double, int, string.
+    /// </summary>
+    /// <param name="entityName">Name of the entity owning the field</param>
+    /// <param name="fieldName">Name of the field to watch</param>
+    /// <param name="callback">Callback invoked with (oldValue, newValue) converted to T</param>
+    public void Watch<T>(string entityName, string fieldName,
+        Action<T, T> callback)
+    {
+        Subscriptions.AddUnityFieldCallback(entityName, fieldName, (oldVal, newVal) =>
+        {
+            T Convert(MorphynValue v)
+            {
+                object? raw = v.ToObject();
+                if (raw == null) return default!;
+                if (typeof(T) == typeof(float))  return (T)(object)System.Convert.ToSingle(raw);
+                if (typeof(T) == typeof(double)) return (T)(object)System.Convert.ToDouble(raw);
+                if (typeof(T) == typeof(int))    return (T)(object)System.Convert.ToInt32(raw);
+                if (typeof(T) == typeof(bool))   return (T)(object)System.Convert.ToBoolean(raw);
+                if (typeof(T) == typeof(string)) return (T)(object)(raw.ToString() ?? "");
+                return (T)raw;
+            }
+            callback(Convert(oldVal), Convert(newVal));
+        });
+    }
+
+    /// <summary>
+    /// Unsubscribe a previously registered field-change callback.
+    /// Pass the same delegate instance used in OnFieldChanged.
+    /// </summary>
+    /// <param name="entityName">Name of the entity owning the field</param>
+    /// <param name="fieldName">Name of the field being watched</param>
+    /// <param name="callback">The exact delegate instance to remove</param>
+    public void Unwatch(string entityName, string fieldName,
+        Action<MorphynValue, MorphynValue> callback)
+    {
+        Subscriptions.RemoveUnityFieldCallback(entityName, fieldName, callback);
     }
 
     public void SaveState()
