@@ -81,30 +81,75 @@ Action<object?[]> onDeath = args => {
     deathScreen.SetActive(true);
 };
 
-morphyn.On("Player", "death", onDeath);
+morphyn.When("Player", "death", onDeath);
 
-morphyn.On("Player", "levelUp", args => {
+morphyn.When("Player", "levelUp", args => {
     int level = System.Convert.ToInt32(args[0]);
     levelUpUI.Show(level);
 });
 
 // Always unsubscribe in OnDestroy to avoid memory leaks
-morphyn.Off("Player", "death", onDeath);
+morphyn.Unwhen("Player", "death", onDeath);
 
 public class MyComponent : MonoBehaviour
 {
     void Start()
     {
-        MorphynController.Instance.On("Player", "death", OnPlayerDeath);
+        MorphynController.Instance.When("Player", "death", OnPlayerDeath);
     }
 
     void OnPlayerDeath(object?[] args) { /* ... */ }
 
     void OnDestroy()
     {
-        MorphynController.Instance.Off("Player", "death", OnPlayerDeath);
+        MorphynController.Instance.Unwhen("Player", "death", OnPlayerDeath);
     }
 }
+
+
+// ── FIELD WATCHERS ────────────────────────────────────────────────────────────
+// Subscribe to changes of a specific field.
+// Fires only when the value actually changes — same-value assignment is a no-op.
+// Callback receives (oldValue, newValue).
+
+// Raw MorphynValue
+morphyn.Watch("Player", "hp", (oldVal, newVal) => {
+    Debug.Log($"hp: {oldVal.NumVal} -> {newVal.NumVal}");
+});
+
+// Typed — auto-converts to T (supports float, double, int, bool, string)
+morphyn.Watch<float>("Player", "hp", (old, now) => {
+    hpBar.fillAmount = now / maxHp;
+});
+
+morphyn.Watch<bool>("Player", "alive", (old, now) => {
+    if (!now) deathScreen.SetActive(true);
+});
+
+// Unwatch — pass the same delegate instance used in Watch
+morphyn.Unwatch("Player", "hp", myCallback);
+
+public class HpBar : MonoBehaviour
+{
+    void Start()
+    {
+        MorphynController.Instance.Watch<float>("Player", "hp", OnHpChanged);
+    }
+
+    void OnHpChanged(float old, float now)
+    {
+        hpBar.fillAmount = now / 100f;
+    }
+
+    void OnDestroy()
+    {
+        MorphynController.Instance.Unwatch("Player", "hp", OnHpChanged);
+    }
+}
+
+// Watch vs When:
+// Watch  — fires when a field VALUE changes, receives (old, new)
+// When   — fires when an entity sends a named EVENT, receives event args
 
 
 // ── MORPHYN-TO-MORPHYN SUBSCRIPTIONS FROM C# ─────────────────────────────────
@@ -115,9 +160,9 @@ morphyn.Subscribe("Logger", "Player", "death", "onPlayerDeath");
 
 morphyn.Unsubscribe("Logger", "Player", "death", "onPlayerDeath");
 
-// On vs Subscribe:
-// On / Off      — C# method reacts to Morphyn event
-// Subscribe     — Morphyn entity reacts to another Morphyn entity's event
+// When vs Subscribe:
+// When / Unwhen    — C# method reacts to Morphyn event
+// Subscribe        — Morphyn entity reacts to another Morphyn entity's event
 
 
 // ── UNITY BRIDGE: call Unity from .morph ─────────────────────────────────────
@@ -199,10 +244,16 @@ public class EnemyController : MonoBehaviour
 {
     void Start()
     {
-        MorphynController.Instance.On("Enemy", "die", args => {
+        // React to event
+        MorphynController.Instance.When("Enemy", "die", args => {
             int reward = System.Convert.ToInt32(args[0]);
             ScoreManager.Add(reward);
             Destroy(gameObject);
+        });
+
+        // React to field change
+        MorphynController.Instance.Watch<float>("Enemy", "hp", (old, now) => {
+            hpBar.fillAmount = now / 50f;
         });
     }
 
@@ -214,7 +265,8 @@ public class EnemyController : MonoBehaviour
 
     void OnDestroy()
     {
-        MorphynController.Instance.Off("Enemy", "die", myHandler);
+        MorphynController.Instance.Unwhen("Enemy", "die", myHandler);
+        MorphynController.Instance.Unwatch("Enemy", "hp", myWatcher);
     }
 }
 ```

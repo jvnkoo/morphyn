@@ -27,7 +27,7 @@ double speed    = morphyn.GetDouble("Player", "speed");
 string nickname = morphyn.GetString("Player", "nickname");
 
 // Get field — generic (auto-converts to T)
-float hp = morphyn.Get<float>("Player", "hp");
+float hp   = morphyn.Get<float>("Player", "hp");
 bool alive = morphyn.Get<bool>("Player", "alive");
 
 // Get field — dynamic (returns whatever is stored: double, bool, string, MorphynPool or null)
@@ -49,7 +49,6 @@ morphyn.Emit("Player", "damage", 25);
 
 // Trigger event and get return value
 MorphynValue result = morphyn.EmitSync("Player", "calculate", 25.0, 10.0);
-float value = morphyn.Get<float>("Player", "output");
 
 // Subscribe Morphyn entity to another entity's event
 morphyn.Subscribe("Logger", "Player", "death", "onPlayerDeath");
@@ -58,10 +57,23 @@ morphyn.Subscribe("Logger", "Player", "death", "onPlayerDeath");
 morphyn.Unsubscribe("Logger", "Player", "death", "onPlayerDeath");
 
 // Subscribe C# method to a Morphyn event
-morphyn.On("Player", "death", args => Debug.Log("Player died!"));
+morphyn.When("Player", "death", args => Debug.Log("Player died!"));
 
 // Unsubscribe C# method
-morphyn.Off("Player", "death", myHandler);
+morphyn.Unwhen("Player", "death", myHandler);
+
+// Watch a field for changes — raw MorphynValue
+morphyn.Watch("Player", "hp", (oldVal, newVal) => {
+    Debug.Log($"hp changed: {oldVal.NumVal} -> {newVal.NumVal}");
+});
+
+// Watch a field for changes — typed (auto-converts to T)
+morphyn.Watch<float>("Player", "hp", (old, now) => {
+    hpBar.fillAmount = now / maxHp;
+});
+
+// Unwatch
+morphyn.Unwatch("Player", "hp", myCallback);
 
 // Save / Load
 morphyn.SaveState();
@@ -72,12 +84,12 @@ morphyn.LoadState("Player");
 
 ## C# Listeners
 
-Subscribe any C# method directly to a Morphyn entity event using `On` and `Off`.
+Subscribe any C# method directly to a Morphyn entity event using `When` and `Unwhen`.
 
-### On
+### When
 
 ```cs
-MorphynController.Instance.On(entityName, eventName, handler);
+MorphynController.Instance.When(entityName, eventName, handler);
 ```
 
 The handler receives the same arguments the event was fired with as `object?[]`.
@@ -87,8 +99,8 @@ The handler receives the same arguments the event was fired with as `object?[]`.
 ```cs
 void Start()
 {
-    MorphynController.Instance.On("Player", "death", OnPlayerDeath);
-    MorphynController.Instance.On("Player", "levelUp", args => {
+    MorphynController.Instance.When("Player", "death", OnPlayerDeath);
+    MorphynController.Instance.When("Player", "levelUp", args => {
         double level = Convert.ToDouble(args[0]);
         levelUpScreen.Show((int)level);
     });
@@ -103,22 +115,22 @@ void OnPlayerDeath(object?[] args)
 void OnDestroy()
 {
     // Always unsubscribe to avoid memory leaks
-    MorphynController.Instance.Off("Player", "death", OnPlayerDeath);
+    MorphynController.Instance.Unwhen("Player", "death", OnPlayerDeath);
 }
 ```
 
-### Off
+### Unwhen
 
 ```cs
-MorphynController.Instance.Off(entityName, eventName, handler);
+MorphynController.Instance.Unwhen(entityName, eventName, handler);
 ```
 
 !!! note
-    Always call `Off` in `OnDestroy` to avoid memory leaks and calls on destroyed objects.
+    Always call `Unwhen` in `OnDestroy` to avoid memory leaks and calls on destroyed objects.
 
 ### Difference from Subscribe
 
-| | `On` / `Off` | `Subscribe` / `Unsubscribe` |
+| | `When` / `Unwhen` | `Subscribe` / `Unsubscribe` |
 |---|---|---|
 | Subscriber | C# `Action<object?[]>` | Morphyn entity event |
 | Use case | Unity UI, audio, effects | Morphyn-to-Morphyn logic |
@@ -126,13 +138,71 @@ MorphynController.Instance.Off(entityName, eventName, handler);
 
 ```cs
 // C# reacts to Morphyn event
-morphyn.On("Enemy", "death", args => {
+morphyn.When("Enemy", "death", args => {
     Instantiate(explosionPrefab, transform.position, Quaternion.identity);
 });
 
 // Morphyn entity reacts to Morphyn event
 morphyn.Subscribe("Logger", "Enemy", "death", "onEnemyDeath");
 ```
+
+---
+
+## Field Watchers
+
+Subscribe a C# callback to changes of a specific field on a Morphyn entity.
+The callback fires immediately after the field is written, before the next tick.
+It only fires when the value actually changes — assigning the same value is a no-op.
+
+### Watch
+
+```cs
+// Raw MorphynValue
+morphyn.Watch(entityName, fieldName, (oldVal, newVal) => { });
+
+// Typed — auto-converts to T (supports float, double, int, bool, string)
+morphyn.Watch<T>(entityName, fieldName, (old, now) => { });
+```
+
+**Example:**
+
+```cs
+void Start()
+{
+    MorphynController.Instance.Watch<float>("Player", "hp", OnHpChanged);
+    MorphynController.Instance.Watch("Enemy", "alive", (old, now) => {
+        if (!System.Convert.ToBoolean(now.ToObject()))
+            ShowDeathEffect();
+    });
+}
+
+void OnHpChanged(float old, float now)
+{
+    hpBar.fillAmount = now / maxHp;
+    if (now <= 0) deathScreen.SetActive(true);
+}
+
+void OnDestroy()
+{
+    MorphynController.Instance.Unwatch("Player", "hp", OnHpChanged);
+}
+```
+
+### Unwatch
+
+```cs
+morphyn.Unwatch(entityName, fieldName, callback);
+```
+
+Pass the **same delegate instance** used in `Watch`. Always call `Unwatch` in `OnDestroy`.
+
+### Watch vs When
+
+| | `Watch` / `Unwatch` | `When` / `Unwhen` |
+|---|---|---|
+| Trigger | Field value changes | Entity fires an event |
+| Arguments | `(oldValue, newValue)` | Event arguments |
+| Use case | UI sync, visual feedback | Reactions to game events |
 
 ---
 
@@ -163,12 +233,6 @@ when Player.death : onPlayerDeath
 
 ```cs
 morphyn.Unsubscribe(subscriberEntityName, targetEntityName, targetEvent, handlerEvent);
-```
-
-**Example:**
-
-```cs
-MorphynController.Instance.Unsubscribe("Logger", "Player", "death", "onPlayerDeath");
 ```
 
 ### Full Example
@@ -338,7 +402,17 @@ public class Setup : MonoBehaviour
 }
 ```
 
-### 3. Use for configs and logic, not complex gameplay systems
+### 3. Always unsubscribe in OnDestroy
+
+```cs
+void OnDestroy()
+{
+    MorphynController.Instance.Unwhen("Player", "death", myHandler);
+    MorphynController.Instance.Unwatch("Player", "hp", myWatcher);
+}
+```
+
+### 4. Use for configs and logic, not complex gameplay systems
 
 ```cs
 // GOOD
@@ -377,22 +451,18 @@ morphyn.SetField("Player", "hp", 50.0);
 float hp = morphyn.GetFloat("Player", "hp"); // 50
 ```
 
-### Subscribe warning: entity not found
+### Watch not firing
 
-```cs
-// MorphynController.Start() calls LoadAndRun() automatically if runOnStart is true
-// Safe to subscribe from Start() or later
-void Start()
-{
-    MorphynController.Instance.Subscribe("Logger", "Player", "death", "onPlayerDeath");
-}
-```
+- Check the field name matches exactly (case-sensitive)
+- Watch fires only on value **change** — setting the same value does nothing
+- Make sure `Watch` is called after `LoadAndRun()` completes
 
 ### C# listener called after object destroyed
 
 ```cs
 void OnDestroy()
 {
-    MorphynController.Instance.Off("Player", "death", myHandler);
+    MorphynController.Instance.Unwhen("Player", "death", myHandler);
+    MorphynController.Instance.Unwatch("Player", "hp", myWatcher);
 }
 ```

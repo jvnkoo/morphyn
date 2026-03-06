@@ -1,5 +1,3 @@
-# Learn Morphyn in Y Minutes
-
 ```morphyn
 # This is a comment
 // This too
@@ -91,11 +89,11 @@ entity Player {
   # Returns the last assigned value inside the called event.
   event take_damage(amount) {
     emit MathLib.clamp(hp - amount, 0, max_hp) -> hp
-    
+
     # RECURSION & LOOPS:
     # Morphyn now supports deep recursion for implementing while/for loops.
     # The runtime uses a heap-based stack, so 10,000+ iterations are safe.
-    check hp > 0: emit self.take_damage(1) -> hp 
+    check hp > 0: emit self.take_damage(1) -> hp
   }
 
   # sync result can also go into a pool slot
@@ -219,6 +217,68 @@ entity Logger {
 # - destroyed entities are cleaned up automatically
 # - when/unwhen can be used in any event, not just init
 # - unwhen args must match the args used in the original when
+
+# ── FIELD WATCHERS ────────────────────────────────────────────────────────────
+# watch: subscribe to a field value change
+# unwatch: unsubscribe
+#
+# The handler receives (oldValue, newValue) as arguments.
+# Fires only when the value actually changes — same-value assignment is a no-op.
+#
+# watch fieldName : handler              # watch own field (self)
+# watch Entity.fieldName : handler       # watch field on another entity
+# unwatch Entity.fieldName : handler     # unsubscribe
+
+entity UI {
+  event init {
+    watch Player.hp : onPlayerHpChanged       # watch another entity's field
+    watch Player.alive : onPlayerAliveChanged
+  }
+
+  event onPlayerHpChanged(old, new) {
+    emit log("Player hp:", old, "->", new)
+    check new <= 0: emit log("Player is dead!")
+  }
+
+  event onPlayerAliveChanged(old, new) {
+    emit log("Player alive:", old, "->", new)
+    unwatch Player.hp : onPlayerHpChanged     # stop watching hp when player dies
+  }
+}
+
+entity PlayerWithSelfWatch {
+  has hp: 100
+  has shield: 50
+
+  event init {
+    watch hp : onHpChanged        # watch own field — "self" is implied
+    watch shield : onShieldChanged
+  }
+
+  event onHpChanged(old, new) {
+    emit log("hp changed:", old, "->", new)
+    check new <= 0: {
+      emit log("dying...")
+      unwatch hp : onHpChanged    # clean up own watcher
+    }
+  }
+
+  event onShieldChanged(old, new) {
+    emit log("shield changed:", old, "->", new)
+  }
+
+  event takeDamage(amount) {
+    hp - amount -> hp
+  }
+}
+
+# Rules:
+# - handler receives exactly (oldValue, newValue) as arguments
+# - fires only when value changes — setting same value does nothing
+# - watch/unwatch can be used in any event, not just init
+# - duplicate watches are ignored
+# - destroyed entities are cleaned up automatically
+# - an entity can watch its own fields or fields on other entities
 
 # ── IMPORTS ───────────────────────────────────────────────────────────────────
 import "math" # built-in standard library

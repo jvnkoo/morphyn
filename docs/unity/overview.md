@@ -20,6 +20,7 @@ entity Enemy {
 ## Key Features
 
 **Hot reload** — edit logic and values without restarting:
+
 ```morphyn
 event damage(amount) {
   hp - amount -> hp
@@ -28,6 +29,7 @@ event damage(amount) {
 ```
 
 **Event-driven logic** — reactive behaviors without state machines:
+
 ```morphyn
 entity Shop {
   has gold: 100
@@ -42,10 +44,32 @@ entity Shop {
 ```
 
 **C# bridge** — subscribe Unity methods directly to Morphyn events:
+
 ```cs
-MorphynController.Instance.On("Player", "die", args => {
+MorphynController.Instance.When("Player", "die", args => {
     deathScreen.SetActive(true);
 });
+```
+
+**Field watchers** — react to field value changes from C# or from `.morph`:
+
+```cs
+// C#
+MorphynController.Instance.Watch<float>("Player", "hp", (old, now) => {
+    hpBar.fillAmount = now / maxHp;
+});
+```
+
+```morphyn
+// .morph
+entity UI {
+  event init {
+    watch Player.hp : onPlayerHpChanged
+  }
+  event onPlayerHpChanged(old, new) {
+    emit log("hp:", old, "->", new)
+  }
+}
 ```
 
 ---
