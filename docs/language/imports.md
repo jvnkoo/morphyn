@@ -17,7 +17,6 @@ entity Player {
 
 - Imports are resolved relative to the importing file
 - Circular imports are automatically prevented
-- Import statements must end with semicolon
 - Missing import files generate warnings but don't stop execution
 
 ## Examples

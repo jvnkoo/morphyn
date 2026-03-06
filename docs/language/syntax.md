@@ -21,6 +21,7 @@ entity EntityName {
   # Fields and events
 }
 ```
+
 ## Field Declaration
 
 ### Basic Fields
@@ -32,6 +33,7 @@ has name: "Player"
 has alive: true
 has exist: null
 ```
+
 ### Pool Fields
 
 ```morphyn
@@ -39,6 +41,7 @@ has items: pool[1, 2, 3]
 has names: pool["Alice", "Bob"]
 has flags: pool[true, false, true]
 ```
+
 ## Event Handlers
 
 ### Without Parameters
@@ -67,6 +70,7 @@ hp - 10 -> hp
 damage * 2 -> result
 0 -> counter
 ```
+
 ### Check (Guard)
 
 ```morphyn
@@ -74,10 +78,12 @@ damage * 2 -> result
 check condition: action
 check hp > 0: emit alive
 check state == "idle": emit can_move
+
 # Check without an inline action (guard)
 # If false, the event execution is stopped
 check i < 0
 ```
+
 ### Emit (Event Dispatch)
 
 ```morphyn
@@ -88,6 +94,7 @@ emit self.destroy
 emit log("message", value)
 emit input("prompt: ", "fieldName")
 ```
+
 ### Sync Emit (Immediate Call with Return Value)
 
 Executes an event synchronously and assigns the result to a field.
@@ -97,23 +104,7 @@ emit event_name(args) -> field
 emit Entity.event_name(args) -> field
 emit Entity.event_name(args) -> pool.at[idx]
 ```
-Sync calls can be chained — direct recursion (an event calling itself) is forbidden.
-```morphyn
-entity MathLib {
-  event clamp(value, min, max) {
-    check value < min: min -> value
-    check value > max: max -> value
-    value -> result
-  }
-}
-entity Player {
-  has hp: 150
-  has max_hp: 100
-  event heal(amount) {
-    emit MathLib.clamp(hp + amount, 0, max_hp) -> hp
-  }
-}
-```
+
 ### Subscriptions
 
 Subscribe to events of another entity:
@@ -122,6 +113,7 @@ Subscribe to events of another entity:
 when TargetEntity.eventName : handlerEvent
 unwhen TargetEntity.eventName : handlerEvent
 ```
+
 ```morphyn
 entity Logger {
   event init {
@@ -132,6 +124,37 @@ entity Logger {
   }
 }
 ```
+
+### Field Change Subscriptions
+
+Subscribe to value changes of a field:
+
+```morphyn
+watch fieldName : handlerEvent              # watch own field
+watch TargetEntity.fieldName : handlerEvent # watch field on another entity
+
+unwatch fieldName : handlerEvent
+unwatch TargetEntity.fieldName : handlerEvent
+```
+
+The handler receives `(oldValue, newValue)` as arguments.
+Only fires when the value actually changes.
+
+```morphyn
+entity Player {
+  has hp: 100
+
+  event init {
+    watch hp : onHpChanged
+  }
+
+  event onHpChanged(old, new) {
+    emit log("hp:", old, "->", new)
+    check new <= 0: emit die
+  }
+}
+```
+
 ### Block Actions
 
 ```morphyn
@@ -141,7 +164,9 @@ entity Logger {
   action3
 }
 ```
+
 ## Built-in Functions
+
 | Function | Description | Example |
 |----------|-------------|---------|
 | `log` | Print to console | `emit log("HP:", hp)` |
@@ -157,8 +182,6 @@ The field name must be passed as a **string literal in quotes**.
 emit input("Enter your name: ", "name")
 emit input("Enter amount: ", "amount")
 ```
-
-If the input can be parsed as a number it is stored as a number, otherwise as a string.
 
 ## Operators
 
@@ -209,6 +232,8 @@ If the input can be parsed as a number it is stored as a number, otherwise as a 
 | `pool` | Collection type |
 | `when` | Subscribe to another entity's event |
 | `unwhen` | Unsubscribe from another entity's event |
+| `watch` | Subscribe to field value changes |
+| `unwatch` | Unsubscribe from field value changes |
 | `true` | Boolean true |
 | `false` | Boolean false |
 | `null` | Null value |

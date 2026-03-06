@@ -1,5 +1,7 @@
 # Event System
+
 ## Overview
+
 Morphyn uses an event queue to process entity reactions. Events are processed
 in order, and each event can trigger additional events.
 
@@ -57,11 +59,7 @@ entity Player {
 ### Send to Self
 ```morphyn
 emit event_name
-
-# or
-
 emit self.event_name
-
 emit heal(10)
 ```
 
@@ -72,6 +70,7 @@ emit player.damage(5)
 ```
 
 ## Event Subscriptions
+
 Entities can subscribe to events of other entities using `when` and unsubscribe using `unwhen`.
 
 ### Syntax
@@ -128,10 +127,7 @@ entity Logger {
 }
 ```
 
-If `Logger.severity` changes between subscription and the event firing, the new value is used.
-
 ### Unsubscribing
-Use `unwhen` to stop receiving events. The `unwhen` args must match what was used in `when`:
 ```morphyn
 entity Logger {
   has severity: 3
@@ -148,54 +144,88 @@ entity Logger {
 ```
 
 ### Rules
-- **An entity cannot subscribe to its own instance's events.**
+- An entity cannot subscribe to its own instance's events.
+- Duplicate subscriptions are ignored.
+- Destroyed entities are cleaned up automatically.
+- `when` and `unwhen` can be used in any event, not just `init`.
+- `unwhen` args must match the args used in the original `when`.
+
+---
+
+## Field Change Subscriptions
+
+Entities can also subscribe to **field value changes** using `watch` and unsubscribe using `unwatch`.
+
+The handler receives `(oldValue, newValue)` as arguments. It fires only when the value actually changes — setting a field to the same value does not trigger watchers.
+
+### Syntax
 ```morphyn
-entity Logger {
+watch fieldName : handlerEvent              # watch own field (self)
+watch TargetEntity.fieldName : handlerEvent # watch field on another entity
+
+unwatch fieldName : handlerEvent
+unwatch TargetEntity.fieldName : handlerEvent
+```
+
+### Basic Example — watch own field
+```morphyn
+entity Player {
+  has hp: 100
+
   event init {
-    when Logger.something : onSomething  # runtime error — same instance
-    when Player.death : onPlayerDeath    # ok — different entity
+    watch hp : onHpChanged
+  }
+
+  event onHpChanged(old, new) {
+    emit log("hp changed:", old, "->", new)
+    check new <= 0: emit die
+  }
+
+  event takeDamage(amount) {
+    hp - amount -> hp
   }
 }
 ```
-Two clones of the same entity type spawned via `pool.add` are separate instances and can subscribe to each other normally.
 
-- **Duplicate subscriptions are ignored.** Subscribing the same handler to the same event twice has no effect.
-- **Dead entities are cleaned up automatically.** If a subscriber is destroyed, its subscriptions are removed during garbage collection.
-- **`when` and `unwhen` can be used anywhere** — inside `event init`, `event tick`, or any other event handler.
-
-### Multiple Subscribers
-Multiple entities can subscribe to the same event independently:
+### Watch a field on another entity
 ```morphyn
-entity Logger {
-  event init {
-    when Player.death : onPlayerDeath
-  }
-  event onPlayerDeath {
-    emit log("Logger: player died")
-  }
-}
-
 entity UI {
   event init {
-    when Player.death : onPlayerDeath
+    watch Player.hp : onPlayerHpChanged
   }
-  event onPlayerDeath {
-    emit log("UI: showing death screen")
-  }
-}
 
-entity Stats {
-  has deaths: 0
-  event init {
-    when Player.death : recordDeath
-  }
-  event recordDeath {
-    deaths + 1 -> deaths
+  event onPlayerHpChanged(old, new) {
+    emit log("UI: player hp changed:", old, "->", new)
   }
 }
 ```
 
+### Unwatch
+```morphyn
+entity UI {
+  event init {
+    watch Player.hp : onPlayerHpChanged
+  }
+
+  event onPlayerHpChanged(old, new) {
+    emit log("UI: player hp changed:", old, "->", new)
+    unwatch Player.hp : onPlayerHpChanged  # stop watching after first change
+  }
+}
+```
+
+### Rules
+- The handler receives exactly two arguments: `(oldValue, newValue)`.
+- Fires only when the value **changes** — assigning the same value is a no-op.
+- `watch` and `unwatch` can be used in any event, not just `init`.
+- Duplicate watches are ignored.
+- Destroyed entities are cleaned up automatically.
+- An entity can watch its own fields or fields on other entities.
+
+---
+
 ## Built-in Functions
+
 Built-in functions are called via `emit` but handled directly by the runtime.
 
 ### log
@@ -203,7 +233,6 @@ Prints values to console:
 ```morphyn
 emit log("HP:", hp)
 emit log("Position:", x, y)
-emit log("Pool:", items)
 ```
 
 ### input
@@ -216,35 +245,6 @@ emit input("Enter amount: ", "amount")
 - Second argument: **field name as a string literal** (in quotes)
 - If the input can be parsed as a number, it is stored as a number
 - Otherwise stored as a string
-
-!!! note
-    The field name must be passed as a string literal in quotes: `"fieldName"`.
-    Writing `emit input("prompt", fieldName)` will not work — `fieldName` would
-    be evaluated as a variable, not as a field name.
-
-**Example — interactive calculator:**
-```morphyn
-entity Calc {
-  has a: 0
-  has b: 0
-  has op: ""
-  event init {
-    emit input("First number: ", "a")
-    emit input("Operator (+,-,*,/): ", "op")
-    emit input("Second number: ", "b")
-    emit calculate
-  }
-  event calculate {
-    check op == "+": emit log(a, "+", b, "=", a + b)
-    check op == "-": emit log(a, "-", b, "=", a - b)
-    check op == "*": emit log(a, "*", b, "=", a * b)
-    check op == "/": {
-      check b == 0: emit log("error: division by zero")
-      check b != 0: emit log(a, "/", b, "=", a / b)
-    }
-  }
-}
-```
 
 ### unity
 Calls a registered Unity callback:

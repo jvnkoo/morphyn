@@ -33,13 +33,13 @@ null
 #### Entity Fields
 ```morphyn
 has hp: 50
-has name: noname
+has name: "noname"
 has alive: true
 ```
 
 #### Event Parameters
 ```morphyn
-on damage(amount) {
+event damage(amount) {
   hp - amount -> hp  # 'amount' is a parameter
 }
 ```

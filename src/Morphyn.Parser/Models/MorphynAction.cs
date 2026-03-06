@@ -7,7 +7,8 @@ namespace Morphyn.Parser
         Emit, EmitWithReturn, EmitWithReturnIndex,
         When, Unwhen,
         Check, Set, SetIndex, Block,
-        PoolIndexWrite
+        PoolIndexWrite,
+        WatchField, UnwatchField
     }
 
     /// <summary>
@@ -102,5 +103,30 @@ namespace Morphyn.Parser
     {
         public BlockAction() => Kind = ActionKind.Block;
         public MorphynAction[] Actions { get; set; } = System.Array.Empty<MorphynAction>();
+    }
+
+    /// <summary>
+    /// watch TargetEntity.fieldName : localHandler
+    /// watch fieldName : localHandler  (implies self)
+    /// Handler receives (oldValue, newValue) as arguments.
+    /// </summary>
+    public class WatchFieldAction : MorphynAction
+    {
+        public WatchFieldAction() => Kind = ActionKind.WatchField;
+        public required string TargetEntityName { get; init; }
+        public required string FieldName { get; init; }
+        public required string HandlerEventName { get; init; }
+    }
+
+    /// <summary>
+    /// unwatch TargetEntity.fieldName : localHandler
+    /// Removes a field watch subscription registered by WatchFieldAction.
+    /// </summary>
+    public class UnwatchFieldAction : MorphynAction
+    {
+        public UnwatchFieldAction() => Kind = ActionKind.UnwatchField;
+        public required string TargetEntityName { get; init; }
+        public required string FieldName { get; init; }
+        public required string HandlerEventName { get; init; }
     }
 }

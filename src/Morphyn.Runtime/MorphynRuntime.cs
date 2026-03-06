@@ -210,6 +210,7 @@ namespace Morphyn.Runtime
         public static void Unsubscribe(Entity subscriber, Entity target,
             string targetEvent, string handlerEvent)
             => Subscriptions.Unsubscribe(subscriber, target, targetEvent, handlerEvent);
+
         // Called by MorphynBuiltins and MorphynSyncEngine
         internal static bool HandleEmitRouting(EntityData data, Entity entity, EmitAction emit,
             MorphynValue[] resolvedArgs)
@@ -273,10 +274,17 @@ namespace Morphyn.Runtime
                 case ActionKind.Set:
                     {
                         var set = Unsafe.As<SetAction>(action);
+                        var newVal = EvaluateToValue(entity, set.Expression, localScope, data);
                         if (entity.Fields.ContainsKey(set.TargetField))
-                            entity.Fields[set.TargetField] = EvaluateToValue(entity, set.Expression, localScope, data);
+                        {
+                            var oldVal = entity.Fields[set.TargetField];
+                            entity.Fields[set.TargetField] = newVal;
+                            Subscriptions.NotifyFieldChanged(entity, set.TargetField, oldVal, newVal);
+                        }
                         else
-                            localScope[set.TargetField] = EvaluateToValue(entity, set.Expression, localScope, data);
+                        {
+                            localScope[set.TargetField] = newVal;
+                        }
                         return true;
                     }
 
@@ -396,6 +404,26 @@ namespace Morphyn.Runtime
                             Subscriptions.Unsubscribe(entity, ute, unwhenAct.TargetEventName, unwhenAct.HandlerEventName);
                         else
                             Console.WriteLine($"[Subscription Error] Entity '{unwhenAct.TargetEntityName}' not found.");
+                        return true;
+                    }
+
+                case ActionKind.WatchField:
+                    {
+                        var w = Unsafe.As<WatchFieldAction>(action);
+                        if (data.Entities.TryGetValue(w.TargetEntityName, out var wte))
+                            Subscriptions.WatchField(entity, wte, w.FieldName, w.HandlerEventName);
+                        else
+                            Console.WriteLine($"[Subscription Error] Entity '{w.TargetEntityName}' not found.");
+                        return true;
+                    }
+
+                case ActionKind.UnwatchField:
+                    {
+                        var u = Unsafe.As<UnwatchFieldAction>(action);
+                        if (data.Entities.TryGetValue(u.TargetEntityName, out var ute))
+                            Subscriptions.UnwatchField(entity, ute, u.FieldName, u.HandlerEventName);
+                        else
+                            Console.WriteLine($"[Subscription Error] Entity '{u.TargetEntityName}' not found.");
                         return true;
                     }
 

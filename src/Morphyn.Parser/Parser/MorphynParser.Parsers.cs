@@ -224,7 +224,7 @@ namespace Morphyn.Parser
                 from dot in Token.EqualTo(MorphynToken.Dot)
                 from eventName in Identifier
                 select (entity: entityName, ev: eventName)
-            ).Try().Or(Identifier.Select(name => (entity: "self", ev: name))) 
+            ).Try().Or(Identifier.Select(name => (entity: "self", ev: name)))
             from colon in Token.EqualTo(MorphynToken.Colon)
             from handler in Identifier
             from handlerArgs in CallArguments.OptionalOrDefault(null)
@@ -253,6 +253,42 @@ namespace Morphyn.Parser
                     HandlerEventName = handler,
                     HandlerArgs = handlerArgs?.ToList()
                 }).Try();
+
+        // watch Entity.field : handler
+        // watch field : handler  (implies self)
+        private static TokenListParser<MorphynToken, (string entity, string targetField)> WatchFieldTarget =>
+            (from entityName in Identifier
+             from dot in Token.EqualTo(MorphynToken.Dot)
+             from fieldName in Identifier
+             select (entity: entityName, targetField: fieldName))
+            .Try()
+            .Or(from selfField in Identifier
+                select (entity: "self", targetField: selfField));
+
+        private static TokenListParser<MorphynToken, MorphynAction> WatchFieldParser =>
+            (from watchKeyword in Token.EqualTo(MorphynToken.Watch)
+             from targetPath in WatchFieldTarget
+             from colon in Token.EqualTo(MorphynToken.Colon)
+             from handler in Identifier
+             select (MorphynAction)new WatchFieldAction
+             {
+                 TargetEntityName = targetPath.entity,
+                 FieldName        = targetPath.targetField, 
+                 HandlerEventName = handler,
+             }).Try();
+
+        // unwatch Entity.field : handler
+        private static TokenListParser<MorphynToken, MorphynAction> UnwatchFieldParser =>
+            (from unwatchKeyword in Token.EqualTo(MorphynToken.Unwatch)
+             from targetPath in WatchFieldTarget
+             from colon in Token.EqualTo(MorphynToken.Colon)
+             from handler in Identifier
+             select (MorphynAction)new UnwatchFieldAction
+             {
+                 TargetEntityName = targetPath.entity,
+                 FieldName        = targetPath.targetField, 
+                 HandlerEventName = handler,
+             }).Try();
 
         private static TokenListParser<MorphynToken, MorphynExpression> ArithExpression =>
             Parse.Chain(
@@ -284,6 +320,8 @@ namespace Morphyn.Parser
                 .Or(EmitAction.Try())
                 .Or(WhenAction.Try())
                 .Or(UnwhenAction.Try())
+                .Or(WatchFieldParser.Try())
+                .Or(UnwatchFieldParser.Try())
                 .Or(FlowAction.Try());
 
         private static TokenListParser<MorphynToken, MorphynAction> CheckAction =>
