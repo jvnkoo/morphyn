@@ -915,11 +915,72 @@
   
 </li>
         
-          <li class="md-nav__item">
-  <a href="#multiple-subscribers" class="md-nav__link">
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#field-change-subscriptions" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Multiple Subscribers
+        Field Change Subscriptions
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Field Change Subscriptions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#syntax_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Syntax
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#basic-example-watch-own-field" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Basic Example — watch own field
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#watch-a-field-on-another-entity" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Watch a field on another entity
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#unwatch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Unwatch
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rules_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Rules
       
     </span>
   </a>
@@ -1764,11 +1825,72 @@
   
 </li>
         
-          <li class="md-nav__item">
-  <a href="#multiple-subscribers" class="md-nav__link">
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#field-change-subscriptions" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Multiple Subscribers
+        Field Change Subscriptions
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Field Change Subscriptions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#syntax_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Syntax
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#basic-example-watch-own-field" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Basic Example — watch own field
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#watch-a-field-on-another-entity" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Watch a field on another entity
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#unwatch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Unwatch
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rules_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Rules
       
     </span>
   </a>
@@ -1897,12 +2019,8 @@ in order, and each event can trigger additional events.</p>
 <h2 id="sending-events">Sending Events</h2>
 <h3 id="send-to-self">Send to Self</h3>
 <div class="language-morphyn highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="k">emit</span> <span class="n">event_name</span>
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="c1"># or</span>
-</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>
-</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="k">emit</span> <span class="kc">self</span><span class="p">.</span><span class="n">event_name</span>
-</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>
-</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="k">emit</span> <span class="n">heal</span><span class="p">(</span><span class="m">10</span><span class="p">)</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="k">emit</span> <span class="kc">self</span><span class="p">.</span><span class="n">event_name</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="k">emit</span> <span class="n">heal</span><span class="p">(</span><span class="m">10</span><span class="p">)</span>
 </span></code></pre></div>
 <h3 id="send-to-target">Send to Target</h3>
 <div class="language-morphyn highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="k">emit</span> <span class="n">target</span><span class="p">.</span><span class="n">event_name</span>
@@ -1954,9 +2072,7 @@ in order, and each event can trigger additional events.</p>
 </span><span id="__span-9-10"><a id="__codelineno-9-10" name="__codelineno-9-10" href="#__codelineno-9-10"></a>  <span class="p">}</span>
 </span><span id="__span-9-11"><a id="__codelineno-9-11" name="__codelineno-9-11" href="#__codelineno-9-11"></a><span class="p">}</span>
 </span></code></pre></div>
-<p>If <code>Logger.severity</code> changes between subscription and the event firing, the new value is used.</p>
 <h3 id="unsubscribing">Unsubscribing</h3>
-<p>Use <code>unwhen</code> to stop receiving events. The <code>unwhen</code> args must match what was used in <code>when</code>:
 <div class="language-morphyn highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="k">entity</span> <span class="nc">Logger</span> <span class="p">{</span>
 </span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>  <span class="k">has</span> <span class="nv">severity</span><span class="p">:</span> <span class="m">3</span>
 </span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>
@@ -1969,105 +2085,97 @@ in order, and each event can trigger additional events.</p>
 </span><span id="__span-10-10"><a id="__codelineno-10-10" name="__codelineno-10-10" href="#__codelineno-10-10"></a>    <span class="n">unwhen</span> <span class="nc">Player</span><span class="p">.</span><span class="n">death</span> <span class="p">:</span> <span class="n">onPlayerDeath</span><span class="p">(</span><span class="n">severity</span><span class="p">)</span>  <span class="c1"># matches the original when</span>
 </span><span id="__span-10-11"><a id="__codelineno-10-11" name="__codelineno-10-11" href="#__codelineno-10-11"></a>  <span class="p">}</span>
 </span><span id="__span-10-12"><a id="__codelineno-10-12" name="__codelineno-10-12" href="#__codelineno-10-12"></a><span class="p">}</span>
-</span></code></pre></div></p>
+</span></code></pre></div>
 <h3 id="rules">Rules</h3>
 <ul>
-<li>
-<p><strong>An entity cannot subscribe to its own instance's events.</strong>
-<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="k">entity</span> <span class="nc">Logger</span> <span class="p">{</span>
-</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>  <span class="k">event</span> <span class="nf">init</span> <span class="p">{</span>
-</span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a>    <span class="n">when</span> <span class="nc">Logger</span><span class="p">.</span><span class="n">something</span> <span class="p">:</span> <span class="n">onSomething</span>  <span class="c1"># runtime error — same instance</span>
-</span><span id="__span-11-4"><a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a>    <span class="n">when</span> <span class="nc">Player</span><span class="p">.</span><span class="n">death</span> <span class="p">:</span> <span class="n">onPlayerDeath</span>    <span class="c1"># ok — different entity</span>
-</span><span id="__span-11-5"><a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a>  <span class="p">}</span>
-</span><span id="__span-11-6"><a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a><span class="p">}</span>
-</span></code></pre></div>
-Two clones of the same entity type spawned via <code>pool.add</code> are separate instances and can subscribe to each other normally.</p>
-</li>
-<li>
-<p><strong>Duplicate subscriptions are ignored.</strong> Subscribing the same handler to the same event twice has no effect.</p>
-</li>
-<li><strong>Dead entities are cleaned up automatically.</strong> If a subscriber is destroyed, its subscriptions are removed during garbage collection.</li>
-<li><strong><code>when</code> and <code>unwhen</code> can be used anywhere</strong> — inside <code>event init</code>, <code>event tick</code>, or any other event handler.</li>
+<li>An entity cannot subscribe to its own instance's events.</li>
+<li>Duplicate subscriptions are ignored.</li>
+<li>Destroyed entities are cleaned up automatically.</li>
+<li><code>when</code> and <code>unwhen</code> can be used in any event, not just <code>init</code>.</li>
+<li><code>unwhen</code> args must match the args used in the original <code>when</code>.</li>
 </ul>
-<h3 id="multiple-subscribers">Multiple Subscribers</h3>
-<p>Multiple entities can subscribe to the same event independently:
-<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="k">entity</span> <span class="nc">Logger</span> <span class="p">{</span>
-</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>  <span class="k">event</span> <span class="nf">init</span> <span class="p">{</span>
-</span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a>    <span class="n">when</span> <span class="nc">Player</span><span class="p">.</span><span class="n">death</span> <span class="p">:</span> <span class="n">onPlayerDeath</span>
-</span><span id="__span-12-4"><a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a>  <span class="p">}</span>
-</span><span id="__span-12-5"><a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a>  <span class="k">event</span> <span class="nf">onPlayerDeath</span> <span class="p">{</span>
-</span><span id="__span-12-6"><a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a>    <span class="k">emit</span> <span class="nb">log</span><span class="p">(</span><span class="s2">&quot;Logger: player died&quot;</span><span class="p">)</span>
-</span><span id="__span-12-7"><a id="__codelineno-12-7" name="__codelineno-12-7" href="#__codelineno-12-7"></a>  <span class="p">}</span>
-</span><span id="__span-12-8"><a id="__codelineno-12-8" name="__codelineno-12-8" href="#__codelineno-12-8"></a><span class="p">}</span>
-</span><span id="__span-12-9"><a id="__codelineno-12-9" name="__codelineno-12-9" href="#__codelineno-12-9"></a>
-</span><span id="__span-12-10"><a id="__codelineno-12-10" name="__codelineno-12-10" href="#__codelineno-12-10"></a><span class="k">entity</span> <span class="nc">UI</span> <span class="p">{</span>
-</span><span id="__span-12-11"><a id="__codelineno-12-11" name="__codelineno-12-11" href="#__codelineno-12-11"></a>  <span class="k">event</span> <span class="nf">init</span> <span class="p">{</span>
-</span><span id="__span-12-12"><a id="__codelineno-12-12" name="__codelineno-12-12" href="#__codelineno-12-12"></a>    <span class="n">when</span> <span class="nc">Player</span><span class="p">.</span><span class="n">death</span> <span class="p">:</span> <span class="n">onPlayerDeath</span>
-</span><span id="__span-12-13"><a id="__codelineno-12-13" name="__codelineno-12-13" href="#__codelineno-12-13"></a>  <span class="p">}</span>
-</span><span id="__span-12-14"><a id="__codelineno-12-14" name="__codelineno-12-14" href="#__codelineno-12-14"></a>  <span class="k">event</span> <span class="nf">onPlayerDeath</span> <span class="p">{</span>
-</span><span id="__span-12-15"><a id="__codelineno-12-15" name="__codelineno-12-15" href="#__codelineno-12-15"></a>    <span class="k">emit</span> <span class="nb">log</span><span class="p">(</span><span class="s2">&quot;UI: showing death screen&quot;</span><span class="p">)</span>
-</span><span id="__span-12-16"><a id="__codelineno-12-16" name="__codelineno-12-16" href="#__codelineno-12-16"></a>  <span class="p">}</span>
-</span><span id="__span-12-17"><a id="__codelineno-12-17" name="__codelineno-12-17" href="#__codelineno-12-17"></a><span class="p">}</span>
-</span><span id="__span-12-18"><a id="__codelineno-12-18" name="__codelineno-12-18" href="#__codelineno-12-18"></a>
-</span><span id="__span-12-19"><a id="__codelineno-12-19" name="__codelineno-12-19" href="#__codelineno-12-19"></a><span class="k">entity</span> <span class="nc">Stats</span> <span class="p">{</span>
-</span><span id="__span-12-20"><a id="__codelineno-12-20" name="__codelineno-12-20" href="#__codelineno-12-20"></a>  <span class="k">has</span> <span class="nv">deaths</span><span class="p">:</span> <span class="m">0</span>
-</span><span id="__span-12-21"><a id="__codelineno-12-21" name="__codelineno-12-21" href="#__codelineno-12-21"></a>  <span class="k">event</span> <span class="nf">init</span> <span class="p">{</span>
-</span><span id="__span-12-22"><a id="__codelineno-12-22" name="__codelineno-12-22" href="#__codelineno-12-22"></a>    <span class="n">when</span> <span class="nc">Player</span><span class="p">.</span><span class="n">death</span> <span class="p">:</span> <span class="n">recordDeath</span>
-</span><span id="__span-12-23"><a id="__codelineno-12-23" name="__codelineno-12-23" href="#__codelineno-12-23"></a>  <span class="p">}</span>
-</span><span id="__span-12-24"><a id="__codelineno-12-24" name="__codelineno-12-24" href="#__codelineno-12-24"></a>  <span class="k">event</span> <span class="nf">recordDeath</span> <span class="p">{</span>
-</span><span id="__span-12-25"><a id="__codelineno-12-25" name="__codelineno-12-25" href="#__codelineno-12-25"></a>    <span class="n">deaths</span> <span class="o o-Arithmetic">+</span> <span class="m">1</span> <span class="o">-&gt;</span> <span class="n">deaths</span>
-</span><span id="__span-12-26"><a id="__codelineno-12-26" name="__codelineno-12-26" href="#__codelineno-12-26"></a>  <span class="p">}</span>
-</span><span id="__span-12-27"><a id="__codelineno-12-27" name="__codelineno-12-27" href="#__codelineno-12-27"></a><span class="p">}</span>
-</span></code></pre></div></p>
+<hr />
+<h2 id="field-change-subscriptions">Field Change Subscriptions</h2>
+<p>Entities can also subscribe to <strong>field value changes</strong> using <code>watch</code> and unsubscribe using <code>unwatch</code>.</p>
+<p>The handler receives <code>(oldValue, newValue)</code> as arguments. It fires only when the value actually changes — setting a field to the same value does not trigger watchers.</p>
+<h3 id="syntax_1">Syntax</h3>
+<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="n">watch</span> <span class="n">fieldName</span> <span class="p">:</span> <span class="n">handlerEvent</span>              <span class="c1"># watch own field (self)</span>
+</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="n">watch</span> <span class="nc">TargetEntity</span><span class="p">.</span><span class="n">fieldName</span> <span class="p">:</span> <span class="n">handlerEvent</span> <span class="c1"># watch field on another entity</span>
+</span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a>
+</span><span id="__span-11-4"><a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a><span class="n">unwatch</span> <span class="n">fieldName</span> <span class="p">:</span> <span class="n">handlerEvent</span>
+</span><span id="__span-11-5"><a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a><span class="n">unwatch</span> <span class="nc">TargetEntity</span><span class="p">.</span><span class="n">fieldName</span> <span class="p">:</span> <span class="n">handlerEvent</span>
+</span></code></pre></div>
+<h3 id="basic-example-watch-own-field">Basic Example — watch own field</h3>
+<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="k">entity</span> <span class="nc">Player</span> <span class="p">{</span>
+</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>  <span class="k">has</span> <span class="nv">hp</span><span class="p">:</span> <span class="m">100</span>
+</span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a>
+</span><span id="__span-12-4"><a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a>  <span class="k">event</span> <span class="nf">init</span> <span class="p">{</span>
+</span><span id="__span-12-5"><a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a>    <span class="n">watch</span> <span class="n">hp</span> <span class="p">:</span> <span class="n">onHpChanged</span>
+</span><span id="__span-12-6"><a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a>  <span class="p">}</span>
+</span><span id="__span-12-7"><a id="__codelineno-12-7" name="__codelineno-12-7" href="#__codelineno-12-7"></a>
+</span><span id="__span-12-8"><a id="__codelineno-12-8" name="__codelineno-12-8" href="#__codelineno-12-8"></a>  <span class="k">event</span> <span class="nf">onHpChanged</span><span class="p">(</span><span class="n">old</span><span class="p">,</span> <span class="n">new</span><span class="p">)</span> <span class="p">{</span>
+</span><span id="__span-12-9"><a id="__codelineno-12-9" name="__codelineno-12-9" href="#__codelineno-12-9"></a>    <span class="k">emit</span> <span class="nb">log</span><span class="p">(</span><span class="s2">&quot;hp changed:&quot;</span><span class="p">,</span> <span class="n">old</span><span class="p">,</span> <span class="s2">&quot;-&gt;&quot;</span><span class="p">,</span> <span class="n">new</span><span class="p">)</span>
+</span><span id="__span-12-10"><a id="__codelineno-12-10" name="__codelineno-12-10" href="#__codelineno-12-10"></a>    <span class="k">check</span> <span class="n">new</span> <span class="o o-Comparison">&lt;=</span> <span class="m">0</span><span class="p">:</span> <span class="k">emit</span> <span class="n">die</span>
+</span><span id="__span-12-11"><a id="__codelineno-12-11" name="__codelineno-12-11" href="#__codelineno-12-11"></a>  <span class="p">}</span>
+</span><span id="__span-12-12"><a id="__codelineno-12-12" name="__codelineno-12-12" href="#__codelineno-12-12"></a>
+</span><span id="__span-12-13"><a id="__codelineno-12-13" name="__codelineno-12-13" href="#__codelineno-12-13"></a>  <span class="k">event</span> <span class="nf">takeDamage</span><span class="p">(</span><span class="n">amount</span><span class="p">)</span> <span class="p">{</span>
+</span><span id="__span-12-14"><a id="__codelineno-12-14" name="__codelineno-12-14" href="#__codelineno-12-14"></a>    <span class="n">hp</span> <span class="o o-Arithmetic">-</span> <span class="n">amount</span> <span class="o">-&gt;</span> <span class="n">hp</span>
+</span><span id="__span-12-15"><a id="__codelineno-12-15" name="__codelineno-12-15" href="#__codelineno-12-15"></a>  <span class="p">}</span>
+</span><span id="__span-12-16"><a id="__codelineno-12-16" name="__codelineno-12-16" href="#__codelineno-12-16"></a><span class="p">}</span>
+</span></code></pre></div>
+<h3 id="watch-a-field-on-another-entity">Watch a field on another entity</h3>
+<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="k">entity</span> <span class="nc">UI</span> <span class="p">{</span>
+</span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>  <span class="k">event</span> <span class="nf">init</span> <span class="p">{</span>
+</span><span id="__span-13-3"><a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a>    <span class="n">watch</span> <span class="nc">Player</span><span class="p">.</span><span class="n">hp</span> <span class="p">:</span> <span class="n">onPlayerHpChanged</span>
+</span><span id="__span-13-4"><a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a>  <span class="p">}</span>
+</span><span id="__span-13-5"><a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a>
+</span><span id="__span-13-6"><a id="__codelineno-13-6" name="__codelineno-13-6" href="#__codelineno-13-6"></a>  <span class="k">event</span> <span class="nf">onPlayerHpChanged</span><span class="p">(</span><span class="n">old</span><span class="p">,</span> <span class="n">new</span><span class="p">)</span> <span class="p">{</span>
+</span><span id="__span-13-7"><a id="__codelineno-13-7" name="__codelineno-13-7" href="#__codelineno-13-7"></a>    <span class="k">emit</span> <span class="nb">log</span><span class="p">(</span><span class="s2">&quot;UI: player hp changed:&quot;</span><span class="p">,</span> <span class="n">old</span><span class="p">,</span> <span class="s2">&quot;-&gt;&quot;</span><span class="p">,</span> <span class="n">new</span><span class="p">)</span>
+</span><span id="__span-13-8"><a id="__codelineno-13-8" name="__codelineno-13-8" href="#__codelineno-13-8"></a>  <span class="p">}</span>
+</span><span id="__span-13-9"><a id="__codelineno-13-9" name="__codelineno-13-9" href="#__codelineno-13-9"></a><span class="p">}</span>
+</span></code></pre></div>
+<h3 id="unwatch">Unwatch</h3>
+<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="k">entity</span> <span class="nc">UI</span> <span class="p">{</span>
+</span><span id="__span-14-2"><a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>  <span class="k">event</span> <span class="nf">init</span> <span class="p">{</span>
+</span><span id="__span-14-3"><a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a>    <span class="n">watch</span> <span class="nc">Player</span><span class="p">.</span><span class="n">hp</span> <span class="p">:</span> <span class="n">onPlayerHpChanged</span>
+</span><span id="__span-14-4"><a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a>  <span class="p">}</span>
+</span><span id="__span-14-5"><a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a>
+</span><span id="__span-14-6"><a id="__codelineno-14-6" name="__codelineno-14-6" href="#__codelineno-14-6"></a>  <span class="k">event</span> <span class="nf">onPlayerHpChanged</span><span class="p">(</span><span class="n">old</span><span class="p">,</span> <span class="n">new</span><span class="p">)</span> <span class="p">{</span>
+</span><span id="__span-14-7"><a id="__codelineno-14-7" name="__codelineno-14-7" href="#__codelineno-14-7"></a>    <span class="k">emit</span> <span class="nb">log</span><span class="p">(</span><span class="s2">&quot;UI: player hp changed:&quot;</span><span class="p">,</span> <span class="n">old</span><span class="p">,</span> <span class="s2">&quot;-&gt;&quot;</span><span class="p">,</span> <span class="n">new</span><span class="p">)</span>
+</span><span id="__span-14-8"><a id="__codelineno-14-8" name="__codelineno-14-8" href="#__codelineno-14-8"></a>    <span class="n">unwatch</span> <span class="nc">Player</span><span class="p">.</span><span class="n">hp</span> <span class="p">:</span> <span class="n">onPlayerHpChanged</span>  <span class="c1"># stop watching after first change</span>
+</span><span id="__span-14-9"><a id="__codelineno-14-9" name="__codelineno-14-9" href="#__codelineno-14-9"></a>  <span class="p">}</span>
+</span><span id="__span-14-10"><a id="__codelineno-14-10" name="__codelineno-14-10" href="#__codelineno-14-10"></a><span class="p">}</span>
+</span></code></pre></div>
+<h3 id="rules_1">Rules</h3>
+<ul>
+<li>The handler receives exactly two arguments: <code>(oldValue, newValue)</code>.</li>
+<li>Fires only when the value <strong>changes</strong> — assigning the same value is a no-op.</li>
+<li><code>watch</code> and <code>unwatch</code> can be used in any event, not just <code>init</code>.</li>
+<li>Duplicate watches are ignored.</li>
+<li>Destroyed entities are cleaned up automatically.</li>
+<li>An entity can watch its own fields or fields on other entities.</li>
+</ul>
+<hr />
 <h2 id="built-in-functions">Built-in Functions</h2>
 <p>Built-in functions are called via <code>emit</code> but handled directly by the runtime.</p>
 <h3 id="log">log</h3>
 <p>Prints values to console:
-<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="k">emit</span> <span class="nb">log</span><span class="p">(</span><span class="s2">&quot;HP:&quot;</span><span class="p">,</span> <span class="n">hp</span><span class="p">)</span>
-</span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a><span class="k">emit</span> <span class="nb">log</span><span class="p">(</span><span class="s2">&quot;Position:&quot;</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
-</span><span id="__span-13-3"><a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a><span class="k">emit</span> <span class="nb">log</span><span class="p">(</span><span class="s2">&quot;Pool:&quot;</span><span class="p">,</span> <span class="n">items</span><span class="p">)</span>
+<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="k">emit</span> <span class="nb">log</span><span class="p">(</span><span class="s2">&quot;HP:&quot;</span><span class="p">,</span> <span class="n">hp</span><span class="p">)</span>
+</span><span id="__span-15-2"><a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a><span class="k">emit</span> <span class="nb">log</span><span class="p">(</span><span class="s2">&quot;Position:&quot;</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
 </span></code></pre></div></p>
 <h3 id="input">input</h3>
 <p>Reads a line from console and writes the value to a field:
-<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="k">emit</span> <span class="n">input</span><span class="p">(</span><span class="s2">&quot;Enter your name: &quot;</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">)</span>
-</span><span id="__span-14-2"><a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a><span class="k">emit</span> <span class="n">input</span><span class="p">(</span><span class="s2">&quot;Enter amount: &quot;</span><span class="p">,</span> <span class="s2">&quot;amount&quot;</span><span class="p">)</span>
+<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="k">emit</span> <span class="n">input</span><span class="p">(</span><span class="s2">&quot;Enter your name: &quot;</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">)</span>
+</span><span id="__span-16-2"><a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a><span class="k">emit</span> <span class="n">input</span><span class="p">(</span><span class="s2">&quot;Enter amount: &quot;</span><span class="p">,</span> <span class="s2">&quot;amount&quot;</span><span class="p">)</span>
 </span></code></pre></div>
 - First argument: prompt string shown to user
 - Second argument: <strong>field name as a string literal</strong> (in quotes)
 - If the input can be parsed as a number, it is stored as a number
 - Otherwise stored as a string</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>The field name must be passed as a string literal in quotes: <code>"fieldName"</code>.
-Writing <code>emit input("prompt", fieldName)</code> will not work — <code>fieldName</code> would
-be evaluated as a variable, not as a field name.</p>
-</div>
-<p><strong>Example — interactive calculator:</strong>
-<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="k">entity</span> <span class="nc">Calc</span> <span class="p">{</span>
-</span><span id="__span-15-2"><a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a>  <span class="k">has</span> <span class="nv">a</span><span class="p">:</span> <span class="m">0</span>
-</span><span id="__span-15-3"><a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a>  <span class="k">has</span> <span class="nv">b</span><span class="p">:</span> <span class="m">0</span>
-</span><span id="__span-15-4"><a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a>  <span class="k">has</span> <span class="nv">op</span><span class="p">:</span> <span class="s2">&quot;&quot;</span>
-</span><span id="__span-15-5"><a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a>  <span class="k">event</span> <span class="nf">init</span> <span class="p">{</span>
-</span><span id="__span-15-6"><a id="__codelineno-15-6" name="__codelineno-15-6" href="#__codelineno-15-6"></a>    <span class="k">emit</span> <span class="n">input</span><span class="p">(</span><span class="s2">&quot;First number: &quot;</span><span class="p">,</span> <span class="s2">&quot;a&quot;</span><span class="p">)</span>
-</span><span id="__span-15-7"><a id="__codelineno-15-7" name="__codelineno-15-7" href="#__codelineno-15-7"></a>    <span class="k">emit</span> <span class="n">input</span><span class="p">(</span><span class="s2">&quot;Operator (+,-,*,/): &quot;</span><span class="p">,</span> <span class="s2">&quot;op&quot;</span><span class="p">)</span>
-</span><span id="__span-15-8"><a id="__codelineno-15-8" name="__codelineno-15-8" href="#__codelineno-15-8"></a>    <span class="k">emit</span> <span class="n">input</span><span class="p">(</span><span class="s2">&quot;Second number: &quot;</span><span class="p">,</span> <span class="s2">&quot;b&quot;</span><span class="p">)</span>
-</span><span id="__span-15-9"><a id="__codelineno-15-9" name="__codelineno-15-9" href="#__codelineno-15-9"></a>    <span class="k">emit</span> <span class="n">calculate</span>
-</span><span id="__span-15-10"><a id="__codelineno-15-10" name="__codelineno-15-10" href="#__codelineno-15-10"></a>  <span class="p">}</span>
-</span><span id="__span-15-11"><a id="__codelineno-15-11" name="__codelineno-15-11" href="#__codelineno-15-11"></a>  <span class="k">event</span> <span class="nf">calculate</span> <span class="p">{</span>
-</span><span id="__span-15-12"><a id="__codelineno-15-12" name="__codelineno-15-12" href="#__codelineno-15-12"></a>    <span class="k">check</span> <span class="n">op</span> <span class="o o-Comparison">==</span> <span class="s2">&quot;+&quot;</span><span class="p">:</span> <span class="k">emit</span> <span class="nb">log</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="s2">&quot;+&quot;</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="s2">&quot;=&quot;</span><span class="p">,</span> <span class="n">a</span> <span class="o o-Arithmetic">+</span> <span class="n">b</span><span class="p">)</span>
-</span><span id="__span-15-13"><a id="__codelineno-15-13" name="__codelineno-15-13" href="#__codelineno-15-13"></a>    <span class="k">check</span> <span class="n">op</span> <span class="o o-Comparison">==</span> <span class="s2">&quot;-&quot;</span><span class="p">:</span> <span class="k">emit</span> <span class="nb">log</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="s2">&quot;=&quot;</span><span class="p">,</span> <span class="n">a</span> <span class="o o-Arithmetic">-</span> <span class="n">b</span><span class="p">)</span>
-</span><span id="__span-15-14"><a id="__codelineno-15-14" name="__codelineno-15-14" href="#__codelineno-15-14"></a>    <span class="k">check</span> <span class="n">op</span> <span class="o o-Comparison">==</span> <span class="s2">&quot;*&quot;</span><span class="p">:</span> <span class="k">emit</span> <span class="nb">log</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="s2">&quot;*&quot;</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="s2">&quot;=&quot;</span><span class="p">,</span> <span class="n">a</span> <span class="o o-Arithmetic">*</span> <span class="n">b</span><span class="p">)</span>
-</span><span id="__span-15-15"><a id="__codelineno-15-15" name="__codelineno-15-15" href="#__codelineno-15-15"></a>    <span class="k">check</span> <span class="n">op</span> <span class="o o-Comparison">==</span> <span class="s2">&quot;/&quot;</span><span class="p">:</span> <span class="p">{</span>
-</span><span id="__span-15-16"><a id="__codelineno-15-16" name="__codelineno-15-16" href="#__codelineno-15-16"></a>      <span class="k">check</span> <span class="n">b</span> <span class="o o-Comparison">==</span> <span class="m">0</span><span class="p">:</span> <span class="k">emit</span> <span class="nb">log</span><span class="p">(</span><span class="s2">&quot;error: division by zero&quot;</span><span class="p">)</span>
-</span><span id="__span-15-17"><a id="__codelineno-15-17" name="__codelineno-15-17" href="#__codelineno-15-17"></a>      <span class="k">check</span> <span class="n">b</span> <span class="o o-Comparison">!=</span> <span class="m">0</span><span class="p">:</span> <span class="k">emit</span> <span class="nb">log</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="s2">&quot;/&quot;</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="s2">&quot;=&quot;</span><span class="p">,</span> <span class="n">a</span> <span class="o o-Arithmetic">/</span> <span class="n">b</span><span class="p">)</span>
-</span><span id="__span-15-18"><a id="__codelineno-15-18" name="__codelineno-15-18" href="#__codelineno-15-18"></a>    <span class="p">}</span>
-</span><span id="__span-15-19"><a id="__codelineno-15-19" name="__codelineno-15-19" href="#__codelineno-15-19"></a>  <span class="p">}</span>
-</span><span id="__span-15-20"><a id="__codelineno-15-20" name="__codelineno-15-20" href="#__codelineno-15-20"></a><span class="p">}</span>
-</span></code></pre></div></p>
 <h3 id="unity">unity</h3>
 <p>Calls a registered Unity callback:
-<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="k">emit</span> <span class="nb">unity</span><span class="p">(</span><span class="s2">&quot;PlaySound&quot;</span><span class="p">,</span> <span class="s2">&quot;explosion&quot;</span><span class="p">)</span>
-</span><span id="__span-16-2"><a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a><span class="k">emit</span> <span class="nb">unity</span><span class="p">(</span><span class="s2">&quot;SpawnEnemy&quot;</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+<div class="language-morphyn highlight"><pre><span></span><code><span id="__span-17-1"><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="k">emit</span> <span class="nb">unity</span><span class="p">(</span><span class="s2">&quot;PlaySound&quot;</span><span class="p">,</span> <span class="s2">&quot;explosion&quot;</span><span class="p">)</span>
+</span><span id="__span-17-2"><a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a><span class="k">emit</span> <span class="nb">unity</span><span class="p">(</span><span class="s2">&quot;SpawnEnemy&quot;</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
 </span></code></pre></div></p>
 
 
