@@ -4,7 +4,7 @@ using Morphyn.Parser;
 
 namespace Morphyn.Runtime
 {
-    internal static class Subscriptions
+    public static class Subscriptions
     {
         // Key: (targetEntityName, targetEventName)
         // Value: list of (subscriber, handlerEvent, handlerArgs)
