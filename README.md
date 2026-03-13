@@ -5,7 +5,7 @@
     
 ### [Morphyn](https://jvnkoo.github.io/morphyn) is a scripting language providing a clean, event-driven syntax to manage configs and logic. It's designed to be lightweight and opinionated, focusing entirely on entity states and reactive events without the overhead of a general-purpose language.
 
-[📥 Download](https://github.com/jvnkoo/morphyn/releases/latest) · [📖 Docs](https://jvnkoo.github.io/morphyn) · [💡 Examples](https://jvnkoo.github.io/morphyn/examples/basic/) · [🐛 Issues](https://github.com/jvnkoo/morphyn/issues)
+[📥 Download](https://github.com/jvnkoo/morphyn/releases/latest) · [📖 Docs](https://jvnkoo.github.io/morphyn) · [💡 Learn](https://jvnkoo.github.io/morphyn/learn/learn/) · [🐛 Issues](https://github.com/jvnkoo/morphyn/issues)
 
 ![GitHub stars](https://img.shields.io/github/stars/jvnkoo/morphyn?style=social)
 ![License](https://img.shields.io/badge/license-Apache%202.0-blue)
