@@ -125,7 +125,12 @@ namespace Morphyn.Runtime
                         if (frame.ReturnField != null)
                         {
                             if (frame.ParentEntity != null)
-                                frame.ParentEntity.Fields[frame.ReturnField] = MorphynValue.FromObject(lastAssigned);
+                            {
+                                var newMv = MorphynValue.FromObject(lastAssigned);
+                                frame.ParentEntity.Fields.TryGetValue(frame.ReturnField, out var oldMv);
+                                frame.ParentEntity.Fields[frame.ReturnField] = newMv;
+                                Subscriptions.NotifyFieldChanged(frame.ParentEntity, frame.ReturnField, oldMv, newMv);
+                            }
                             else if (frame.ParentScope != null)
                                 frame.ParentScope[frame.ReturnField] = MorphynValue.FromObject(lastAssigned);
                         }
@@ -170,21 +175,23 @@ namespace Morphyn.Runtime
             {
                 case ActionKind.Set:
                 {
-                    var set = Unsafe.As<SetAction>(item.Action);
-                    if (entity.Fields.ContainsKey(set.TargetField))
-                    {
-                        var mv = EvaluateToValue(entity, set.Expression, scope, data);
-                        entity.Fields[set.TargetField] = mv;
-                        lastAssigned = mv.ToObject();
+                        var set = Unsafe.As<SetAction>(item.Action);
+                        if (entity.Fields.ContainsKey(set.TargetField))
+                        {
+                            var mv = EvaluateToValue(entity, set.Expression, scope, data);
+                            entity.Fields.TryGetValue(set.TargetField, out var oldMv);
+                            entity.Fields[set.TargetField] = mv;
+                            Subscriptions.NotifyFieldChanged(entity, set.TargetField, oldMv, mv);
+                            lastAssigned = mv.ToObject();
+                        }
+                        else
+                        {
+                            var mv = EvaluateToValue(entity, set.Expression, scope, data);
+                            scope[set.TargetField] = mv;
+                            lastAssigned = mv.ToObject();
+                        }
+                        return true;
                     }
-                    else
-                    {
-                        var mv = EvaluateToValue(entity, set.Expression, scope, data);
-                        scope[set.TargetField] = mv;
-                        lastAssigned = mv.ToObject();
-                    }
-                    return true;
-                }
 
                 case ActionKind.Check:
                 {
