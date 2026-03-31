@@ -1,14 +1,74 @@
 # Unity API Reference
 
-## MorphynController
+## MorphynEntity
 
-The main component that loads and runs `.morph` files.
+Attach to any GameObject to give it its own `.morph` script. The entity is registered into the shared runtime context automatically when the scene starts. Fields and events are visible and editable in the Inspector.
 
 ### Settings
 
 | Setting | Description |
 |---------|-------------|
-| **Morphyn Scripts** | Drag `.morph` files here |
+| **Script** | `.morph` file to load (TextAsset) |
+| **Custom Entity Name** | Override the entity name (defaults to file name) |
+| **Auto Save On Destroy** | Write entity state to disk when the GameObject is destroyed |
+
+### Inspector
+
+In Edit mode, the Inspector shows all `has` fields with their current values. Editing a field directly patches the `.morph` file on disk. In Play mode, fields reflect live runtime values and can be edited in real time. All events are listed with an **Emit** button to fire them manually — useful for testing without writing C#.
+
+### API Methods
+
+```cs
+MorphynEntity entity = GetComponent<MorphynEntity>();
+
+// Get field — generic with default
+float hp   = entity.Get<float>("hp", 100f);
+bool alive = entity.Get<bool>("alive", true);
+
+// Get raw MorphynValue
+MorphynValue raw = entity.GetField("hp");
+
+// Set field — typed overloads
+entity.SetField("hp", 50f);
+entity.SetField("alive", true);
+entity.SetField("name", "Hero");
+entity.SetField("hp", MorphynValue.FromDouble(50.0)); // explicit MorphynValue
+
+// Trigger event
+entity.Emit("damage", 25);
+entity.Emit("die");
+
+// Watch field for changes — typed
+entity.Watch<float>("hp", (old, now) => {
+    hpBar.fillAmount = now / maxHp;
+});
+
+// Watch field for changes — raw MorphynValue
+entity.Watch("hp", (oldVal, newVal) => {
+    Debug.Log($"hp changed: {oldVal.NumVal} -> {newVal.NumVal}");
+});
+
+// Listen to another entity's events
+entity.ListenTo("Boss", "phase_change", args => {
+    int phase = System.Convert.ToInt32(args[0].ToObject());
+    UpdateBossUI(phase);
+});
+
+// Entity name (resolved after registration)
+string name = entity.EntityName;
+```
+
+---
+
+## MorphynController
+
+The main runtime component. ONE instance per scene manages the shared context. Required even when using `MorphynEntity` — it hosts the tick loop, hot reload, and save/load.
+
+### Settings
+
+| Setting | Description |
+|---------|-------------|
+| **Morphyn Scripts** | `.morph` files to load globally |
 | **Run On Start** | Auto-load on `Start()` |
 | **Enable Tick** | Send `tick(dt)` every frame |
 | **Enable Hot Reload** | Edit files during Play mode |
@@ -30,7 +90,7 @@ string nickname = morphyn.GetString("Player", "nickname");
 float hp   = morphyn.Get<float>("Player", "hp");
 bool alive = morphyn.Get<bool>("Player", "alive");
 
-// Get field — dynamic (returns whatever is stored: double, bool, string, MorphynPool or null)
+// Get field — dynamic (returns double, bool, string, MorphynPool or null)
 object val = morphyn.Get("Player", "hp");
 
 // Get raw MorphynValue
@@ -78,6 +138,7 @@ morphyn.Unwatch("Player", "hp", myCallback);
 // Save / Load
 morphyn.SaveState();
 morphyn.LoadState("Player");
+morphyn.LoadAllStates();
 ```
 
 ---
@@ -150,9 +211,7 @@ morphyn.Subscribe("Logger", "Enemy", "death", "onEnemyDeath");
 
 ## Field Watchers
 
-Subscribe a C# callback to changes of a specific field on a Morphyn entity.
-The callback fires immediately after the field is written, before the next tick.
-It only fires when the value actually changes — assigning the same value is a no-op.
+Subscribe a C# callback to changes of a specific field on a Morphyn entity. The callback fires immediately after the field is written, before the next tick. It only fires when the value actually changes — assigning the same value is a no-op.
 
 ### Watch
 
@@ -162,6 +221,9 @@ morphyn.Watch(entityName, fieldName, (oldVal, newVal) => { });
 
 // Typed — auto-converts to T (supports float, double, int, bool, string)
 morphyn.Watch<T>(entityName, fieldName, (old, now) => { });
+
+// MorphynEntity shorthand — no entity name needed
+entity.Watch<T>(fieldName, (old, now) => { });
 ```
 
 **Example:**
@@ -369,6 +431,16 @@ MorphynController.Instance.LoadState("Player");
 // Auto-save on quit — set in Inspector
 ```
 
+Per-file save policy is set on each entry in the `MorphynController` Morphyn Scripts array:
+
+| Mode | Behavior |
+|------|----------|
+| `None` | Never save or load |
+| `Auto` | Load on startup, save on quit |
+| `ManualOnly` | Only when you call `SaveState()` / `LoadState()` from code |
+
+`MorphynEntity` has its own **Auto Save On Destroy** toggle. When enabled, the entity's fields are written to disk when the GameObject is destroyed.
+
 **Saved file example:**
 
 ```morphyn
@@ -383,13 +455,23 @@ entity Player {
 
 ## Best Practices
 
-### 1. One MorphynController per scene
+### 1. Prefer MorphynEntity over dumping everything into MorphynController
+
+```
+PlayerObject  → MorphynEntity → player.morph
+EnemyPrefab   → MorphynEntity → enemy.morph
+ShopManager   → MorphynEntity → shop.morph
+```
+
+One `MorphynController` still needs to exist in the scene for the runtime, but it doesn't need to hold every script.
+
+### 2. One MorphynController per scene
 
 ```cs
 MorphynController.Instance // singleton — only one instance exists
 ```
 
-### 2. Register callbacks early
+### 3. Register Unity callbacks early
 
 ```cs
 [DefaultExecutionOrder(-100)]
@@ -402,7 +484,7 @@ public class Setup : MonoBehaviour
 }
 ```
 
-### 3. Always unsubscribe in OnDestroy
+### 4. Always unsubscribe in OnDestroy
 
 ```cs
 void OnDestroy()
@@ -412,7 +494,7 @@ void OnDestroy()
 }
 ```
 
-### 4. Use for configs and logic, not complex gameplay systems
+### 5. Use for configs and logic, not heavy simulation
 
 ```cs
 // GOOD
@@ -437,6 +519,12 @@ if (MorphynController.Instance == null)
 
 - Register callbacks in `Awake()`, not `Start()`
 - Register **before** MorphynController loads scripts
+
+### Inspector shows "Failed to parse"
+
+- Check that the entity name in the `.morph` file matches the file name (or set **Custom Entity Name**)
+- Check the Console for parser errors
+- Make sure the `.morph` file has valid syntax
 
 ### Hot reload not working
 

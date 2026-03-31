@@ -5,15 +5,37 @@ using UnityEngine;
 using Morphyn.Unity;
 using Morphyn.Parser;
 
-// ── SETUP ─────────────────────────────────────────────────────────────────────
-// 1. Add MorphynController component to a GameObject in your scene
+
+// ── SETUP: TWO APPROACHES ─────────────────────────────────────────────────────
+
+// APPROACH A: MorphynEntity per GameObject (recommended for per-object logic)
+// 1. Add MorphynEntity component to a GameObject
+// 2. Drag a .morph file into the Script slot
+// 3. Press Play — entity is registered automatically
+
+MorphynEntity entity = GetComponent<MorphynEntity>();
+
+
+// APPROACH B: MorphynController (global, shared scripts)
+// 1. Add MorphynController component to a scene GameObject
 // 2. Drag .morph files into the Morphyn Scripts array
 // 3. Press Play
 
 MorphynController morphyn = MorphynController.Instance;
 
 
-// ── READ FIELDS ───────────────────────────────────────────────────────────────
+// ── READ FIELDS (via MorphynEntity) ──────────────────────────────────────────
+
+float hp        = entity.Get<float>("hp", 100f);
+bool alive      = entity.Get<bool>("alive", true);
+string nickname = entity.Get<string>("nickname", "unknown");
+
+// Raw MorphynValue
+MorphynValue raw = entity.GetField("hp");
+if (!raw.IsNull) float hp = System.Convert.ToSingle(raw.ToObject());
+
+
+// ── READ FIELDS (via MorphynController) ──────────────────────────────────────
 
 // Typed helpers — cleanest option when you know the type
 float hp        = morphyn.GetFloat("Player", "hp");
@@ -40,7 +62,12 @@ Dictionary<string, MorphynValue> fields = morphyn.GetAllFields("Player");
 
 // ── WRITE FIELDS ──────────────────────────────────────────────────────────────
 
-// Overloads accept primitives directly — no wrapping needed
+// Via MorphynEntity
+entity.SetField("hp", 50f);
+entity.SetField("alive", true);
+entity.SetField("name", "Hero");
+
+// Via MorphynController — overloads accept primitives directly
 morphyn.SetField("Player", "hp",    50.0);
 morphyn.SetField("Player", "alive", true);
 morphyn.SetField("Player", "name",  "Hero");
@@ -52,6 +79,11 @@ morphyn.SetField("Player", "hp", MorphynValue.FromDouble(50.0));
 
 // ── TRIGGER EVENTS ────────────────────────────────────────────────────────────
 
+// Via MorphynEntity
+entity.Emit("damage", 25);
+entity.Emit("heal", 20);
+
+// Via MorphynController
 morphyn.Emit("Player", "damage", 25);           // fire and forget
 morphyn.Emit("Player", "heal", 20);
 morphyn.Emit("Enemy", "take_damage", 10, true); // multiple args
@@ -72,7 +104,7 @@ MorphynValue result = morphyn.EmitSync("MathLib", "clamp",
 float clamped = System.Convert.ToSingle(result.ToObject()); // 100
 
 
-// ── C# LISTENERS ─────────────────────────────────────────────────────────────
+// ── C# LISTENERS ──────────────────────────────────────────────────────────────
 // Subscribe a C# method to a Morphyn entity event.
 // Handler receives event args as object?[].
 
@@ -112,12 +144,17 @@ public class MyComponent : MonoBehaviour
 // Fires only when the value actually changes — same-value assignment is a no-op.
 // Callback receives (oldValue, newValue).
 
-// Raw MorphynValue
+// Via MorphynEntity — typed
+entity.Watch<float>("hp", (old, now) => {
+    hpBar.fillAmount = now / maxHp;
+});
+
+// Via MorphynController — raw MorphynValue
 morphyn.Watch("Player", "hp", (oldVal, newVal) => {
     Debug.Log($"hp: {oldVal.NumVal} -> {newVal.NumVal}");
 });
 
-// Typed — auto-converts to T (supports float, double, int, bool, string)
+// Via MorphynController — typed, auto-converts to T (supports float, double, int, bool, string)
 morphyn.Watch<float>("Player", "hp", (old, now) => {
     hpBar.fillAmount = now / maxHp;
 });
@@ -165,7 +202,7 @@ morphyn.Unsubscribe("Logger", "Player", "death", "onPlayerDeath");
 // Subscribe        — Morphyn entity reacts to another Morphyn entity's event
 
 
-// ── UNITY BRIDGE: call Unity from .morph ─────────────────────────────────────
+// ── UNITY BRIDGE: call Unity from .morph ──────────────────────────────────────
 // In .morph:
 //   emit unity("PlaySound", "explosion")
 //   emit unity("SpawnVFX", x, y, z)
@@ -207,6 +244,9 @@ morphyn.LoadAllStates();        // loads all
 //   Auto       — load on startup, save on quit
 //   ManualOnly — only when you call SaveState() / LoadState() from code
 
+// MorphynEntity has its own autoSaveOnDestroy toggle (set in Inspector).
+// When enabled, entity state is written to disk when the GameObject is destroyed.
+
 // Saved files are plain .morph — human-readable, version-controllable:
 // entity Player {
 //   has hp: 75
@@ -220,7 +260,7 @@ morphyn.LoadAllStates();        // loads all
 // Entity field values are preserved across reloads
 
 
-// ── FULL EXAMPLE ──────────────────────────────────────────────────────────────
+// ── FULL EXAMPLE: ENTITY-PER-OBJECT ──────────────────────────────────────────
 
 // enemy.morph
 /*
@@ -240,33 +280,36 @@ entity Enemy {
 }
 */
 
+// Attach MorphynEntity to EnemyPrefab and drag enemy.morph into the Script slot.
 public class EnemyController : MonoBehaviour
 {
+    MorphynEntity _entity;
+
     void Start()
     {
+        _entity = GetComponent<MorphynEntity>();
+
         // React to event
+        _entity.Watch<float>("hp", (old, now) => {
+            hpBar.fillAmount = now / 50f;
+        });
+
         MorphynController.Instance.When("Enemy", "die", args => {
             int reward = System.Convert.ToInt32(args[0]);
             ScoreManager.Add(reward);
             Destroy(gameObject);
-        });
-
-        // React to field change
-        MorphynController.Instance.Watch<float>("Enemy", "hp", (old, now) => {
-            hpBar.fillAmount = now / 50f;
         });
     }
 
     void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Bullet"))
-            MorphynController.Instance.Emit("Enemy", "take_damage", 25);
+            _entity.Emit("take_damage", 25);
     }
 
     void OnDestroy()
     {
         MorphynController.Instance.Unwhen("Enemy", "die", myHandler);
-        MorphynController.Instance.Unwatch("Enemy", "hp", myWatcher);
     }
 }
 ```

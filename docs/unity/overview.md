@@ -2,6 +2,25 @@
 
 Morphyn runs alongside your Unity project as a scripting layer for game logic and config. `.morph` files are loaded at runtime, hot-reloaded on save, and accessed from C# through a simple API.
 
+There are two ways to structure your project:
+
+- **MorphynController** — one global component that loads all `.morph` files. Good for shared config, singletons, and global systems.
+- **MorphynEntity** — one component per GameObject, each with its own `.morph` file. Good for per-object logic, prefabs, and modular design.
+
+---
+
+## Entity-First Workflow (Recommended)
+
+Instead of dumping all scripts into one `MorphynController`, attach a `MorphynEntity` component to each relevant GameObject and point it at its own `.morph` file.
+
+```
+PlayerObject    → MorphynEntity → player.morph
+EnemyPrefab     → MorphynEntity → enemy.morph
+ShopManager     → MorphynEntity → shop.morph
+```
+
+Each entity is isolated, self-contained, and automatically registered into the shared runtime context when the scene starts.
+
 ---
 
 ## Hot Reload
@@ -18,6 +37,28 @@ entity Enemy {
 ---
 
 ## Key Features
+
+**Entity-per-object architecture** — each GameObject manages its own `.morph` script:
+
+```cs
+// Attach MorphynEntity to a prefab, no global controller needed
+public class EnemyController : MonoBehaviour
+{
+    MorphynEntity _entity;
+
+    void Start()
+    {
+        _entity = GetComponent<MorphynEntity>();
+        _entity.Watch<float>("hp", (old, now) => hpBar.fillAmount = now / 50f);
+    }
+
+    void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Bullet"))
+            _entity.Emit("take_damage", 25);
+    }
+}
+```
 
 **Hot reload** — edit logic and values without restarting:
 
@@ -71,6 +112,8 @@ entity UI {
   }
 }
 ```
+
+**Inspector integration** — field values and events are visible and editable in the Unity Inspector when using `MorphynEntity`. Fields reflect live values during Play mode. Events can be fired from the Inspector with a single click.
 
 ---
 
