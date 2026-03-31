@@ -63,7 +63,15 @@ public class MorphynController : MonoBehaviour
     private MorphynValue[] _internalArgsBuffer = new MorphynValue[8];
     private MorphynValue[] _syncArgsBuffer = new MorphynValue[4];
 
+    // Watch wrapper registry: maps user-provided typed callbacks to the raw MorphynValue wrappers
+    // so that Unwatch can find and remove the exact delegate stored in Subscriptions.
+    // Key: (entityName, fieldName, original callback object as object)
+    private readonly Dictionary<(string, string, object), Action<MorphynValue, MorphynValue>>
+        _watchWrappers = new();
+
     private const string StdlibResourcesPath = "MorphynStdLib";
+
+    public static event System.Action OnContextReady;
 
     public EntityData Context => _context;
 
@@ -76,13 +84,9 @@ public class MorphynController : MonoBehaviour
             return;
         }
         _instance = this;
-
-        // Cache persistent path to avoid allocations during runtime
         _cachedSavePath = Path.Combine(Application.persistentDataPath, saveFolder);
-    }
 
-    void Start()
-    {
+        // Move initialization here so context is ready before any Start()
         MorphynParser.OnError = msg => Debug.LogError(msg);
 
         MorphynRuntime.UnityCallback = (name, args) =>
@@ -98,6 +102,7 @@ public class MorphynController : MonoBehaviour
             if (enableHotReload) SetupHotReload();
         }
     }
+
 
     public void LoadAndRun()
     {
@@ -153,6 +158,7 @@ public class MorphynController : MonoBehaviour
             }
 
             _lastTime = Time.time;
+            OnContextReady?.Invoke();
         }
         catch (Exception ex)
         {
@@ -300,13 +306,15 @@ public class MorphynController : MonoBehaviour
         return string.Join("\n", finalContent);
     }
 
-    private static string? TryLoadStdlib(string importName)
+    // internal so MorphynEntity can reuse the same stdlib lookup logic
+    internal static string? TryLoadStdlib(string importName)
     {
         string name = Path.GetFileNameWithoutExtension(importName);
 
 #if UNITY_EDITOR
-        // In Editor: find the file anywhere in the project by name
-        var guids = UnityEditor.AssetDatabase.FindAssets($"{name} t:TextAsset");
+        // Search without t:TextAsset filter — ScriptedImporter assets (.morph) are not
+        // recognized as TextAsset by AssetDatabase and will be silently missed otherwise.
+        var guids = UnityEditor.AssetDatabase.FindAssets(name);
         foreach (var guid in guids)
         {
             string assetPath = UnityEditor.AssetDatabase.GUIDToAssetPath(guid);
@@ -424,6 +432,23 @@ public class MorphynController : MonoBehaviour
                 {
                     existingEntity.Events = newEntity.Events;
                     existingEntity.BuildCache();
+
+                    // Sync fields from the reloaded file and fire Watch callbacks for changed values.
+                    // Without this, changing a field value in the .morph file during Play Mode
+                    // would never trigger Watch — the in-memory value would stay stale.
+                    foreach (var fieldEntry in newEntity.Fields)
+                    {
+                        string fieldName = fieldEntry.Key;
+                        MorphynValue newValue = fieldEntry.Value;
+
+                        existingEntity.Fields.TryGetValue(fieldName, out MorphynValue oldValue);
+
+                        // Write the new value into the live entity
+                        existingEntity.Fields[fieldName] = newValue;
+
+                        // Notify watchers only if the value actually changed
+                        Subscriptions.NotifyFieldChanged(existingEntity, fieldName, oldValue, newValue);
+                    }
                 }
                 else
                 {
@@ -465,9 +490,9 @@ public class MorphynController : MonoBehaviour
             entity.Fields[fieldName] = value;
     }
 
-    public void SetField(string entityName, string fieldName, bool value)   => SetField(entityName, fieldName, MorphynValue.FromBool(value));
+    public void SetField(string entityName, string fieldName, bool value) => SetField(entityName, fieldName, MorphynValue.FromBool(value));
     public void SetField(string entityName, string fieldName, double value) => SetField(entityName, fieldName, MorphynValue.FromDouble(value));
-    public void SetField(string entityName, string fieldName, float value)  => SetField(entityName, fieldName, MorphynValue.FromDouble(value));
+    public void SetField(string entityName, string fieldName, float value) => SetField(entityName, fieldName, MorphynValue.FromDouble(value));
     public void SetField(string entityName, string fieldName, string value) => SetField(entityName, fieldName, MorphynValue.FromObject(value));
 
     public Dictionary<string, MorphynValue> GetAllFields(string entityName)
@@ -526,10 +551,10 @@ public class MorphynController : MonoBehaviour
         if (raw == null) return defaultValue;
         try
         {
-            if (typeof(T) == typeof(bool))   return (T)(object)System.Convert.ToBoolean(raw);
-            if (typeof(T) == typeof(float))  return (T)(object)System.Convert.ToSingle(raw);
+            if (typeof(T) == typeof(bool)) return (T)(object)System.Convert.ToBoolean(raw);
+            if (typeof(T) == typeof(float)) return (T)(object)System.Convert.ToSingle(raw);
             if (typeof(T) == typeof(double)) return (T)(object)System.Convert.ToDouble(raw);
-            if (typeof(T) == typeof(int))    return (T)(object)System.Convert.ToInt32(raw);
+            if (typeof(T) == typeof(int)) return (T)(object)System.Convert.ToInt32(raw);
             if (typeof(T) == typeof(string)) return (T)(object)(raw.ToString() ?? "");
             return (T)raw;
         }
@@ -562,10 +587,10 @@ public class MorphynController : MonoBehaviour
         return MorphynValue.Null;
     }
 
-    public MorphynValue EmitSync(string entityName, string eventName, bool arg)    => EmitSync(entityName, eventName, MorphynValue.FromBool(arg));
-    public MorphynValue EmitSync(string entityName, string eventName, double arg)  => EmitSync(entityName, eventName, MorphynValue.FromDouble(arg));
-    public MorphynValue EmitSync(string entityName, string eventName, float arg)   => EmitSync(entityName, eventName, MorphynValue.FromDouble(arg));
-    public MorphynValue EmitSync(string entityName, string eventName, string arg)  => EmitSync(entityName, eventName, MorphynValue.FromObject(arg));
+    public MorphynValue EmitSync(string entityName, string eventName, bool arg) => EmitSync(entityName, eventName, MorphynValue.FromBool(arg));
+    public MorphynValue EmitSync(string entityName, string eventName, double arg) => EmitSync(entityName, eventName, MorphynValue.FromDouble(arg));
+    public MorphynValue EmitSync(string entityName, string eventName, float arg) => EmitSync(entityName, eventName, MorphynValue.FromDouble(arg));
+    public MorphynValue EmitSync(string entityName, string eventName, string arg) => EmitSync(entityName, eventName, MorphynValue.FromObject(arg));
 
     /// <summary>
     /// Subscribe a Morphyn entity to another entity's event.
@@ -634,16 +659,20 @@ public class MorphynController : MonoBehaviour
 
     public void Unwhen(string entityName, string eventName, Action<MorphynValue[]> handler)
     {
-        // Note: wrapping creates a new delegate instance, so Off cannot match by reference.
-        // To support Off correctly, callers should manage the wrapper themselves,
-        // or use UnityBridge.Instance directly with Action<object?[]>.
-        Debug.LogWarning("[Morphyn] Off() cannot remove a wrapped handler by reference. Use UnityBridge.Instance.RemoveListener directly with Action<object?[]> if removal is required.");
+        UnityBridge.Instance.RemoveListener(entityName, eventName, args =>
+        {
+            var morphArgs = new MorphynValue[args.Length];
+            for (int i = 0; i < args.Length; i++)
+                morphArgs[i] = MorphynValue.FromObject(args[i]);
+            handler(morphArgs);
+        });
     }
 
     /// <summary>
     /// Subscribe to changes of a specific field on a Morphyn entity.
     /// Callback receives (oldValue, newValue) as MorphynValue.
     /// Called immediately after the field is written (before next tick).
+    /// Store the callback delegate in a field to be able to Unwatch later.
     /// </summary>
     /// <param name="entityName">Name of the entity owning the field</param>
     /// <param name="fieldName">Name of the field to watch</param>
@@ -651,12 +680,14 @@ public class MorphynController : MonoBehaviour
     public void Watch(string entityName, string fieldName,
         Action<MorphynValue, MorphynValue> callback)
     {
+        // Register directly — no wrapper needed for the raw MorphynValue overload
         Subscriptions.AddUnityFieldCallback(entityName, fieldName, callback);
     }
 
     /// <summary>
     /// Subscribe to changes of a specific field, with auto-conversion to type T.
     /// Supports: bool, float, double, int, string.
+    /// IMPORTANT: Store the same delegate instance passed here to be able to Unwatch later.
     /// </summary>
     /// <param name="entityName">Name of the entity owning the field</param>
     /// <param name="fieldName">Name of the field to watch</param>
@@ -664,26 +695,44 @@ public class MorphynController : MonoBehaviour
     public void Watch<T>(string entityName, string fieldName,
         Action<T, T> callback)
     {
-        Subscriptions.AddUnityFieldCallback(entityName, fieldName, (oldVal, newVal) =>
+        // Build the raw wrapper once and cache it so Unwatch<T> can retrieve and remove it
+        Action<MorphynValue, MorphynValue> wrapper = (oldVal, newVal) =>
         {
             T Convert(MorphynValue v)
             {
                 object? raw = v.ToObject();
                 if (raw == null) return default!;
-                if (typeof(T) == typeof(float))  return (T)(object)System.Convert.ToSingle(raw);
+                if (typeof(T) == typeof(float)) return (T)(object)System.Convert.ToSingle(raw);
                 if (typeof(T) == typeof(double)) return (T)(object)System.Convert.ToDouble(raw);
-                if (typeof(T) == typeof(int))    return (T)(object)System.Convert.ToInt32(raw);
-                if (typeof(T) == typeof(bool))   return (T)(object)System.Convert.ToBoolean(raw);
+                if (typeof(T) == typeof(int)) return (T)(object)System.Convert.ToInt32(raw);
+                if (typeof(T) == typeof(bool)) return (T)(object)System.Convert.ToBoolean(raw);
                 if (typeof(T) == typeof(string)) return (T)(object)(raw.ToString() ?? "");
                 return (T)raw;
             }
             callback(Convert(oldVal), Convert(newVal));
-        });
+        };
+
+        // Use the user callback object as part of the key so each unique delegate gets its own wrapper
+        var key = (entityName, fieldName, (object)callback);
+        _watchWrappers[key] = wrapper;
+
+        Subscriptions.AddUnityFieldCallback(entityName, fieldName, wrapper);
     }
 
     /// <summary>
-    /// Unsubscribe a previously registered field-change callback.
-    /// Pass the same delegate instance used in OnFieldChanged.
+    /// Subscribe to changes of multiple fields on a single entity, all routing to the same callback.
+    /// Each field gets its own wrapper; all are removable via Unwatch(entityName, fieldNames, callback).
+    /// </summary>
+    public void Watch<T>(string entityName, string[] fieldNames,
+        Action<T, T> callback)
+    {
+        for (int i = 0; i < fieldNames.Length; i++)
+            Watch(entityName, fieldNames[i], callback);
+    }
+
+    /// <summary>
+    /// Unsubscribe a previously registered raw field-change callback.
+    /// Pass the exact same delegate instance used in Watch.
     /// </summary>
     /// <param name="entityName">Name of the entity owning the field</param>
     /// <param name="fieldName">Name of the field being watched</param>
@@ -692,6 +741,39 @@ public class MorphynController : MonoBehaviour
         Action<MorphynValue, MorphynValue> callback)
     {
         Subscriptions.RemoveUnityFieldCallback(entityName, fieldName, callback);
+    }
+
+    /// <summary>
+    /// Unsubscribe a previously registered typed field-change callback.
+    /// Pass the exact same delegate instance used in Watch&lt;T&gt;.
+    /// Removes all entries for this callback across the given field.
+    /// </summary>
+    public void Unwatch<T>(string entityName, string fieldName,
+        Action<T, T> callback)
+    {
+        var key = (entityName, fieldName, (object)callback);
+        if (_watchWrappers.TryGetValue(key, out var wrapper))
+        {
+            Subscriptions.RemoveUnityFieldCallback(entityName, fieldName, wrapper);
+            _watchWrappers.Remove(key);
+        }
+    }
+
+    /// <summary>
+    /// Unsubscribe a typed callback from multiple fields at once.
+    /// </summary>
+    public void Unwatch<T>(string entityName, string[] fieldNames,
+        Action<T, T> callback)
+    {
+        for (int i = 0; i < fieldNames.Length; i++)
+            Unwatch(entityName, fieldNames[i], callback);
+    }
+
+    public void Unwatch(string entityName, string[] fieldNames,
+        Action<MorphynValue, MorphynValue> callback)
+    {
+        for (int i = 0; i < fieldNames.Length; i++)
+            Unwatch(entityName, fieldNames[i], callback);
     }
 
     public void SaveState()
@@ -752,6 +834,8 @@ public class MorphynController : MonoBehaviour
             _watchers[i].Dispose();
         }
         _watchers.Clear();
+
+        _watchWrappers.Clear();
 
         MorphynRuntime.UnityCallback = null;
         UnityBridge.Instance.ClearCallbacks();
