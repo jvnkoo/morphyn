@@ -1056,6 +1056,45 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#setup-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Setup Options
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Setup Options">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#option-a-morphynentity-per-gameobject-recommended" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Option A: MorphynEntity per GameObject (Recommended)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#option-b-morphyncontroller-global" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Option B: MorphynController (Global)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#quick-start-example" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1068,10 +1107,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#step-1-create-config-file" class="md-nav__link">
+  <a href="#step-1-create-a-config-file" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Step 1: Create Config File
+        Step 1: Create a Config File
       
     </span>
   </a>
@@ -1079,10 +1118,21 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#step-2-use-in-c" class="md-nav__link">
+  <a href="#step-2a-entity-component-approach" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Step 2: Use in C
+        Step 2a: Entity Component Approach
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-2b-global-controller-approach" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 2b: Global Controller Approach
       
     </span>
   </a>
@@ -1102,6 +1152,17 @@
         
       </ul>
     </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#inspector" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Inspector
+      
+    </span>
+  </a>
   
 </li>
       
@@ -1404,6 +1465,45 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#setup-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Setup Options
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Setup Options">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#option-a-morphynentity-per-gameobject-recommended" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Option A: MorphynEntity per GameObject (Recommended)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#option-b-morphyncontroller-global" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Option B: MorphynController (Global)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#quick-start-example" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1416,10 +1516,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#step-1-create-config-file" class="md-nav__link">
+  <a href="#step-1-create-a-config-file" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Step 1: Create Config File
+        Step 1: Create a Config File
       
     </span>
   </a>
@@ -1427,10 +1527,21 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#step-2-use-in-c" class="md-nav__link">
+  <a href="#step-2a-entity-component-approach" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Step 2: Use in C
+        Step 2a: Entity Component Approach
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-2b-global-controller-approach" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 2b: Global Controller Approach
       
     </span>
   </a>
@@ -1450,6 +1561,17 @@
         
       </ul>
     </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#inspector" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Inspector
+      
+    </span>
+  </a>
   
 </li>
       
@@ -1489,15 +1611,34 @@
 <ol>
 <li>Download <code>Morphyn.unitypackage</code> from <a href="https://github.com/jvnkoo/morphyn/releases/latest">Releases</a></li>
 <li>Import: <code>Assets &gt; Import Package &gt; Custom Package</code></li>
-<li>Add to scene: <code>GameObject &gt; Create Empty &gt; Add Component &gt; Morphyn Controller</code></li>
-<li>Drag <code>.morph</code> files into <code>Morphyn Scripts</code> array</li>
-<li>Check <code>Enable Hot Reload</code></li>
+<li><strong>Optional global controller:</strong> <code>GameObject &gt; Create Empty &gt; Add Component &gt; Morphyn Controller</code></li>
 <li>Press Play</li>
 </ol>
 <p>Done.</p>
 <hr />
+<h2 id="setup-options">Setup Options</h2>
+<h3 id="option-a-morphynentity-per-gameobject-recommended">Option A: MorphynEntity per GameObject (Recommended)</h3>
+<p>Attach a <code>MorphynEntity</code> component directly to each GameObject that needs its own script.</p>
+<ol>
+<li>Select a GameObject in the scene or a prefab</li>
+<li><code>Add Component &gt; Morphyn Entity</code></li>
+<li>Drag a <code>.morph</code> file into the <strong>Script</strong> slot</li>
+<li>Optionally set a <strong>Custom Entity Name</strong> (defaults to the file name)</li>
+<li>Press Play — the entity is registered automatically</li>
+</ol>
+<p>No global <code>MorphynController</code> is required for this workflow, but one must exist somewhere in the scene for the shared runtime to run.</p>
+<h3 id="option-b-morphyncontroller-global">Option B: MorphynController (Global)</h3>
+<p>Load all <code>.morph</code> files from a single scene-level component.</p>
+<ol>
+<li><code>GameObject &gt; Create Empty &gt; Add Component &gt; Morphyn Controller</code></li>
+<li>Drag <code>.morph</code> files into the <strong>Morphyn Scripts</strong> array</li>
+<li>Set per-file <strong>Save Mode</strong> if needed</li>
+<li>Check <strong>Enable Hot Reload</strong> for live editing</li>
+<li>Press Play</li>
+</ol>
+<hr />
 <h2 id="quick-start-example">Quick Start Example</h2>
-<h3 id="step-1-create-config-file">Step 1: Create Config File</h3>
+<h3 id="step-1-create-a-config-file">Step 1: Create a Config File</h3>
 <p>Create <code>player.morph</code> in your Assets folder:</p>
 <div class="language-morphyn highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">entity</span> <span class="nc">Player</span> <span class="p">{</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>  <span class="k">has</span> <span class="nv">hp</span><span class="p">:</span> <span class="m">100</span>
@@ -1511,29 +1652,48 @@
 </span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>  <span class="p">}</span>
 </span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="p">}</span>
 </span></code></pre></div>
-<h3 id="step-2-use-in-c">Step 2: Use in C</h3>
+<h3 id="step-2a-entity-component-approach">Step 2a: Entity Component Approach</h3>
+<p>Add <code>MorphynEntity</code> to your Player GameObject and drag <code>player.morph</code> into the Script slot.</p>
 <div class="language-cs highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="k">using</span><span class="w"> </span><span class="nn">UnityEngine</span><span class="p">;</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="k">public</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">PlayerController</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">MonoBehaviour</span>
 </span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="p">{</span>
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">    </span><span class="k">private</span><span class="w"> </span><span class="n">MorphynController</span><span class="w"> </span><span class="n">_morphyn</span><span class="p">;</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">    </span><span class="n">MorphynEntity</span><span class="w"> </span><span class="n">_entity</span><span class="p">;</span>
 </span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>
 </span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="w">    </span><span class="k">void</span><span class="w"> </span><span class="nf">Start</span><span class="p">()</span>
 </span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="w">    </span><span class="p">{</span>
-</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="w">        </span><span class="n">_morphyn</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">MorphynController</span><span class="p">.</span><span class="n">Instance</span><span class="p">;</span>
-</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>
-</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a><span class="w">        </span><span class="kt">float</span><span class="w"> </span><span class="n">hp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">_morphyn</span><span class="p">.</span><span class="n">GetFloat</span><span class="p">(</span><span class="s">&quot;Player&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;hp&quot;</span><span class="p">);</span>
-</span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a><span class="w">        </span><span class="n">Debug</span><span class="p">.</span><span class="n">Log</span><span class="p">(</span><span class="s">$&quot;Player HP: {hp}&quot;</span><span class="p">);</span>
-</span><span id="__span-1-13"><a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a><span class="w">    </span><span class="p">}</span>
-</span><span id="__span-1-14"><a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a>
-</span><span id="__span-1-15"><a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a><span class="w">    </span><span class="k">void</span><span class="w"> </span><span class="nf">Update</span><span class="p">()</span>
-</span><span id="__span-1-16"><a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a><span class="w">    </span><span class="p">{</span>
-</span><span id="__span-1-17"><a id="__codelineno-1-17" name="__codelineno-1-17" href="#__codelineno-1-17"></a><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">Input</span><span class="p">.</span><span class="n">GetKeyDown</span><span class="p">(</span><span class="n">KeyCode</span><span class="p">.</span><span class="n">L</span><span class="p">))</span>
-</span><span id="__span-1-18"><a id="__codelineno-1-18" name="__codelineno-1-18" href="#__codelineno-1-18"></a><span class="w">        </span><span class="p">{</span>
-</span><span id="__span-1-19"><a id="__codelineno-1-19" name="__codelineno-1-19" href="#__codelineno-1-19"></a><span class="w">            </span><span class="n">_morphyn</span><span class="p">.</span><span class="n">Emit</span><span class="p">(</span><span class="s">&quot;Player&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;level_up&quot;</span><span class="p">);</span>
-</span><span id="__span-1-20"><a id="__codelineno-1-20" name="__codelineno-1-20" href="#__codelineno-1-20"></a><span class="w">        </span><span class="p">}</span>
-</span><span id="__span-1-21"><a id="__codelineno-1-21" name="__codelineno-1-21" href="#__codelineno-1-21"></a><span class="w">    </span><span class="p">}</span>
-</span><span id="__span-1-22"><a id="__codelineno-1-22" name="__codelineno-1-22" href="#__codelineno-1-22"></a><span class="p">}</span>
+</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="w">        </span><span class="n">_entity</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">GetComponent</span><span class="o">&lt;</span><span class="n">MorphynEntity</span><span class="o">&gt;</span><span class="p">();</span>
+</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="w">        </span><span class="kt">float</span><span class="w"> </span><span class="n">hp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">_entity</span><span class="p">.</span><span class="n">Get</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="p">(</span><span class="s">&quot;hp&quot;</span><span class="p">,</span><span class="w"> </span><span class="mf">100f</span><span class="p">);</span>
+</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a><span class="w">        </span><span class="n">Debug</span><span class="p">.</span><span class="n">Log</span><span class="p">(</span><span class="s">$&quot;Player HP: {hp}&quot;</span><span class="p">);</span>
+</span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-1-13"><a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a>
+</span><span id="__span-1-14"><a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a><span class="w">    </span><span class="k">void</span><span class="w"> </span><span class="nf">Update</span><span class="p">()</span>
+</span><span id="__span-1-15"><a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a><span class="w">    </span><span class="p">{</span>
+</span><span id="__span-1-16"><a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">Input</span><span class="p">.</span><span class="n">GetKeyDown</span><span class="p">(</span><span class="n">KeyCode</span><span class="p">.</span><span class="n">L</span><span class="p">))</span>
+</span><span id="__span-1-17"><a id="__codelineno-1-17" name="__codelineno-1-17" href="#__codelineno-1-17"></a><span class="w">            </span><span class="n">_entity</span><span class="p">.</span><span class="n">Emit</span><span class="p">(</span><span class="s">&quot;level_up&quot;</span><span class="p">);</span>
+</span><span id="__span-1-18"><a id="__codelineno-1-18" name="__codelineno-1-18" href="#__codelineno-1-18"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-1-19"><a id="__codelineno-1-19" name="__codelineno-1-19" href="#__codelineno-1-19"></a><span class="p">}</span>
+</span></code></pre></div>
+<h3 id="step-2b-global-controller-approach">Step 2b: Global Controller Approach</h3>
+<div class="language-cs highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="k">using</span><span class="w"> </span><span class="nn">UnityEngine</span><span class="p">;</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="k">public</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">PlayerController</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">MonoBehaviour</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="p">{</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">    </span><span class="n">MorphynController</span><span class="w"> </span><span class="n">_morphyn</span><span class="p">;</span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="w">    </span><span class="k">void</span><span class="w"> </span><span class="nf">Start</span><span class="p">()</span>
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="w">    </span><span class="p">{</span>
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="w">        </span><span class="n">_morphyn</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">MorphynController</span><span class="p">.</span><span class="n">Instance</span><span class="p">;</span>
+</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="w">        </span><span class="kt">float</span><span class="w"> </span><span class="n">hp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">_morphyn</span><span class="p">.</span><span class="n">GetFloat</span><span class="p">(</span><span class="s">&quot;Player&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;hp&quot;</span><span class="p">);</span>
+</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a><span class="w">        </span><span class="n">Debug</span><span class="p">.</span><span class="n">Log</span><span class="p">(</span><span class="s">$&quot;Player HP: {hp}&quot;</span><span class="p">);</span>
+</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a>
+</span><span id="__span-2-14"><a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a><span class="w">    </span><span class="k">void</span><span class="w"> </span><span class="nf">Update</span><span class="p">()</span>
+</span><span id="__span-2-15"><a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a><span class="w">    </span><span class="p">{</span>
+</span><span id="__span-2-16"><a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">Input</span><span class="p">.</span><span class="n">GetKeyDown</span><span class="p">(</span><span class="n">KeyCode</span><span class="p">.</span><span class="n">L</span><span class="p">))</span>
+</span><span id="__span-2-17"><a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a><span class="w">            </span><span class="n">_morphyn</span><span class="p">.</span><span class="n">Emit</span><span class="p">(</span><span class="s">&quot;Player&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;level_up&quot;</span><span class="p">);</span>
+</span><span id="__span-2-18"><a id="__codelineno-2-18" name="__codelineno-2-18" href="#__codelineno-2-18"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-2-19"><a id="__codelineno-2-19" name="__codelineno-2-19" href="#__codelineno-2-19"></a><span class="p">}</span>
 </span></code></pre></div>
 <h3 id="step-3-test-hot-reload">Step 3: Test Hot Reload</h3>
 <ol>
@@ -1541,8 +1701,16 @@
 <li>Open <code>player.morph</code></li>
 <li>Change <code>has hp: 100</code> to <code>has hp: 999</code></li>
 <li>Save</li>
-<li><strong>HP updates instantly in running game!</strong></li>
+<li><strong>HP updates instantly in the running game!</strong></li>
 </ol>
+<hr />
+<h2 id="inspector">Inspector</h2>
+<p>When a <code>MorphynEntity</code> component is attached to a GameObject, the Inspector shows:</p>
+<ul>
+<li><strong>Fields</strong> — all <code>has</code> fields with their current values, editable in both Edit and Play mode. Editing a field in Edit mode patches the <code>.morph</code> file directly.</li>
+<li><strong>Events</strong> — all defined events with an <strong>Emit</strong> button to fire them manually from the Inspector during Play mode.</li>
+<li>A status message showing how many fields and events were parsed.</li>
+</ul>
 <hr />
 <h2 id="next-steps">Next Steps</h2>
 <ul>
