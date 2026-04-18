@@ -3,7 +3,7 @@
 # Morphyn 
 <div align="left">
     
-### [Morphyn](https://jvnkoo.github.io/morphyn) is a scripting language providing a clean, event-driven syntax to manage configs and logic. It's designed to be lightweight and opinionated, focusing entirely on entity states and reactive events without the overhead of a general-purpose language.
+> #### [Morphyn](https://jvnkoo.github.io/morphyn) is a scripting language I built for managing configs and game logic(not really) in Unity. Event-driven and lightweight.
 
 </div>
 
@@ -100,15 +100,6 @@ Executed on **.NET 10 (RyuJIT x86-64-v3)** / **Intel Core i5-10400H**.
 | **Morphyn + GC Run** | **682.79 ns** | 3.349 ns | 772.75 | 659.09 ns | 716.10 ns | **0 B** |
 
 ---
-## Why not Lua?
-
-The Unity bridges are a mess. MoonSharp hasn’t been updated in years, and newer alternatives like NLua and xLua bring their own baggage - NLua often trips over AOT constraints, while xLua’s power comes at the cost of high complexity. Getting either to work with hot reload and state preservation is a project in itself.
-
-Morphyn exists because setting up Lua in Unity shouldn't take days.
-Simpler, opinionated, built specifically for game config and logic.
-You lose the standard library. You gain something that works on the first try.
-
----
 ## VS Code Extension
 
 Syntax highlighting, bracket matching, comment support for `.morph` files.
@@ -127,18 +118,6 @@ Works with any .NET project, no Unity required.
 # Windows
 .\install.ps1; morphyn game.morph
 ```
-
----
-## Roadmap
-
-- [x] Core language runtime
-- [x] Unity integration  
-- [x] Hot reload system
-- [x] VS Code extension
-- [ ] Async event handling
-- [ ] More documentation examples
-- [ ] Performance optimizations
-- [ ] Self-hosted interpreter
 
 ---
 ## Contributing
